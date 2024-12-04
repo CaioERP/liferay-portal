@@ -1,5 +1,6 @@
 import Breadcrumbs from 'shared/components/Breadcrumbs';
 import classNames from 'classnames';
+import ClayBadge from '@clayui/badge';
 import ClayButton from '@clayui/button';
 import ClayDropDown, {Align} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
@@ -143,6 +144,17 @@ const PageActions: React.FC<IPageActionsProps> = ({
 				{actions.map(({label, ...props}) => (
 					<ClayDropDown.Item key={label} {...props}>
 						{label}
+
+						{label === 'Static Segment' && (
+							<ClayBadge
+								className='ml-1'
+								displayType='warning'
+								label={Liferay.Language.get(
+									'deprecated'
+								).toUpperCase()}
+								translucent
+							/>
+						)}
 					</ClayDropDown.Item>
 				))}
 			</ClayDropDown>
