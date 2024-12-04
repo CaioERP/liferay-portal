@@ -2,6 +2,10 @@ import * as API from 'shared/api';
 import * as breadcrumbs from 'shared/util/breadcrumbs';
 import autobind from 'autobind-decorator';
 import BasePage from 'shared/components/base-page';
+import ClayButton from '@clayui/button';
+import ClayIcon from '@clayui/icon';
+import ClayLink from '@clayui/link';
+import ClayPopover from '@clayui/popover';
 import getCN from 'classnames';
 import Label from 'shared/components/Label';
 import omitDefinedProps from 'shared/util/omitDefinedProps';
@@ -9,12 +13,14 @@ import React from 'react';
 import {addAlert} from 'shared/actions/alerts';
 import {Alert} from 'shared/types';
 import {ChannelContext} from 'shared/context/channel';
+import {ClayTooltipProvider} from '@clayui/tooltip';
 import {close, modalTypes, open} from 'shared/actions/modals';
 import {connect} from 'react-redux';
 import {PropTypes} from 'prop-types';
 import {Routes, SEGMENTS, toRoute} from 'shared/util/router';
 import {Segment} from 'shared/util/records';
 import {SegmentTypes} from 'shared/util/constants';
+import {sub} from 'shared/util/lang';
 
 const MessageKeys = {
 	NameCannotBeBlank: 'name-cannot-be-blank',
@@ -34,7 +40,6 @@ const ERRORS = {
 		)
 	}
 };
-
 export default WrappedComponent => {
 	class BaseEdit extends React.Component {
 		static contextType = ChannelContext;
@@ -52,7 +57,9 @@ export default WrappedComponent => {
 		};
 
 		state = {
-			onDelete: false
+			onDelete: false,
+			show: false,
+			showTooltip: false
 		};
 
 		componentDidMount() {
@@ -145,6 +152,19 @@ export default WrappedComponent => {
 				? Liferay.Language.get('static-segment')
 				: Liferay.Language.get('dynamic-segment');
 		}
+		@autobind
+		togglePopover() {
+			this.setState(prevState => ({
+				show: !prevState.show
+			}));
+		}
+
+		@autobind
+		toggleTooltip() {
+			this.setState(prevState => ({
+				showTooltip: !prevState.show
+			}));
+		}
 
 		@autobind
 		handleSubmit(form, formRef, submitFn) {
@@ -226,6 +246,10 @@ export default WrappedComponent => {
 
 			const {onDelete} = this.state;
 
+			const {show} = this.state;
+
+			const {showTooltip} = this.state;
+
 			const {selectedChannel} = this.context;
 
 			const editing = !!id;
@@ -281,6 +305,77 @@ export default WrappedComponent => {
 								<Label display='secondary' size='lg' uppercase>
 									{this.getPageTitleLabel()}
 								</Label>
+								<ClayTooltipProvider show={showTooltip}>
+									<ClayPopover
+										alignPosition='bottom'
+										closeOnClickOutside
+										header={Liferay.Language.get(
+											'deprecated-feature'
+										)}
+										show={show}
+										trigger={
+											<ClayButton
+												data-tooltip-align='top'
+												displayType='warning'
+												onBlur={() =>
+													this.setState({
+														showTooltip: !showTooltip
+													})
+												}
+												onClick={() =>
+													this.setState({
+														show: !show
+													})
+												}
+												onFocus={() =>
+													this.setState({
+														showTooltip: !showTooltip
+													})
+												}
+												onMouseOut={() =>
+													this.setState({
+														showTooltip: !showTooltip
+													})
+												}
+												onMouseOver={() =>
+													this.setState({
+														showTooltip: !showTooltip
+													})
+												}
+												title={Liferay.Language.get(
+													'open-deprecated-definition'
+												)}
+												translucent
+											>
+												{Liferay.Language.get(
+													'deprecated'
+												).toUpperCase()}
+												<span className='inline-item inline-item-before pl-2'>
+													<ClayIcon symbol='warning-full' />
+												</span>
+											</ClayButton>
+										}
+									>
+										{sub(
+											Liferay.Language.get(
+												'this-feature-is-deprecated.-x-for-more-information'
+											),
+											[
+												<ClayLink
+													decoration='underline'
+													href='https://help.liferay.com/hc/en-us/articles/360015767952-Maintenance-Mode-and-Deprecation'
+													key='deprecated'
+													target='_blank'
+												>
+													{Liferay.Language.get(
+														'check-the-deprecated-features-page'
+													)}
+												</ClayLink>
+											],
+											false
+										)}
+									</ClayPopover>
+								</ClayTooltipProvider>
 							</BasePage.Header.TitleSection>
 
 							<BasePage.Header.Section>
