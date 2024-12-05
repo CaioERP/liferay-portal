@@ -3,7 +3,10 @@ import AddReport from '../components/AddReport';
 import AssetCard from '../hocs/AssetCard';
 import autobind from 'autobind-decorator';
 import BasePage from 'shared/components/base-page';
+import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
+import ClayLink from '@clayui/link';
+import ClayPopover from '@clayui/popover';
 import CustomAssetsDashboardQuery from 'shared/queries/CustomAssetsDashboardQuery';
 import CustomAssetsReportMutation from 'shared/queries/CustomAssetsReportMutation';
 import getQuery from 'shared/queries/custom-asset-query';
@@ -13,6 +16,7 @@ import withCurrentUser from 'shared/hoc/WithCurrentUser';
 import {addAlert} from 'shared/actions/alerts';
 import {Alert} from 'shared/types';
 import {ChannelContext} from 'shared/context/channel';
+import {ClayTooltipProvider} from '@clayui/tooltip';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {getRangeSelectorsFromQuery} from 'shared/util/util';
@@ -67,7 +71,10 @@ class CustomAssetsDashboardPage extends React.Component {
 		 * @type {object}
 		 * @default {}
 		 */
-		filters: {}
+		filters: {},
+
+		show: false,
+		showTooltip: false
 	};
 
 	componentDidMount() {
@@ -200,6 +207,19 @@ class CustomAssetsDashboardPage extends React.Component {
 			});
 		});
 	}
+	@autobind
+	togglePopover() {
+		this.setState(prevState => ({
+			show: !prevState.show
+		}));
+	}
+
+	@autobind
+	toggleTooltip() {
+		this.setState(prevState => ({
+			showTooltip: !prevState.show
+		}));
+	}
 
 	renderDefinitions() {
 		const {
@@ -273,6 +293,10 @@ class CustomAssetsDashboardPage extends React.Component {
 			state: {definition, filters}
 		} = this;
 
+		const {show} = this.state;
+
+		const {showTooltip} = this.state;
+
 		const {
 			params: {channelId, groupId, title}
 		} = router;
@@ -294,7 +318,79 @@ class CustomAssetsDashboardPage extends React.Component {
 					]}
 					groupId={groupId}
 				>
-					<BasePage.Header.TitleSection title={decodedTitle} />
+					<BasePage.Header.TitleSection title={decodedTitle}>
+						<ClayTooltipProvider show={showTooltip}>
+							<ClayPopover
+								alignPosition='bottom'
+								closeOnClickOutside
+								header={Liferay.Language.get(
+									'deprecated-feature'
+								)}
+								show={show}
+								trigger={
+									<ClayButton
+										data-tooltip-align='top'
+										displayType='warning'
+										onBlur={() =>
+											this.setState({
+												showTooltip: !showTooltip
+											})
+										}
+										onClick={() =>
+											this.setState({
+												show: !show
+											})
+										}
+										onFocus={() =>
+											this.setState({
+												showTooltip: !showTooltip
+											})
+										}
+										onMouseOut={() =>
+											this.setState({
+												showTooltip: !showTooltip
+											})
+										}
+										onMouseOver={() =>
+											this.setState({
+												showTooltip: !showTooltip
+											})
+										}
+										title={Liferay.Language.get(
+											'open-deprecated-definition'
+										)}
+										translucent
+									>
+										{Liferay.Language.get(
+											'deprecated'
+										).toUpperCase()}
+										<span className='inline-item inline-item-before pl-2'>
+											<ClayIcon symbol='warning-full' />
+										</span>
+									</ClayButton>
+								}
+							>
+								{sub(
+									Liferay.Language.get(
+										'this-feature-is-deprecated.-x-for-more-information'
+									),
+									[
+										<ClayLink
+											decoration='underline'
+											href='https://help.liferay.com/hc/en-us/articles/360015767952-Maintenance-Mode-and-Deprecation'
+											key='deprecated'
+											target='_blank'
+										>
+											{Liferay.Language.get(
+												'check-the-deprecated-features-page'
+											)}
+										</ClayLink>
+									],
+									false
+								)}
+							</ClayPopover>
+						</ClayTooltipProvider>
+					</BasePage.Header.TitleSection>
 				</BasePage.Header>
 
 				<BasePage.Context.Provider value={{filters, router}}>
