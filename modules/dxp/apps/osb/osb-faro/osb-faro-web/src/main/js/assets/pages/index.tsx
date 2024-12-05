@@ -62,6 +62,7 @@ const NAV_ITEMS = [
 		route: Routes.ASSETS_WEB_CONTENT
 	},
 	{
+		deprecated: true,
 		exact: true,
 		label: Liferay.Language.get('custom'),
 		route: Routes.ASSETS_CUSTOM
@@ -103,7 +104,7 @@ const Assets: React.FC<IAssetsProps> = ({className, router}) => {
 				<BasePage.Header.NavBar
 					items={NAV_ITEMS}
 					routeParams={{channelId, groupId}}
-				/>
+				></BasePage.Header.NavBar>
 			</BasePage.Header>
 			{getMatchedRoute(NAV_ITEMS) === Routes.ASSETS_BLOGS && (
 				<BasePage.SubHeader>
