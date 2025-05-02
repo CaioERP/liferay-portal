@@ -18,13 +18,11 @@ import com.liferay.object.model.ObjectFolderTable;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
-import com.liferay.petra.sql.dsl.expression.Expression;
 import com.liferay.petra.sql.dsl.query.DSLQuery;
+import com.liferay.portal.kernel.util.GetterUtil;
 
-import java.sql.Date;
-
-import java.time.LocalDate;
-
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
@@ -46,6 +44,12 @@ public class OverviewContentResourceImpl
 			String languageId, Integer rangeKey, Integer spaceId)
 		throws Exception {
 
+		return _toOverviewContent(
+			_getOverviewContentObjects(rangeKey),
+			_getPreviousTotalCount(rangeKey));
+	}
+
+	private Object[] _getOverviewContentObjects(int rangeKey) {
 		AssetCategoryTable assetCategoryTable = AssetCategoryTable.INSTANCE;
 		AssetEntries_AssetTagsTable assetEntriesAssetTagsTable =
 			AssetEntries_AssetTagsTable.INSTANCE;
@@ -57,22 +61,12 @@ public class OverviewContentResourceImpl
 		ObjectEntryTable objectEntryTable = ObjectEntryTable.INSTANCE;
 		ObjectFolderTable objectFolderTable = ObjectFolderTable.INSTANCE;
 
-		Expression<Boolean> previousExpression =
-			DSLFunctionFactoryUtil.caseWhenThen(
-				objectEntryTable.createDate.lt(
-					Date.valueOf(_getStartDate(rangeKey))),
-				true
-			).elseEnd(
-				false
-			);
-
 		DSLQuery dslQuery = DSLQueryFactoryUtil.select(
 			DSLFunctionFactoryUtil.countDistinct(
 				assetEntryAssetCategoryRelTable.assetCategoryId
 			).as(
 				"categoriesCount"
 			),
-			previousExpression.as("previous"),
 			DSLFunctionFactoryUtil.countDistinct(
 				assetEntriesAssetTagsTable.tagId
 			).as(
@@ -116,79 +110,94 @@ public class OverviewContentResourceImpl
 			objectFolderTable.externalReferenceCode.eq(
 				"L_CMS_CONTENT_STRUCTURES"
 			).and(
-				objectEntryTable.createDate.gte(
-					Date.valueOf(_getPreviousStartDate(rangeKey)))
+				objectEntryTable.createDate.gte(_getStartDate(rangeKey))
 			)
-		).groupBy(
-			previousExpression
 		);
 
-		return _toOverviewContent(_objectEntryLocalService.dslQuery(dslQuery));
-	}
+		List<Object[]> results = _objectEntryLocalService.dslQuery(dslQuery);
 
-	private String _getPreviousStartDate(int rangeKey) {
-		LocalDate localDate = LocalDate.now();
-
-		localDate = localDate.minusDays(rangeKey * 2L);
-
-		return localDate.toString();
-	}
-
-	private String _getStartDate(int rangeKey) {
-		LocalDate localDate = LocalDate.now();
-
-		localDate = localDate.minusDays(rangeKey);
-
-		return localDate.toString();
-	}
-
-	private OverviewContent _toOverviewContent(List<Object[]> results) {
-		long categoriesCount = 0;
-		long currentTotalCount = 0;
-		long previousTotalCount = 0;
-		long tagsCount = 0;
-		long vocabulariesCount = 0;
-
-		for (Object[] result : results) {
-			if (Boolean.TRUE.equals(result[1])) {
-				previousTotalCount = (Long)result[3];
-			}
-			else {
-				categoriesCount = (Long)result[0];
-				currentTotalCount = (Long)result[3];
-				tagsCount = (Long)result[2];
-				vocabulariesCount = (Long)result[4];
-			}
+		if (results.isEmpty()) {
+			return new Object[] {0, 0, 0, 0};
 		}
 
-		Trend.Classification classification = Trend.Classification.NEUTRAL;
-		double percentage = 0.0;
+		return results.get(0);
+	}
 
-		if (previousTotalCount > 0) {
-			double diff = currentTotalCount - previousTotalCount;
+	private Date _getPreviousStartDate(int rangeKey) {
+		Calendar calendar = Calendar.getInstance();
 
-			percentage = diff / previousTotalCount * 100;
+		calendar.add(Calendar.DAY_OF_MONTH, -(rangeKey * 2));
 
-			if (percentage > 0) {
-				classification = Trend.Classification.POSITIVE;
-			}
-			else if (percentage < 0) {
-				classification = Trend.Classification.NEGATIVE;
-			}
+		calendar.set(Calendar.HOUR_OF_DAY, 12);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+
+		return calendar.getTime();
+	}
+
+	private long _getPreviousTotalCount(int rangeKey) {
+		AssetEntryTable assetEntryTable = AssetEntryTable.INSTANCE;
+		ObjectDefinitionTable objectDefinitionTable =
+			ObjectDefinitionTable.INSTANCE;
+		ObjectEntryTable objectEntryTable = ObjectEntryTable.INSTANCE;
+		ObjectFolderTable objectFolderTable = ObjectFolderTable.INSTANCE;
+
+		DSLQuery dslQuery = DSLQueryFactoryUtil.select(
+			DSLFunctionFactoryUtil.count(
+				objectEntryTable.objectEntryId
+			).as(
+				"totalCount"
+			)
+		).from(
+			objectFolderTable
+		).innerJoinON(
+			objectDefinitionTable,
+			objectDefinitionTable.objectFolderId.eq(
+				objectFolderTable.objectFolderId)
+		).innerJoinON(
+			objectEntryTable,
+			objectEntryTable.objectDefinitionId.eq(
+				objectDefinitionTable.objectDefinitionId)
+		).innerJoinON(
+			assetEntryTable,
+			assetEntryTable.classPK.eq(objectEntryTable.objectEntryId)
+		).where(
+			objectFolderTable.externalReferenceCode.eq(
+				"L_CMS_CONTENT_STRUCTURES"
+			).and(
+				objectEntryTable.createDate.gte(_getPreviousStartDate(rangeKey))
+			).and(
+				objectEntryTable.createDate.lt(_getStartDate(rangeKey))
+			)
+		);
+
+		List<Object[]> results = _objectEntryLocalService.dslQuery(dslQuery);
+
+		if (results.isEmpty()) {
+			return 0;
 		}
-		else if (currentTotalCount > 0) {
-			classification = Trend.Classification.POSITIVE;
-			percentage = 100.0;
-		}
 
-		return _toOverviewContent(
-			categoriesCount, classification, percentage, tagsCount,
-			vocabulariesCount);
+		return GetterUtil.getLong(results.get(0));
+	}
+
+	private Date _getStartDate(int rangeKey) {
+		Calendar calendar = Calendar.getInstance();
+
+		calendar.add(Calendar.DAY_OF_MONTH, -rangeKey);
+
+		calendar.set(Calendar.HOUR_OF_DAY, 12);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+
+		return calendar.getTime();
 	}
 
 	private OverviewContent _toOverviewContent(
 		long categoriesCount, Trend.Classification classification,
-		double percentage, long tagsCount, long vocabulariesCount) {
+		double percentage, long tagsCount, long totalCount,
+		long vocabulariesCount) {
 
 		Trend trend = new Trend();
 
@@ -199,10 +208,44 @@ public class OverviewContentResourceImpl
 
 		overviewContent.setCategoriesCount(() -> categoriesCount);
 		overviewContent.setTagsCount(() -> tagsCount);
+		overviewContent.setTotalCount(() -> totalCount);
 		overviewContent.setTrend(() -> trend);
 		overviewContent.setVocabulariesCount(() -> vocabulariesCount);
 
 		return overviewContent;
+	}
+
+	private OverviewContent _toOverviewContent(
+		Object[] objects, long previousTotalCount) {
+
+		long categoriesCount = (Long)objects[0];
+		long tagsCount = (Long)objects[1];
+		long totalCount = (Long)objects[2];
+		long vocabulariesCount = (Long)objects[3];
+
+		Trend.Classification classification = Trend.Classification.NEUTRAL;
+		double percentage = 0.0;
+
+		if (previousTotalCount > 0) {
+			double diff = totalCount - previousTotalCount;
+
+			percentage = diff / previousTotalCount * 100.0;
+
+			if (percentage > 0) {
+				classification = Trend.Classification.POSITIVE;
+			}
+			else if (percentage < 0) {
+				classification = Trend.Classification.NEGATIVE;
+			}
+		}
+		else if (totalCount > 0) {
+			classification = Trend.Classification.POSITIVE;
+			percentage = 100.0;
+		}
+
+		return _toOverviewContent(
+			categoriesCount, classification, percentage, tagsCount,
+			totalCount, vocabulariesCount);
 	}
 
 	@Reference
