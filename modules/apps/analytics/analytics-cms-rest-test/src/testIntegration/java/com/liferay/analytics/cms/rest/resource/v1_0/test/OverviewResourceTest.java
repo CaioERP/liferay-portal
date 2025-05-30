@@ -140,7 +140,8 @@ public class OverviewResourceTest extends BaseOverviewResourceTestCase {
 
 		Assert.assertEquals(expectedContentOverview, contentOverview);
 	}
-
+	
+	@Override
 	@Test
 	public void testGetContentOverviewWithAssetCategory() throws Exception {
 		_assetVocabulary = _assetVocabularyLocalService.addVocabulary(
@@ -186,6 +187,7 @@ public class OverviewResourceTest extends BaseOverviewResourceTestCase {
 		Assert.assertEquals(expectedContentOverview, contentOverview);
 	}
 
+	@Override
 	@Test
 	public void testGetContentOverviewWithAssetTag() throws Exception {
 		ObjectDefinition objectDefinition =
