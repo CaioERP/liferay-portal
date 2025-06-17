@@ -92,7 +92,7 @@ describe('[CMS Dashboard] Components: SpacesDropdown', () => {
 		).toBeInTheDocument();
 	});
 
-	xit('search by a space and returns a filtered result', async () => {
+	it('search by a space and returns a filtered result', async () => {
 		mockSpaces([
 			{id: '01', name: 'space 01'},
 			{id: '02', name: 'space 02'},
@@ -130,11 +130,11 @@ describe('[CMS Dashboard] Components: SpacesDropdown', () => {
 					screen.queryByRole('menuitem', {name: 'space 02'})
 				).toBeInTheDocument();
 			},
-			{timeout: 100}
+			{timeout: 3000}
 		);
 	});
 
-	xit('search by a space and returns a empty result', async () => {
+	it('search by a space and returns a empty result', async () => {
 		mockSpaces([
 			{id: '01', name: 'space 01'},
 			{id: '02', name: 'space 02'},
@@ -170,7 +170,7 @@ describe('[CMS Dashboard] Components: SpacesDropdown', () => {
 					})
 				).toBeInTheDocument();
 			},
-			{timeout: 100}
+			{timeout: 3000}
 		);
 	});
 

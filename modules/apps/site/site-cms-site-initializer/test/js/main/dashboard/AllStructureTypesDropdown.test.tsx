@@ -130,7 +130,7 @@ describe('[CMS Dashboard] Components: AllStructureTypesDropdown', () => {
 		).toBeInTheDocument();
 	});
 
-	xit('search by a structure and returns a filtered result', async () => {
+	it('search by a structure and returns a filtered result', async () => {
 		mockStructures([
 			{id: '01', name: 'structure 01'},
 			{id: '02', name: 'structure 02'},
@@ -171,11 +171,11 @@ describe('[CMS Dashboard] Components: AllStructureTypesDropdown', () => {
 					screen.queryByRole('menuitem', {name: 'structure 02'})
 				).toBeInTheDocument();
 			},
-			{timeout: 100}
+			{timeout: 3000}
 		);
 	});
 
-	xit('search by a structure and returns a empty result', async () => {
+	it('search by a structure and returns a empty result', async () => {
 		mockStructures([
 			{id: '01', name: 'structure 01'},
 			{id: '02', name: 'structure 02'},
@@ -211,7 +211,7 @@ describe('[CMS Dashboard] Components: AllStructureTypesDropdown', () => {
 					})
 				).toBeInTheDocument();
 			},
-			{timeout: 100}
+			{timeout: 3000}
 		);
 	});
 

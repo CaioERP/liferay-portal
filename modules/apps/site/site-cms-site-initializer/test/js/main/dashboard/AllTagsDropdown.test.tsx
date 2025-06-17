@@ -127,7 +127,7 @@ describe('[CMS Dashboard] Components: AllTagsDropdown', () => {
 		).toBeInTheDocument();
 	});
 
-	xit('search by a tag and returns a filtered result', async () => {
+	it('search by a tag and returns a filtered result', async () => {
 		mockTags([
 			{id: '01', name: 'tag 01'},
 			{id: '02', name: 'tag 02'},
@@ -165,11 +165,11 @@ describe('[CMS Dashboard] Components: AllTagsDropdown', () => {
 					screen.queryByRole('menuitem', {name: 'tag 02'})
 				).toBeInTheDocument();
 			},
-			{timeout: 100}
+			{timeout: 3000}
 		);
 	});
 
-	xit('search by a tag and returns a empty result', async () => {
+	it('search by a tag and returns a empty result', async () => {
 		mockTags([
 			{id: '01', name: 'tag 01'},
 			{id: '02', name: 'tag 02'},
@@ -205,7 +205,7 @@ describe('[CMS Dashboard] Components: AllTagsDropdown', () => {
 					})
 				).toBeInTheDocument();
 			},
-			{timeout: 100}
+			{timeout: 3000}
 		);
 	});
 

@@ -128,7 +128,7 @@ describe('[CMS Dashboard] Components: AllVocabulariesDropdown', () => {
 		).toBeInTheDocument();
 	});
 
-	xit('search by a vocabulary and returns a filtered result', async () => {
+	it('search by a vocabulary and returns a filtered result', async () => {
 		mockVocabularies([
 			{id: '01', name: 'vocabulary 01'},
 			{id: '02', name: 'vocabulary 02'},
@@ -169,11 +169,11 @@ describe('[CMS Dashboard] Components: AllVocabulariesDropdown', () => {
 					screen.queryByRole('menuitem', {name: 'vocabulary 02'})
 				).toBeInTheDocument();
 			},
-			{timeout: 100}
+			{timeout: 3000}
 		);
 	});
 
-	xit('search by a vocabulary and returns a empty result', async () => {
+	it('search by a vocabulary and returns a empty result', async () => {
 		mockVocabularies([
 			{id: '01', name: 'vocabulary 01'},
 			{id: '02', name: 'vocabulary 02'},
@@ -209,7 +209,7 @@ describe('[CMS Dashboard] Components: AllVocabulariesDropdown', () => {
 					})
 				).toBeInTheDocument();
 			},
-			{timeout: 100}
+			{timeout: 3000}
 		);
 	});
 

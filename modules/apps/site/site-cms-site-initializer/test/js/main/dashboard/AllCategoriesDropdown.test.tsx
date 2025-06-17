@@ -160,7 +160,7 @@ describe('[CMS Dashboard] Components: AllCategoriesDropdown', () => {
 		).toBeInTheDocument();
 	});
 
-	xit('navigates to drill down and selects a category', async () => {
+	it('navigates to drill down and selects a category', async () => {
 		const onSelectItem = jest.fn();
 
 		mockCategories([
@@ -238,11 +238,11 @@ describe('[CMS Dashboard] Components: AllCategoriesDropdown', () => {
 					value: '101',
 				});
 			},
-			{timeout: 100}
+			{timeout: 3000}
 		);
 	});
 
-	xit('navigates to drill down, renders a category list and go back to the vocabulary list', async () => {
+	it('navigates to drill down, renders a category list and go back to the vocabulary list', async () => {
 		const onSelectItem = jest.fn();
 
 		mockCategories([
@@ -327,7 +327,7 @@ describe('[CMS Dashboard] Components: AllCategoriesDropdown', () => {
 					screen.getByRole('menuitem', {name: 'vocabulary 01'})
 				).toBeInTheDocument();
 			},
-			{timeout: 100}
+			{timeout: 3000}
 		);
 	});
 });
