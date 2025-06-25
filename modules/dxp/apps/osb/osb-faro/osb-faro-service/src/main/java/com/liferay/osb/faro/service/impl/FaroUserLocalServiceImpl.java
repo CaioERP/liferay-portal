@@ -417,7 +417,7 @@ public class FaroUserLocalServiceImpl extends FaroUserLocalServiceBaseImpl {
 
 		FaroUser faroUser = fetchOwnerFaroUser(groupId);
 
-		User receiverUser;
+		User receiverUser = null;
 
 		if (faroUser == null) {
 			receiverUser = _userLocalService.getUser(faroProject.getUserId());
