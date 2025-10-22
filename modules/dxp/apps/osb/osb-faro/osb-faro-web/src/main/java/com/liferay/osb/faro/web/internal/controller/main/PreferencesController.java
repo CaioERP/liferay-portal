@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
@@ -245,8 +246,8 @@ public class PreferencesController extends BaseFaroController {
 			individualSegmentId);
 	}
 
-	public void removeIndividualSegmentPreferences(
-			long groupId, String individualSegmentId, String scope)
+	public void removeIndividualSegmentsPreferences(
+			long groupId, List<String> individualSegmentIds, String scope)
 		throws Exception {
 
 		long ownerId = _getOwnerId(groupId, scope);
@@ -254,8 +255,8 @@ public class PreferencesController extends BaseFaroController {
 		WorkspacePreferences workspacePreferences = _getWorkspacePreferences(
 			groupId, ownerId);
 
-		workspacePreferences.removeIndividualSegmentPreference(
-			individualSegmentId);
+		workspacePreferences.removeIndividualSegmentsPreferences(
+			individualSegmentIds);
 
 		_faroPreferencesLocalService.savePreferences(
 			getUserId(), groupId, ownerId,
