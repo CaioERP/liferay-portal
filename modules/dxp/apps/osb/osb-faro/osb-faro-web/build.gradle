@@ -113,3 +113,7 @@ packageRunWebpack {
 processResources {
 	dependsOn packageRunWebpack
 }
+
+tasks.named("copyCSS") {
+	dependsOn tasks.named("packageRunWebpack")
+}
