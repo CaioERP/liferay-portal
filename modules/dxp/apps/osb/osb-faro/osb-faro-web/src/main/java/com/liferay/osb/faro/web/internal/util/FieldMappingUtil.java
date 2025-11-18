@@ -15,12 +15,41 @@ import com.liferay.petra.function.transform.TransformUtil;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * @author Matthew Kong
  */
 public class FieldMappingUtil {
+
+	public static String getDisplayName(FieldMapping fieldMapping) {
+		String languageKey = null;
+
+		if (Objects.equals(fieldMapping.getContext(), "demographics")) {
+			languageKey =
+				FieldMappingConstants.getDemographicsFieldMappingLanguageKey(
+					fieldMapping.getFieldName());
+		}
+
+		if (Objects.equals(fieldMapping.getContext(), "account")) {
+			languageKey =
+				FieldMappingConstants.
+					getSalesforceAccountAttributesFieldMappingLanguageKeys(
+						fieldMapping.getFieldName());
+		}
+
+		if (languageKey != null) {
+			PermissionChecker permissionChecker =
+				PermissionThreadLocal.getPermissionChecker();
+
+			User user = permissionChecker.getUser();
+
+			return LanguageUtil.get(user.getLocale(), languageKey);
+		}
+
+		return fieldMapping.getDisplayName();
+	}
 
 	public static List<FieldMappingMap> getNewFieldMappingMaps(
 		ContactsEngineClient contactsEngineClient, FaroProject faroProject,
