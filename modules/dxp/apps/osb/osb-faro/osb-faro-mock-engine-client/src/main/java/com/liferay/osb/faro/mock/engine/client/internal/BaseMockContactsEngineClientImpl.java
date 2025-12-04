@@ -688,6 +688,15 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public Results<Object> getFieldValues(
+		FaroProject faroProject, Long channedId, String context, String query,
+		 String fieldMappingFieldName, int cur, int delta) {
+		return contactsEngineClient.getFieldValues(
+			faroProject, channedId, context, query, fieldMappingFieldName, cur, delta);
+	}
+
+
+	@Override
 	public Individual getIndividual(
 			FaroProject faroProject, String id, String channelId)
 		throws FaroEngineClientException {

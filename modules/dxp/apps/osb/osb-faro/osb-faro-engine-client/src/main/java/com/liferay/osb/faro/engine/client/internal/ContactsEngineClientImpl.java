@@ -1698,6 +1698,65 @@ public class ContactsEngineClientImpl
 	}
 
 	@Override
+	public Results<Object> getFieldValues(
+		FaroProject faroProject, Long channelId, String context, String query,
+		String fieldMappingFieldName, int cur, int delta) {
+
+		Map<String, Object> uriVariables = getUriVariables(
+			faroProject, cur, delta, null);
+
+		for (FieldMappingMap mapping :
+				FieldMappingConstants.getAccountFieldMappingMaps()) {
+
+			if (fieldMappingFieldName.equals(mapping.getName())) {
+				FieldMapping fieldMapping = new FieldMapping();
+
+				uriVariables.put("apply", getGroupBy(fieldMapping));
+
+				FilterBuilder filterBuilder = new FilterBuilder();
+
+				filterBuilder.addSearchFilter(
+					query, fieldMapping.getFieldName(),
+					fieldMapping.getContext() + "/?/value");
+
+				uriVariables.put("channelId", channelId);
+				uriVariables.put("filter", filterBuilder.build());
+
+				PagedModel<?, IndividualTransformation> pagedModel = get(
+					faroProject, context,
+					new ParameterizedTypeReference
+						<EntityModelPagedModel<IndividualTransformation>>() {
+					},
+					uriVariables);
+
+				Results<IndividualTransformation> results =
+					pagedModel.getResults();
+
+				List<IndividualTransformation> individualTransformations =
+					results.getItems();
+
+				return new Results<>(
+					TransformUtil.transform(
+						individualTransformations,
+						individualTransformation -> {
+							Map<String, Object> terms =
+								individualTransformation.getTerms();
+
+							List<Object> objects = new ArrayList<>(
+								terms.values());
+
+							objects.get(0);
+
+							return objects.get(0);
+						}),
+					results.getTotal());
+			}
+		}
+
+		return null;
+	}
+
+	@Override
 	public long getIdentitiesCount(FaroProject faroProject) {
 		RestTemplate restTemplate = getRestTemplate(faroProject);
 

@@ -326,6 +326,10 @@ public interface ContactsEngineClient {
 		FaroProject faroProject, Long channelId, String query,
 		String fieldMappingFieldName, int cur, int delta);
 
+	public Results<Object> getFieldValues(
+		FaroProject faroProject, Long channelId, String context, String query,
+		String fieldMappingFieldName, int cur, int delta);
+
 	public long getIdentitiesCount(FaroProject faroProject);
 
 	public Individual getIndividual(
