@@ -5,7 +5,7 @@
 
 package com.liferay.osb.faro.web.internal.response.filter;
 
-import jakarta.annotation.Priority;
+import javax.annotation.Priority;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
