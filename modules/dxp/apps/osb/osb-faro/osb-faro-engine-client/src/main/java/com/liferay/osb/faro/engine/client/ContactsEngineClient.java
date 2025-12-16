@@ -447,6 +447,9 @@ public interface ContactsEngineClient {
 	public long getSalesforceUsersCount(
 		String dataSourceId, FaroProject faroProject);
 
+	public List<DataSource> getSegmentDataSources(
+		FaroProject faroProject, long channelId, String provideTypeExclude);
+
 	public Results<String> getSessionValues(
 		FaroProject faroProject, String channelId, String fieldName,
 		String filter, String query, int cur, int delta);
