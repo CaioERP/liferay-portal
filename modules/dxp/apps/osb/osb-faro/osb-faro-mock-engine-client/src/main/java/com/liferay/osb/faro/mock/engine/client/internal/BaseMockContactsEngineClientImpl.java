@@ -296,6 +296,15 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public Results<Object> getAccountFieldValues(
+		FaroProject faroProject, Long channelId, String fieldMappingFieldName,
+		String query, int cur, int delta) {
+
+		return contactsEngineClient.getAccountFieldValues(
+			faroProject, channelId, fieldMappingFieldName, query, cur, delta);
+	}
+
+	@Override
 	public Results<IndividualSegment> getAccountIndividualSegments(
 		FaroProject faroProject, String accountId, String channelId,
 		String query, String status, int cur, int delta,
@@ -553,6 +562,14 @@ public abstract class BaseMockContactsEngineClientImpl
 		FaroProject faroProject, List<String> channelIds) {
 
 		return contactsEngineClient.getDataSources(faroProject, channelIds);
+	}
+
+	@Override
+	public List<DataSource> getDataSources(
+		FaroProject faroProject, long channelId, String provideTypeExclude) {
+
+		return contactsEngineClient.getDataSources(
+			faroProject, channelId, provideTypeExclude);
 	}
 
 	@Override
