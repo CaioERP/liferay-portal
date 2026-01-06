@@ -154,7 +154,7 @@ public class ReportController extends BaseFaroController {
 
 		Object result = _buildQueryParameters(
 			assetId, assetType, channelId, fromDateString, individualId, null,
-			query, rangeKey, null, toDateString, type);
+			query, rangeKey, segmentId, toDateString, type);
 
 		if (!(result instanceof Map<?, ?>)) {
 			return result;
