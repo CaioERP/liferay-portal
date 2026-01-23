@@ -8,8 +8,9 @@ package com.liferay.segments.asah.connector.internal.client.model.util;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
-import com.liferay.segments.asah.connector.internal.client.model.DXPVariantSettings;
-import com.liferay.segments.asah.connector.internal.client.model.ExperimentSettings;
+import com.liferay.segments.asah.connector.client.model.DXPVariantSettings;
+import com.liferay.segments.asah.connector.client.model.ExperimentSettings;
+import com.liferay.segments.asah.connector.client.model.util.ExperimentSettingsUtil;
 import com.liferay.segments.model.SegmentsExperiment;
 
 import java.util.List;

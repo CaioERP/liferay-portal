@@ -18,11 +18,11 @@ import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.segments.asah.connector.client.AsahFaroBackendClient;
+import com.liferay.segments.asah.connector.client.AsahFaroBackendClientImpl;
+import com.liferay.segments.asah.connector.client.model.Results;
+import com.liferay.segments.asah.connector.client.model.Topic;
 import com.liferay.segments.asah.connector.internal.cache.AsahInterestTermCache;
-import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClient;
-import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClientImpl;
-import com.liferay.segments.asah.connector.internal.client.model.Results;
-import com.liferay.segments.asah.connector.internal.client.model.Topic;
 import com.liferay.segments.asah.connector.internal.constants.SegmentsAsahDestinationNames;
 
 import java.util.ArrayList;

@@ -6,8 +6,9 @@
 package com.liferay.segments.asah.connector.internal.client.data.binding;
 
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
-import com.liferay.segments.asah.connector.internal.client.model.Results;
-import com.liferay.segments.asah.connector.internal.client.model.Topic;
+import com.liferay.segments.asah.connector.client.data.binding.InterestTermsJSONObjectMapper;
+import com.liferay.segments.asah.connector.client.model.Results;
+import com.liferay.segments.asah.connector.client.model.Topic;
 
 import java.io.IOException;
 

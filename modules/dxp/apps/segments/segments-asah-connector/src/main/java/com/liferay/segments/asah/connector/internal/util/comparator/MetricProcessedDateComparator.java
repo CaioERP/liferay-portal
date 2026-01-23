@@ -7,7 +7,7 @@ package com.liferay.segments.asah.connector.internal.util.comparator;
 
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.segments.asah.connector.internal.client.model.Metric;
+import com.liferay.segments.asah.connector.client.model.Metric;
 
 /**
  * @author Riccardo Ferrari

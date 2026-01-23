@@ -7,7 +7,8 @@ package com.liferay.segments.asah.connector.internal.client.model.util;
 
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
-import com.liferay.segments.asah.connector.internal.client.model.DXPVariantSettings;
+import com.liferay.segments.asah.connector.client.model.DXPVariantSettings;
+import com.liferay.segments.asah.connector.client.model.util.DXPVariantSettingsUtil;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
