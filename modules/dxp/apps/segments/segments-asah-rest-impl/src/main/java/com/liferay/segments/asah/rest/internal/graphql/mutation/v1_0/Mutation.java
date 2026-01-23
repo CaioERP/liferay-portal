@@ -16,9 +16,11 @@ import com.liferay.portal.vulcan.graphql.annotation.GraphQLField;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLName;
 import com.liferay.segments.asah.rest.dto.v1_0.Experiment;
 import com.liferay.segments.asah.rest.dto.v1_0.ExperimentRun;
+import com.liferay.segments.asah.rest.dto.v1_0.SegmentActivation;
 import com.liferay.segments.asah.rest.dto.v1_0.Status;
 import com.liferay.segments.asah.rest.resource.v1_0.ExperimentResource;
 import com.liferay.segments.asah.rest.resource.v1_0.ExperimentRunResource;
+import com.liferay.segments.asah.rest.resource.v1_0.SegmentActivationResource;
 import com.liferay.segments.asah.rest.resource.v1_0.StatusResource;
 
 import jakarta.annotation.Generated;
@@ -54,6 +56,14 @@ public class Mutation {
 
 		_experimentRunResourceComponentServiceObjects =
 			experimentRunResourceComponentServiceObjects;
+	}
+
+	public static void setSegmentActivationResourceComponentServiceObjects(
+		ComponentServiceObjects<SegmentActivationResource>
+			segmentActivationResourceComponentServiceObjects) {
+
+		_segmentActivationResourceComponentServiceObjects =
+			segmentActivationResourceComponentServiceObjects;
 	}
 
 	public static void setStatusResourceComponentServiceObjects(
@@ -102,6 +112,34 @@ public class Mutation {
 			this::_populateResourceContext,
 			experimentRunResource -> experimentRunResource.postExperimentRun(
 				experimentId, experimentRun));
+	}
+
+	@GraphQLField
+	public SegmentActivation createSegmentActivation(
+			@GraphQLName("segmentActivation") SegmentActivation
+				segmentActivation)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_segmentActivationResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			segmentActivationResource ->
+				segmentActivationResource.postSegmentActivation(
+					segmentActivation));
+	}
+
+	@GraphQLField
+	public Response createSegmentActivationBatch(
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("object") Object object)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_segmentActivationResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			segmentActivationResource ->
+				segmentActivationResource.postSegmentActivationBatch(
+					callbackURL, object));
 	}
 
 	@GraphQLField
@@ -203,6 +241,28 @@ public class Mutation {
 		experimentRunResource.setRoleLocalService(_roleLocalService);
 	}
 
+	private void _populateResourceContext(
+			SegmentActivationResource segmentActivationResource)
+		throws Exception {
+
+		segmentActivationResource.setContextAcceptLanguage(_acceptLanguage);
+		segmentActivationResource.setContextCompany(_company);
+		segmentActivationResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		segmentActivationResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		segmentActivationResource.setContextUriInfo(_uriInfo);
+		segmentActivationResource.setContextUser(_user);
+		segmentActivationResource.setGroupLocalService(_groupLocalService);
+		segmentActivationResource.setRoleLocalService(_roleLocalService);
+
+		segmentActivationResource.setVulcanBatchEngineExportTaskResource(
+			_vulcanBatchEngineExportTaskResource);
+
+		segmentActivationResource.setVulcanBatchEngineImportTaskResource(
+			_vulcanBatchEngineImportTaskResource);
+	}
+
 	private void _populateResourceContext(StatusResource statusResource)
 		throws Exception {
 
@@ -226,6 +286,8 @@ public class Mutation {
 		_experimentResourceComponentServiceObjects;
 	private static ComponentServiceObjects<ExperimentRunResource>
 		_experimentRunResourceComponentServiceObjects;
+	private static ComponentServiceObjects<SegmentActivationResource>
+		_segmentActivationResourceComponentServiceObjects;
 	private static ComponentServiceObjects<StatusResource>
 		_statusResourceComponentServiceObjects;
 

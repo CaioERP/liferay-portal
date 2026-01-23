@@ -89,6 +89,8 @@ public class OpenAPIResourceImpl {
 
 			add(ExperimentRunResourceImpl.class);
 
+			add(SegmentActivationResourceImpl.class);
+
 			add(StatusResourceImpl.class);
 
 			add(OpenAPIResourceImpl.class);
