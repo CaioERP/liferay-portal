@@ -57,6 +57,28 @@ components:
                     minimum: 1
                     type: number
             type: object
+        SegmentActivation:
+            properties:
+                Segment:
+                    description:
+                        Represents a set of users that meet certain criteria. Segments may be used to create customized
+                        experiences for users.
+                    properties:
+                        id:
+                            description:
+                                The segment's ID.
+                            format: int64
+                            readOnly: true
+                            type: integer
+                        name:
+                            description:
+                                The segment's name.
+                            readOnly: true
+                            type: string
+                    required:
+                        -   id
+                        -   name
+                    type: object
         Status:
             properties:
                 status:
@@ -166,3 +188,24 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/Experiment"
             tags: ["Status"]
+    "/segmentActivation":
+        post:
+            operationId: postSegmentActivation
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/SegmentActivation"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/SegmentActivation"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SegmentActivation"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/SegmentActivation"
+            tags: ["SegmentActivation"]
