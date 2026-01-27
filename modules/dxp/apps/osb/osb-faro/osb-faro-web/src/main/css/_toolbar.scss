@@ -4,17 +4,6 @@
 	* https://bugs.webkit.org/show_bug.cgi?id=45168
 	*/
 
-	@include browser(Chrome) {
-		.custom-checkbox {
-			.custom-control-input:indeterminate,
-			.custom-control-input:checked {
-				& ~ .custom-control-label::before {
-					transform: translateZ(0);
-				}
-			}
-		}
-	}
-
 	.navbar-root {
 		border-top-left-radius: 0.25rem;
 		border-top-right-radius: 0.25rem;
