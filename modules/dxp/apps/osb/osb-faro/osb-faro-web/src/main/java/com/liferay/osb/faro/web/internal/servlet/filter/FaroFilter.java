@@ -5,6 +5,7 @@
 
 package com.liferay.osb.faro.web.internal.servlet.filter;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -102,16 +103,27 @@ public class FaroFilter extends BaseFilter {
 		String uri = httpServletRequest.getRequestURI();
 
 		if (uri.startsWith("/web/guest")) {
+			StringBuilder sb = new StringBuilder();
+
+			sb.append(_portal.getPortalURL(httpServletRequest));
+			sb.append("/c/portal/login");
+			sb.append("?redirect=");
+
 			String redirect = GetterUtil.getString(
 				httpServletRequest.getParameter("redirect"));
 
-			if (_log.isInfoEnabled()) {
-				_log.info("Adding redirect parameter " + redirect);
+			if (redirect.contains("/workspace")) {
+				sb.append(redirect);
+			}
+			else {
+				sb.append(StringPool.FORWARD_SLASH);
 			}
 
-			httpServletResponse.sendRedirect(
-				_portal.getPortalURL(httpServletRequest) +
-					"/c/portal/login?redirect=" + redirect);
+			if (_log.isInfoEnabled()) {
+				_log.info("Redirect Url: " + sb.toString());
+			}
+
+			httpServletResponse.sendRedirect(sb.toString());
 		}
 		else {
 			String encodeURL = URLCodec.encodeURL(
