@@ -119,10 +119,6 @@ public class FaroFilter extends BaseFilter {
 				sb.append(StringPool.FORWARD_SLASH);
 			}
 
-			if (_log.isInfoEnabled()) {
-				_log.info("Redirect Url: " + sb.toString());
-			}
-
 			httpServletResponse.sendRedirect(sb.toString());
 		}
 		else {
