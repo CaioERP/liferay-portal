@@ -52,6 +52,10 @@ public class FaroThemePreAction extends Action {
 				String redirect = GetterUtil.getString(
 					httpServletRequest.getParameter("redirect"));
 
+				if (_log.isInfoEnabled()) {
+					_log.info("Redirecting to " + redirect);
+				}
+
 				if (Validator.isNotNull(redirect) &&
 					redirect.contains("/workspace")) {
 

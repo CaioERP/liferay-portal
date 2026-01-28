@@ -105,6 +105,10 @@ public class FaroFilter extends BaseFilter {
 			String redirect = GetterUtil.getString(
 				httpServletRequest.getParameter("redirect"));
 
+			if (_log.isInfoEnabled()) {
+				_log.info("Adding redirect parameter " + redirect);
+			}
+
 			httpServletResponse.sendRedirect(
 				_portal.getPortalURL(httpServletRequest) +
 					"/c/portal/login?redirect=" + redirect);
