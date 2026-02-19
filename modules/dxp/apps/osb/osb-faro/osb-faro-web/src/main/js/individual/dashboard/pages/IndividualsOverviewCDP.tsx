@@ -299,21 +299,6 @@ const IndividualsOverviewCDP = () => {
 									)}
 								/>
 							</Card>
-
-							<Card className='w-100'>
-								<IndividualsMetricsCard
-									data={
-										data?.individualMetric
-											?.anonymousIndividualsMetric
-									}
-									description={Liferay.Language.get(
-										'this-is-the-total-number-of-anonymous-individuals.-anonymous-individuals-are-removed-after-30-days-of-inactivity'
-									)}
-									title={Liferay.Language.get(
-										'anonymous-individuals'
-									)}
-								/>
-							</Card>
 						</div>
 
 						<IndividualsList />
