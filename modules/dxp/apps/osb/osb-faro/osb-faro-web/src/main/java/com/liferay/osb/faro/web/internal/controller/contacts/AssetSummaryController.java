@@ -7,16 +7,13 @@ package com.liferay.osb.faro.web.internal.controller.contacts;
 
 import com.liferay.osb.faro.engine.client.model.AssetSummary;
 import com.liferay.osb.faro.engine.client.model.Results;
-import com.liferay.osb.faro.engine.client.util.OrderByField;
 import com.liferay.osb.faro.model.FaroProject;
 import com.liferay.osb.faro.web.internal.controller.BaseFaroController;
 import com.liferay.osb.faro.web.internal.controller.FaroController;
 import com.liferay.osb.faro.web.internal.model.display.FaroFDSResultsDisplay;
 import com.liferay.osb.faro.web.internal.model.display.contacts.AssetSummaryDisplay;
-import com.liferay.osb.faro.web.internal.param.FaroParam;
 import com.liferay.petra.string.StringPool;
 
-import java.util.List;
 import java.util.function.Function;
 
 import javax.ws.rs.DefaultValue;
@@ -41,19 +38,17 @@ public class AssetSummaryController extends BaseFaroController {
 	public FaroFDSResultsDisplay getAssetSummary(
 			@PathParam("groupId") long groupId,
 			@QueryParam("channelId") long channelId,
-			@QueryParam("keywords") String keywords,
+			@QueryParam("search") String search,
 			@QueryParam("rangeKey") int rangeKey, @QueryParam("cur") int cur,
 			@DefaultValue("20") @QueryParam("delta") int delta,
-			@DefaultValue(StringPool.BLANK) @QueryParam("orderByFields")
-				FaroParam<List<OrderByField>> orderByFieldsFaroParam)
+			@DefaultValue(StringPool.BLANK) @QueryParam("sort") String sort)
 		throws Exception {
 
 		FaroProject faroProject =
 			faroProjectLocalService.getFaroProjectByGroupId(groupId);
 
 		Results<AssetSummary> results = contactsEngineClient.getAssetSummaries(
-			faroProject, channelId, keywords, rangeKey, cur, delta,
-			orderByFieldsFaroParam.getValue());
+			faroProject, channelId, search, rangeKey, cur, delta, sort);
 
 		Function<AssetSummary, AssetSummaryDisplay> function =
 			AssetSummaryDisplay::new;
