@@ -175,6 +175,7 @@ public class Individual {
 			return _country;
 		}
 
+		@JsonProperty("createDate")
 		public Date getCreatedDate() {
 			if (_createdDate == null) {
 				return null;
