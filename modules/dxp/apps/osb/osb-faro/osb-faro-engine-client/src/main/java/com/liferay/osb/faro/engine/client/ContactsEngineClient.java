@@ -303,6 +303,9 @@ public interface ContactsEngineClient {
 		String providerType, List<String> states, int cur, int delta,
 		List<OrderByField> orderByFields);
 
+	public long getDemandbaseAccountsCount(
+		String dataSourceId, FaroProject faroProject);
+
 	public long getDXPUsersCount(FaroProject faroProject, String id);
 
 	public Long getEnrichedProfilesCount(
