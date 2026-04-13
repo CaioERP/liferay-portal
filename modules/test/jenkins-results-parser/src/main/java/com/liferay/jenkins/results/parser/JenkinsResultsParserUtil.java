@@ -3780,6 +3780,7 @@ public class JenkinsResultsParserUtil {
 
 			GZIPOutputStream gzipOutputStream = new GZIPOutputStream(
 				fileOutputStream);
+
 			FileInputStream fileInputStream = new FileInputStream(sourceFile)) {
 
 			byte[] bytes = new byte[1024];
@@ -6016,8 +6017,10 @@ public class JenkinsResultsParserUtil {
 	public static void unGzip(File sourceGzipFile, File targetFile) {
 		try (FileOutputStream fileOutputStream = new FileOutputStream(
 				targetFile);
+
 			FileInputStream fileInputStream = new FileInputStream(
 				sourceGzipFile);
+
 			GZIPInputStream gzipInputStream = new GZIPInputStream(
 				fileInputStream)) {
 

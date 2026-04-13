@@ -216,8 +216,10 @@ public class DBUpgradeClient {
 
 		try (ObjectOutputStream bootstrapObjectOutputStream =
 				new ObjectOutputStream(process.getOutputStream());
+
 			InputStreamReader inputStreamReader = new InputStreamReader(
 				process.getInputStream());
+
 			BufferedReader bufferedReader = new BufferedReader(
 				inputStreamReader)) {
 
