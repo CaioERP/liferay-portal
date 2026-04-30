@@ -270,10 +270,7 @@ public class FaroProjectIndexer extends BaseIndexer<FaroProject> {
 	protected IndexableActionableDynamicQuery
 		getIndexableActionableDynamicQuery() {
 
-		indexableActionableDynamicQuery.setPerformActionMethod(
-			this::safeGetDocument);
-
-		indexableActionableDynamicQuery.performActions();
+		return _faroProjectLocalService.getIndexableActionableDynamicQuery();
 	}
 
 	private double _getUsage(long count, long limit) {
