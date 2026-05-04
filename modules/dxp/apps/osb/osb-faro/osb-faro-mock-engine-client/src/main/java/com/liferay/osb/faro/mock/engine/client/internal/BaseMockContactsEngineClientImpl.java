@@ -10,6 +10,7 @@ import com.liferay.osb.faro.engine.client.ContactsEngineClient;
 import com.liferay.osb.faro.engine.client.exception.FaroEngineClientException;
 import com.liferay.osb.faro.engine.client.model.Account;
 import com.liferay.osb.faro.engine.client.model.AccountLifecycleMetric;
+import com.liferay.osb.faro.engine.client.model.AccountMetric;
 import com.liferay.osb.faro.engine.client.model.Activity;
 import com.liferay.osb.faro.engine.client.model.ActivityAggregation;
 import com.liferay.osb.faro.engine.client.model.ActivityAsset;
@@ -335,6 +336,13 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public List<AccountMetric> getAccountMetrics(
+		FaroProject faroProject, Long channelId) {
+
+		return contactsEngineClient.getAccountMetrics(faroProject, channelId);
+	}
+
+	@Override
 	public Results<Account> getAccounts(
 		FaroProject faroProject, String channelId, String filterString,
 		String query, int cur, int delta, String sortString) {
@@ -455,6 +463,33 @@ public abstract class BaseMockContactsEngineClientImpl
 		String rangeStart, int cur, int delta) {
 
 		return contactsEngineClient.getAssetSummaryMimeTypes(
+			faroProject, channelId, rangeEnd, rangeKey, rangeStart, cur, delta);
+	}
+
+	@Override
+	public Results<AssetSummaryTag> getAssetSummaryTags(
+		FaroProject faroProject, long channelId, String rangeEnd, int rangeKey,
+		String rangeStart, int cur, int delta) {
+
+		return contactsEngineClient.getAssetSummaryTags(
+			faroProject, channelId, rangeEnd, rangeKey, rangeStart, cur, delta);
+	}
+
+	@Override
+	public Results<AssetSummaryType> getAssetSummaryTypes(
+		FaroProject faroProject, long channelId, String rangeEnd, int rangeKey,
+		String rangeStart, int cur, int delta) {
+
+		return contactsEngineClient.getAssetSummaryTypes(
+			faroProject, channelId, rangeEnd, rangeKey, rangeStart, cur, delta);
+	}
+
+	@Override
+	public Results<AssetSummaryCategory> getAssetSummaryCategories(
+		FaroProject faroProject, long channelId, String rangeEnd, int rangeKey,
+		String rangeStart, int cur, int delta) {
+
+		return contactsEngineClient.getAssetSummaryCategories(
 			faroProject, channelId, rangeEnd, rangeKey, rangeStart, cur, delta);
 	}
 

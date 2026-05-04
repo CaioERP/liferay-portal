@@ -8,6 +8,7 @@ package com.liferay.osb.faro.engine.client;
 import com.liferay.osb.faro.engine.client.exception.FaroEngineClientException;
 import com.liferay.osb.faro.engine.client.model.Account;
 import com.liferay.osb.faro.engine.client.model.AccountLifecycleMetric;
+import com.liferay.osb.faro.engine.client.model.AccountMetric;
 import com.liferay.osb.faro.engine.client.model.Activity;
 import com.liferay.osb.faro.engine.client.model.ActivityAggregation;
 import com.liferay.osb.faro.engine.client.model.ActivityAsset;
@@ -181,6 +182,9 @@ public interface ContactsEngineClient {
 			String revenue)
 		throws FaroEngineClientException;
 
+	public List<AccountMetric> getAccountMetrics(
+		FaroProject faroProject, Long channelId);
+
 	public Results<Account> getAccounts(
 		FaroProject faroProject, String channelId, String filterString,
 		String query, int cur, int delta, String sortString);
@@ -233,6 +237,18 @@ public interface ContactsEngineClient {
 		String rangeStart, int cur, int delta);
 
 	public Results<AssetSummaryMimeType> getAssetSummaryMimeTypes(
+		FaroProject faroProject, long channelId, String rangeEnd, int rangeKey,
+		String rangeStart, int cur, int delta);
+
+	public Results<AssetSummaryTag> getAssetSummaryTags(
+		FaroProject faroProject, long channelId, String rangeEnd, int rangeKey,
+		String rangeStart, int cur, int delta);
+
+	public Results<AssetSummaryType> getAssetSummaryTypes(
+		FaroProject faroProject, long channelId, String rangeEnd, int rangeKey,
+		String rangeStart, int cur, int delta);
+
+	public Results<AssetSummaryCategory> getAssetSummaryCategories(
 		FaroProject faroProject, long channelId, String rangeEnd, int rangeKey,
 		String rangeStart, int cur, int delta);
 

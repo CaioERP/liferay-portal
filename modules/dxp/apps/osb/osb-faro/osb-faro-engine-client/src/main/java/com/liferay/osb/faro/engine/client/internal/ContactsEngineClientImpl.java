@@ -16,6 +16,7 @@ import com.liferay.osb.faro.engine.client.constants.FilterConstants;
 import com.liferay.osb.faro.engine.client.exception.FaroEngineClientException;
 import com.liferay.osb.faro.engine.client.model.Account;
 import com.liferay.osb.faro.engine.client.model.AccountLifecycleMetric;
+import com.liferay.osb.faro.engine.client.model.AccountMetric;
 import com.liferay.osb.faro.engine.client.model.Activity;
 import com.liferay.osb.faro.engine.client.model.ActivityAggregation;
 import com.liferay.osb.faro.engine.client.model.ActivityAsset;
@@ -27,6 +28,7 @@ import com.liferay.osb.faro.engine.client.model.AssetSummaryCategory;
 import com.liferay.osb.faro.engine.client.model.AssetSummaryMimeType;
 import com.liferay.osb.faro.engine.client.model.AssetSummaryTag;
 import com.liferay.osb.faro.engine.client.model.AssetSummaryType;
+import com.liferay.osb.faro.engine.client.model.AssetSummaryVocabulary;
 import com.liferay.osb.faro.engine.client.model.Author;
 import com.liferay.osb.faro.engine.client.model.BlockedKeyword;
 import com.liferay.osb.faro.engine.client.model.Channel;
@@ -688,6 +690,23 @@ public class ContactsEngineClientImpl
 	}
 
 	@Override
+	public List<AccountMetric> getAccountMetrics(
+		FaroProject faroProject, Long channelId) {
+
+		Map<String, Object> uriVariables = getUriVariables(faroProject);
+
+		if (Validator.isNotNull(channelId)) {
+			uriVariables.put("channelId", channelId);
+		}
+
+		return get(
+			faroProject, Rels.ACCOUNTS_METRICS,
+			new ParameterizedTypeReference<List<AccountMetric>>() {
+			},
+			uriVariables);
+	}
+
+	@Override
 	public Results<Account> getAccounts(
 		FaroProject faroProject, String channelId, String filterString,
 		String query, int cur, int delta, String sortString) {
@@ -1137,6 +1156,34 @@ public class ContactsEngineClientImpl
 			faroProject, Rels.ASSET_SUMMARY_TYPES,
 			new ParameterizedTypeReference
 				<EntityModelPagedModel<AssetSummaryType>>() {
+			},
+			uriVariables);
+
+		return pagedModel.getResults();
+	}
+
+	@Override
+	public Results<AssetSummaryVocabulary> getAssetSummaryVocabularies(
+		FaroProject faroProject, long channelId, String rangeEnd, int rangeKey,
+		String rangeStart, int cur, int delta) {
+
+		Map<String, Object> uriVariables = getUriVariables(
+			faroProject, cur, delta, null);
+
+		uriVariables.put("channelId", channelId);
+
+		if ((rangeEnd != null) && (rangeStart != null)) {
+			uriVariables.put("rangeEnd", rangeEnd);
+			uriVariables.put("rangeStart", rangeStart);
+		}
+		else {
+			uriVariables.put("rangeKey", rangeKey);
+		}
+
+		PagedModel<?, AssetSummaryVocabulary> pagedModel = get(
+			faroProject, Rels.ASSET_SUMMARY_VOCABULARIES,
+			new ParameterizedTypeReference
+				<EntityModelPagedModel<AssetSummaryVocabulary>>() {
 			},
 			uriVariables);
 
