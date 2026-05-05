@@ -6,8 +6,11 @@
 package com.liferay.osb.faro.web.internal.controller.contacts;
 
 import com.liferay.osb.faro.engine.client.model.Account;
+import com.liferay.osb.faro.engine.client.model.AccountDetails;
+import com.liferay.osb.faro.engine.client.model.AccountLifecycleStatus;
 import com.liferay.osb.faro.engine.client.model.AccountMetric;
 import com.liferay.osb.faro.engine.client.model.Individual;
+import com.liferay.osb.faro.engine.client.model.Results;
 import com.liferay.osb.faro.engine.client.util.OrderByField;
 import com.liferay.osb.faro.web.internal.constants.FaroConstants;
 import com.liferay.osb.faro.web.internal.controller.BaseFaroController;
@@ -42,6 +45,25 @@ import org.osgi.service.component.annotations.Component;
 @Path("/{groupId}/account")
 @Produces(MediaType.APPLICATION_JSON)
 public class AccountController extends BaseFaroController {
+
+	@GET
+	@Path("/{id}/details")
+	@RolesAllowed(RoleConstants.SITE_MEMBER)
+	public FaroFDSResultsDisplay getAccountDetailsDisplay(
+			@PathParam("groupId") long groupId, @PathParam("id") String id,
+			@QueryParam("page") int page, @QueryParam("pageSize") int pageSize)
+		throws Exception {
+
+		AccountDetails accountDetails = contactsEngineClient.getAccountDetails(
+			faroProjectLocalService.getFaroProjectByGroupId(groupId), id);
+
+		List<AccountDetails.Field> fields = accountDetails.getFields();
+
+		Results<AccountDetails.Field> results = new Results<>(
+			fields, fields.size());
+
+		return new FaroFDSResultsDisplay(results, page, pageSize);
+	}
 
 	@GET
 	@Path("/{id}")
