@@ -321,6 +321,13 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public AccountDetails getAccountDetails(FaroProject faroProject, String id)
+		throws FaroEngineClientException {
+
+		return contactsEngineClient.getAccountDetails(faroProject, id);
+	}
+
+	@Override
 	public Results<Object> getAccountFieldValues(
 		FaroProject faroProject, Long channelId, String fieldMappingFieldName,
 		String query, int cur, int delta) {
