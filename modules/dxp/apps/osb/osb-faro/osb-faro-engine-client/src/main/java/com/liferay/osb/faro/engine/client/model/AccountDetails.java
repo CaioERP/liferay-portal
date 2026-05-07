@@ -35,6 +35,10 @@ public class AccountDetails {
 			return _dataSourceName;
 		}
 
+		public Date getModifiedDate() {
+			return _modifiedDate;
+		}
+
 		public String getName() {
 			return _name;
 		}
@@ -55,6 +59,10 @@ public class AccountDetails {
 			_dataSourceName = dataSourceName;
 		}
 
+		public void setModifiedDate(Date modifiedDate) {
+			_modifiedDate = modifiedDate;
+		}
+
 		public void setName(String name) {
 			_name = name;
 		}
@@ -66,6 +74,7 @@ public class AccountDetails {
 		private Long _dataSourceId;
 		private Date _dataSourceModifiedDate;
 		private String _dataSourceName;
+		private Date _modifiedDate;
 		private String _name;
 		private String _value;
 
