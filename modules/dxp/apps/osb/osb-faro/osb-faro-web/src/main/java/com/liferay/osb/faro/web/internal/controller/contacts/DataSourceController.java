@@ -403,7 +403,7 @@ public class DataSourceController extends BaseFaroController {
 	@GET
 	@Path("/{id}/channel-data-sources")
 	@RolesAllowed(RoleConstants.SITE_ADMINISTRATOR)
-	public FaroResultsDisplay getChannelDataSourceDisplay(
+	public FaroResultsDisplay getChannelDataSourceFaroResultsDisplay(
 			@PathParam("groupId") long groupId, @PathParam("id") String id,
 			@QueryParam("enabled") Boolean enabled,
 			@QueryParam("name") String name, @QueryParam("cur") int cur,
@@ -889,7 +889,7 @@ public class DataSourceController extends BaseFaroController {
 	@GET
 	@Path("/{id}/groups")
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
-	public FaroResultsDisplay getGroups(
+	public FaroResultsDisplay getGroupsFaroResultsDisplay(
 			@PathParam("groupId") long groupId, @PathParam("id") String id,
 			@DefaultValue(StringPool.BLANK) @QueryParam("name") String name,
 			@DefaultValue("-1") @QueryParam("parentGroupId") long parentGroupId,
@@ -978,7 +978,7 @@ public class DataSourceController extends BaseFaroController {
 	@GET
 	@Path("/{id}/organizations")
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
-	public FaroResultsDisplay getOrganizations(
+	public FaroResultsDisplay getOrganizationsFaroResultsDisplay(
 			@PathParam("groupId") long groupId, @PathParam("id") String id,
 			@DefaultValue(StringPool.BLANK) @QueryParam("name") String name,
 			@DefaultValue("-1") @QueryParam("parentOrganizationId") long
@@ -1038,7 +1038,7 @@ public class DataSourceController extends BaseFaroController {
 	@GET
 	@Path("/{id}/user_groups")
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
-	public FaroResultsDisplay getUserGroups(
+	public FaroResultsDisplay getUserGroupsFaroResultsDisplay(
 			@PathParam("groupId") long groupId, @PathParam("id") String id,
 			@QueryParam("name") String name, @QueryParam("cur") int cur,
 			@QueryParam("delta") int delta)
