@@ -33,14 +33,19 @@ import org.osgi.service.component.annotations.Component;
 public class AssetSummaryCategoryController extends BaseFaroController {
 
 	@GET
-	public FaroFDSResultsDisplay getAssetSummaryCategories(
-			@PathParam("groupId") long groupId,
-			@QueryParam("channelId") long channelId,
-			@QueryParam("rangeEnd") String rangeEnd,
-			@DefaultValue("30") @QueryParam("rangeKey") int rangeKey,
-			@QueryParam("rangeStart") String rangeStart,
-			@QueryParam("cur") int cur,
-			@DefaultValue("20") @QueryParam("delta") int delta)
+	public FaroFDSResultsDisplay<AssetSummaryCategory>
+			getAssetSummaryCategoriesFaroFDSResultsDisplay(
+				@PathParam("groupId") long groupId,
+				@QueryParam("channelId") long channelId,
+				@QueryParam("keywords") String keywords,
+				@QueryParam("page") int page,
+				@DefaultValue("20") @QueryParam("pageSize") int pageSize,
+				@QueryParam("rangeEnd") String rangeEnd,
+				@QueryParam("rangeKey") int rangeKey,
+				@QueryParam("rangeStart") String rangeStart,
+				@DefaultValue(StringPool.BLANK) @QueryParam("sort") String
+					sortString,
+				@QueryParam("vocabularyId") String vocabularyId)
 		throws Exception {
 
 		FaroProject faroProject =
