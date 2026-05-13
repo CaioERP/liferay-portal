@@ -78,39 +78,9 @@ public class AccountController extends BaseFaroController {
 	}
 
 	@GET
-	@Path("/{id}/individuals")
-	@RolesAllowed(RoleConstants.SITE_MEMBER)
-	public FaroFDSResultsDisplay<Individual> getAccountIndividuals(
-			@PathParam("groupId") long groupId, @PathParam("id") String id,
-			@QueryParam("page") int page, @QueryParam("pageSize") int pageSize,
-			@DefaultValue(StringPool.BLANK) @QueryParam("sort") String
-				sortString)
-		throws Exception {
-
-		return new FaroFDSResultsDisplay<>(
-			contactsEngineClient.getAccountIndividuals(
-				faroProjectLocalService.getFaroProjectByGroupId(groupId), id,
-				page, pageSize, sortString),
-			IndividualDisplay::new, page, pageSize);
-	}
-
-	@GET
-	@Path("/metrics")
-	@RolesAllowed(RoleConstants.SITE_MEMBER)
-	public List<AccountMetric> getAccountMetrics(
-			@PathParam("groupId") long groupId,
-			@QueryParam("channelId") long channelId)
-		throws Exception {
-
-		return contactsEngineClient.getAccountMetrics(
-			faroProjectLocalService.getFaroProjectByGroupId(groupId),
-			channelId);
-	}
-
-	@GET
 	@Path("/distribution")
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
-	public FaroResultsDisplay getDistribution(
+	public FaroResultsDisplay getAccountDistributionFaroResultsDisplay(
 			@PathParam("groupId") long groupId,
 			@QueryParam("channelId") String channelId,
 			@QueryParam("fieldMappingFieldName") String fieldMappingFieldName,
@@ -130,9 +100,41 @@ public class AccountController extends BaseFaroController {
 				orderByFieldsFaroParam.getValue()));
 	}
 
+	@GET
+	@Path("/metrics")
+	@RolesAllowed(RoleConstants.SITE_MEMBER)
+	public List<AccountMetric> getAccountMetrics(
+			@PathParam("groupId") long groupId,
+			@QueryParam("channelId") long channelId)
+		throws Exception {
+
+		return contactsEngineClient.getAccountMetrics(
+			faroProjectLocalService.getFaroProjectByGroupId(groupId),
+			channelId);
+	}
+
 	@Override
 	public int[] getEntityTypes() {
 		return _ENTITY_TYPES.clone();
+	}
+
+	@GET
+	@Path("/{id}/individuals")
+	@RolesAllowed(RoleConstants.SITE_MEMBER)
+	public FaroFDSResultsDisplay<Individual>
+			getIndividualsFaroFDSResultsDisplay(
+				@PathParam("groupId") long groupId, @PathParam("id") String id,
+				@QueryParam("page") int page,
+				@QueryParam("pageSize") int pageSize,
+				@DefaultValue(StringPool.BLANK) @QueryParam("sort") String
+					sortString)
+		throws Exception {
+
+		return new FaroFDSResultsDisplay<>(
+			contactsEngineClient.getAccountIndividuals(
+				faroProjectLocalService.getFaroProjectByGroupId(groupId), id,
+				page, pageSize, sortString),
+			IndividualDisplay::new, page, pageSize);
 	}
 
 	@GET
