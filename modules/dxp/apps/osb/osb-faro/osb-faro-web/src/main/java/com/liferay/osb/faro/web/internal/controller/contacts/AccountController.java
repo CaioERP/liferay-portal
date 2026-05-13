@@ -45,6 +45,25 @@ import org.osgi.service.component.annotations.Component;
 public class AccountController extends BaseFaroController {
 
 	@GET
+	@Path("/{id}/details")
+	@RolesAllowed(RoleConstants.SITE_MEMBER)
+	public FaroFDSResultsDisplay getAccountDetailsFaroFDSResultsDisplay(
+			@PathParam("groupId") long groupId, @PathParam("id") String id,
+			@QueryParam("page") int page, @QueryParam("pageSize") int pageSize)
+		throws Exception {
+
+		AccountDetails accountDetails = contactsEngineClient.getAccountDetails(
+			faroProjectLocalService.getFaroProjectByGroupId(groupId), id);
+
+		List<AccountDetails.Field> fields = accountDetails.getFields();
+
+		Results<AccountDetails.Field> results = new Results<>(
+			fields, fields.size());
+
+		return new FaroFDSResultsDisplay(results, page, pageSize);
+	}
+
+	@GET
 	@Path("/{id}")
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
 	public AccountDisplay getAccountDisplay(
