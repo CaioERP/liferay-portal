@@ -9,6 +9,7 @@ import com.liferay.osb.faro.engine.client.model.AssetSummaryCategory;
 import com.liferay.osb.faro.web.internal.controller.BaseFaroController;
 import com.liferay.osb.faro.web.internal.model.display.FaroFDSResultsDisplay;
 import com.liferay.osb.faro.web.internal.model.display.contacts.AssetSummaryCategoryDisplay;
+import com.liferay.petra.string.StringPool;
 
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
