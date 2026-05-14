@@ -55,15 +55,13 @@ public class AccountController extends BaseFaroController {
 			@QueryParam("page") int page, @QueryParam("pageSize") int pageSize)
 		throws Exception {
 
-		AccountDetails accountDetails = contactsEngineClient.getAccountDetails(
-			faroProjectLocalService.getFaroProjectByGroupId(groupId), id);
+		List<AccountDetails.Field> fields =
+			contactsEngineClient.getAccountDetails(
+				faroProjectLocalService.getFaroProjectByGroupId(groupId), id
+			).getFields();
 
-		List<AccountDetails.Field> fields = accountDetails.getFields();
-
-		Results<AccountDetails.Field> results = new Results<>(
-			fields, fields.size());
-
-		return new FaroFDSResultsDisplay(results, page, pageSize);
+		return new FaroFDSResultsDisplay(
+			new Results<>(fields, fields.size()), page, pageSize);
 	}
 
 	@GET
