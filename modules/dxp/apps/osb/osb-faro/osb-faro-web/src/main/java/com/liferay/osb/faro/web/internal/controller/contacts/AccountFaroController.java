@@ -57,8 +57,8 @@ public class AccountFaroController extends BaseFaroController {
 	@Path("/{id}/details")
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
 	public FaroFDSResultsDisplay getAccountDetailsFaroFDSResultsDisplay(
-			@PathParam("groupId") long groupId,
-			@QueryParam("channelId") Long channelId, @PathParam("id") String id)
+			@PathParam("groupId") long groupId, @PathParam("id") String id,
+			@QueryParam("channelId") Long channelId)
 		throws Exception {
 
 		List<AccountDetails.Field> fields =
@@ -68,13 +68,13 @@ public class AccountFaroController extends BaseFaroController {
 			).getFields();
 
 		for (AccountDetails.Field field : fields) {
-			String rawName = field.getName();
+			String fieldName = field.getName();
 
-			field.setSourceName(rawName);
+			field.setSourceName(fieldName);
 
 			String languageKey =
 				FieldMappingConstants.getAccountFieldMappingLanguageKey(
-					rawName);
+					fieldName);
 
 			if (languageKey != null) {
 				field.setName(languageKey);
@@ -89,8 +89,8 @@ public class AccountFaroController extends BaseFaroController {
 	@Path("/{id}")
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
 	public AccountDisplay getAccountDisplay(
-			@PathParam("groupId") long groupId,
-			@QueryParam("channelId") Long channelId, @PathParam("id") String id)
+			@PathParam("groupId") long groupId, @PathParam("id") String id,
+			@QueryParam("channelId") Long channelId)
 		throws Exception {
 
 		return new AccountDisplay(
