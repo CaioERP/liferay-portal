@@ -69,8 +69,9 @@ export async function fetchLifecycleStatus({
 	});
 }
 
-export function fetchMetrics({groupId}) {
+export function fetchMetrics({channelId, groupId}) {
 	return sendRequest({
+		data: {channelId},
 		method: 'GET',
 		path: `contacts/${groupId}/account/metrics`
 	});
