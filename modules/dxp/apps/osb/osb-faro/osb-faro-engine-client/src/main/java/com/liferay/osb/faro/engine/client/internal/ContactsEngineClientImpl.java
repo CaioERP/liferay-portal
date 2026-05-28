@@ -656,13 +656,17 @@ public class ContactsEngineClientImpl
 
 	@Override
 	public Results<Individual> getAccountIndividuals(
-		FaroProject faroProject, String accountId, String query, int cur,
-		int delta, String sortString) {
+		FaroProject faroProject, String accountId, String channelId,
+		String query, int cur, int delta, String sortString) {
 
 		Map<String, Object> uriVariables = getUriVariables(
 			faroProject, cur, delta, null);
 
 		uriVariables.put("id", accountId);
+
+		if (Validator.isNotNull(channelId)) {
+			uriVariables.put("channelId", channelId);
+		}
 
 		if (Validator.isNotNull(query)) {
 			uriVariables.put("query", query);
