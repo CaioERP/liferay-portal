@@ -13,6 +13,7 @@ import com.liferay.osb.faro.constants.FaroUserConstants;
 import com.liferay.osb.faro.contacts.model.constants.JSONConstants;
 import com.liferay.osb.faro.contacts.service.ContactsCardTemplateLocalService;
 import com.liferay.osb.faro.contacts.service.ContactsLayoutTemplateLocalService;
+import com.liferay.osb.faro.engine.client.model.DataSourceUsageMetric;
 import com.liferay.osb.faro.engine.client.model.ProjectUsageMetric;
 import com.liferay.osb.faro.engine.client.model.Results;
 import com.liferay.osb.faro.engine.client.model.Workspace;
@@ -59,6 +60,7 @@ import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.petra.sql.dsl.query.DSLQuery;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.GroupFriendlyURLException;
@@ -498,6 +500,39 @@ public class ProjectFaroController extends BaseFaroController {
 
 		return _projectUsageHelper.getDataSourceUsageMetricDisplays(
 			endDateString, page, pageSize, startDateString);
+	}
+
+	@GET
+	@Path("/{groupId}/usage/data-source-metrics")
+	@RolesAllowed(RoleConstants.SITE_ADMINISTRATOR)
+	public Results<DataSourceUsageMetric> getDataSourceUsageMetrics(
+			@PathParam("groupId") long groupId,
+			@QueryParam("date") String dateString)
+		throws Exception {
+
+		FaroProject faroProject =
+			_faroProjectLocalService.getFaroProjectByGroupId(groupId);
+
+		Date date = new Date();
+
+		if (Validator.isNotNull(dateString)) {
+			date = DateUtil.parseDate(dateString, DateUtil.PATTERN_DATE);
+		}
+
+		Results<DataSourceUsageMetric> results =
+			contactsEngineClient.getDataSourceUsageMetrics(faroProject, date);
+
+		if (_log.isInfoEnabled()) {
+			_log.info(
+				StringBundler.concat(
+					"Retrieved ",
+					results.getItems(
+					).size(),
+					" data source usage metrics for Faro project ",
+					faroProject.getFaroProjectId()));
+		}
+
+		return results;
 	}
 
 	@GET
