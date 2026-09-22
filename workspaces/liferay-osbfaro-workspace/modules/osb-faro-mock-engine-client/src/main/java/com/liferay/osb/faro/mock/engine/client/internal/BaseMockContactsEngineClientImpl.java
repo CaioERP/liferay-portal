@@ -57,6 +57,7 @@ import com.liferay.osb.faro.engine.client.model.IndividualSegmentMembershipChang
 import com.liferay.osb.faro.engine.client.model.IndividualSegmentMembershipChangeAggregation;
 import com.liferay.osb.faro.engine.client.model.IndividualTransformation;
 import com.liferay.osb.faro.engine.client.model.Interest;
+import com.liferay.osb.faro.engine.client.model.LifecycleTriggerResult;
 import com.liferay.osb.faro.engine.client.model.Metric;
 import com.liferay.osb.faro.engine.client.model.PageExperience;
 import com.liferay.osb.faro.engine.client.model.PageVisited;
@@ -1245,6 +1246,24 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public LifecycleTriggerResult getLifecycleNewAccountsResult(
+			FaroProject faroProject, String id, int rangeKey)
+		throws Exception {
+
+		return contactsEngineClient.getLifecycleNewAccountsResult(
+			faroProject, id, rangeKey);
+	}
+
+	@Override
+	public LifecycleTriggerResult getLifecycleStalledAccountsResult(
+			FaroProject faroProject, String id, int rangeKey)
+		throws Exception {
+
+		return contactsEngineClient.getLifecycleStalledAccountsResult(
+			faroProject, id, rangeKey);
+	}
+
+	@Override
 	public List<PageExperience> getPageExperiences(
 			FaroProject faroProject, String canonicalUrl, String channelId,
 			String pageTitle)
@@ -1279,6 +1298,15 @@ public abstract class BaseMockContactsEngineClientImpl
 
 		return contactsEngineClient.getReportsExportCSVCount(
 			faroProject, path, queryParameters);
+	}
+
+	@Override
+	public long getSegmentNewMembersCount(
+			FaroProject faroProject, String id, int rangeKey)
+		throws Exception {
+
+		return contactsEngineClient.getSegmentNewMembersCount(
+			faroProject, id, rangeKey);
 	}
 
 	@Override
