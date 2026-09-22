@@ -10,6 +10,7 @@ import com.liferay.osb.faro.service.FaroPreferencesLocalService;
 import com.liferay.osb.faro.web.internal.constants.FaroPreferencesConstants;
 import com.liferay.osb.faro.web.internal.controller.BaseFaroController;
 import com.liferay.osb.faro.web.internal.controller.FaroController;
+import com.liferay.osb.faro.web.internal.exception.FaroException;
 import com.liferay.osb.faro.web.internal.helper.EmailReportHelper;
 import com.liferay.osb.faro.web.internal.model.display.contacts.FaroPreferencesDisplay;
 import com.liferay.osb.faro.web.internal.model.preferences.DistributionCardTabPreferences;
@@ -42,6 +43,7 @@ import jakarta.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -127,13 +129,14 @@ public class PreferencesFaroController extends BaseFaroController {
 			@FormParam("netNewPipelineAccounts") Boolean netNewPipelineAccounts,
 			@FormParam("newAccounts") Boolean newAccounts,
 			@FormParam("newAtRiskAccounts") Boolean newAtRiskAccounts,
-			@FormParam("newStalledAccounts") Boolean newStalledAccounts,
-			@DefaultValue(FaroPreferencesConstants.SCOPE_USER)
-			@FormParam("scope")
-			String scope)
+			@FormParam("newStalledAccounts") Boolean newStalledAccounts)
 		throws Exception {
 
-		long ownerId = _getOwnerId(groupId, scope);
+		_validateNotificationPreference(
+			emailFrequency, "lifecycleId", lifecycleId);
+
+		long ownerId = _getOwnerId(
+			groupId, FaroPreferencesConstants.SCOPE_USER);
 
 		WorkspacePreferences workspacePreferences = _getWorkspacePreferences(
 			groupId, ownerId);
@@ -159,13 +162,13 @@ public class PreferencesFaroController extends BaseFaroController {
 			@PathParam("groupId") long groupId,
 			@FormParam("emailFrequency") String emailFrequency,
 			@FormParam("newMemberAdded") Boolean newMemberAdded,
-			@FormParam("segmentId") String segmentId,
-			@DefaultValue(FaroPreferencesConstants.SCOPE_USER)
-			@FormParam("scope")
-			String scope)
+			@FormParam("segmentId") String segmentId)
 		throws Exception {
 
-		long ownerId = _getOwnerId(groupId, scope);
+		_validateNotificationPreference(emailFrequency, "segmentId", segmentId);
+
+		long ownerId = _getOwnerId(
+			groupId, FaroPreferencesConstants.SCOPE_USER);
 
 		WorkspacePreferences workspacePreferences = _getWorkspacePreferences(
 			groupId, ownerId);
@@ -276,15 +279,14 @@ public class PreferencesFaroController extends BaseFaroController {
 	public Map<String, LifecycleNotificationPreferences>
 			getLifecycleNotificationPreferences(
 				@PathParam("groupId") long groupId,
-				@DefaultValue(FaroPreferencesConstants.SCOPE_USER)
-				@QueryParam("scope")
-				String scope)
+				@QueryParam("lifecycleId") String lifecycleId)
 		throws Exception {
 
 		WorkspacePreferences workspacePreferences = _getWorkspacePreferences(
-			groupId, _getOwnerId(groupId, scope));
+			groupId, _getOwnerId(groupId, FaroPreferencesConstants.SCOPE_USER));
 
-		return workspacePreferences.getLifecycleNotificationPreferences(null);
+		return workspacePreferences.getLifecycleNotificationPreferences(
+			lifecycleId);
 	}
 
 	@GET
@@ -293,15 +295,14 @@ public class PreferencesFaroController extends BaseFaroController {
 	public Map<String, SegmentNotificationPreferences>
 			getSegmentNotificationPreferences(
 				@PathParam("groupId") long groupId,
-				@DefaultValue(FaroPreferencesConstants.SCOPE_USER)
-				@QueryParam("scope")
-				String scope)
+				@QueryParam("segmentId") String segmentId)
 		throws Exception {
 
 		WorkspacePreferences workspacePreferences = _getWorkspacePreferences(
-			groupId, _getOwnerId(groupId, scope));
+			groupId, _getOwnerId(groupId, FaroPreferencesConstants.SCOPE_USER));
 
-		return workspacePreferences.getSegmentNotificationPreferences(null);
+		return workspacePreferences.getSegmentNotificationPreferences(
+			segmentId);
 	}
 
 	@GET
@@ -474,6 +475,22 @@ public class PreferencesFaroController extends BaseFaroController {
 		return JSONUtil.readValue(
 			faroPreferences.getPreferences(), WorkspacePreferences.class);
 	}
+
+	private void _validateNotificationPreference(
+		String emailFrequency, String idName, String id) {
+
+		if (Validator.isNull(id)) {
+			throw new FaroException(idName + " is required");
+		}
+
+		if (!_notificationFrequencies.contains(emailFrequency)) {
+			throw new FaroException(
+				"emailFrequency must be one of daily, weekly, or monthly");
+		}
+	}
+
+	private static final Set<String> _notificationFrequencies = Set.of(
+		"daily", "monthly", "weekly");
 
 	@Reference
 	private EmailReportHelper _emailReportHelper;
