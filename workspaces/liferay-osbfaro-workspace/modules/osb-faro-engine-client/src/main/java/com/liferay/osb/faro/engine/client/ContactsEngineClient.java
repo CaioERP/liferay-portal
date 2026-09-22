@@ -57,6 +57,7 @@ import com.liferay.osb.faro.engine.client.model.IndividualSegmentMembershipChang
 import com.liferay.osb.faro.engine.client.model.IndividualSegmentMembershipChangeAggregation;
 import com.liferay.osb.faro.engine.client.model.IndividualTransformation;
 import com.liferay.osb.faro.engine.client.model.Interest;
+import com.liferay.osb.faro.engine.client.model.LifecycleTriggerResult;
 import com.liferay.osb.faro.engine.client.model.Metric;
 import com.liferay.osb.faro.engine.client.model.PageExperience;
 import com.liferay.osb.faro.engine.client.model.PageVisited;
@@ -620,6 +621,14 @@ public interface ContactsEngineClient {
 
 	public Date getLastSeenDate(FaroProject faroProject);
 
+	public LifecycleTriggerResult getLifecycleNewAccountsResult(
+			FaroProject faroProject, String id, int rangeKey)
+		throws Exception;
+
+	public LifecycleTriggerResult getLifecycleStalledAccountsResult(
+			FaroProject faroProject, String id, int rangeKey)
+		throws Exception;
+
 	public List<PageExperience> getPageExperiences(
 			FaroProject faroProject, String canonicalUrl, String channelId,
 			String pageTitle)
@@ -641,6 +650,10 @@ public interface ContactsEngineClient {
 	public long getReportsExportCSVCount(
 			FaroProject faroProject, String path,
 			Map<String, List<String>> queryParameters)
+		throws Exception;
+
+	public long getSegmentNewMembersCount(
+			FaroProject faroProject, String id, int rangeKey)
 		throws Exception;
 
 	public Results<String> getSessionValues(
