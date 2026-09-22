@@ -57,6 +57,7 @@ import com.liferay.osb.faro.engine.client.model.IndividualSegmentMembershipChang
 import com.liferay.osb.faro.engine.client.model.IndividualSegmentMembershipChangeAggregation;
 import com.liferay.osb.faro.engine.client.model.IndividualTransformation;
 import com.liferay.osb.faro.engine.client.model.Interest;
+import com.liferay.osb.faro.engine.client.model.LifecycleTriggerResult;
 import com.liferay.osb.faro.engine.client.model.Metric;
 import com.liferay.osb.faro.engine.client.model.PageExperience;
 import com.liferay.osb.faro.engine.client.model.PageVisited;
@@ -101,6 +102,11 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public Channel addChannel(FaroProject faroProject, Channel channel) {
+		return contactsEngineClient.addChannel(faroProject, channel);
+	}
+
+	@Override
 	public void addCSVIndividuals(
 			FaroProject faroProject, List<Map<String, Object>> fieldsMaps,
 			String dataSourceId, List<String> individualSegmentIds)
@@ -108,11 +114,6 @@ public abstract class BaseMockContactsEngineClientImpl
 
 		contactsEngineClient.addCSVIndividuals(
 			faroProject, fieldsMaps, dataSourceId, individualSegmentIds);
-	}
-
-	@Override
-	public Channel addChannel(FaroProject faroProject, Channel channel) {
-		return contactsEngineClient.addChannel(faroProject, channel);
 	}
 
 	@Override
@@ -396,6 +397,13 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public List<AccountLifecycle> getAccountLifecycles(FaroProject faroProject)
+		throws FaroEngineClientException {
+
+		return contactsEngineClient.getAccountLifecycles(faroProject);
+	}
+
+	@Override
 	public List<AccountLifecycleStageMetric> getAccountLifecycleStageMetrics(
 			FaroProject faroProject, String country, String id, String industry,
 			Long segmentId)
@@ -428,13 +436,6 @@ public abstract class BaseMockContactsEngineClientImpl
 
 		return contactsEngineClient.getAccountLifecycleStatus(
 			faroProject, accountLifecycleId, id);
-	}
-
-	@Override
-	public List<AccountLifecycle> getAccountLifecycles(FaroProject faroProject)
-		throws FaroEngineClientException {
-
-		return contactsEngineClient.getAccountLifecycles(faroProject);
 	}
 
 	@Override
@@ -571,6 +572,17 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public Results<Asset> getAssets(
+		FaroProject faroProject, String dataSourceId, String query, int action,
+		String assetType, int cur, int delta,
+		List<OrderByField> orderByFields) {
+
+		return contactsEngineClient.getAssets(
+			faroProject, dataSourceId, query, action, assetType, cur, delta,
+			orderByFields);
+	}
+
+	@Override
 	public Results<AssetSummary> getAssetSummaries(
 		FaroProject faroProject, String accountId, long channelId,
 		String filterString, String individualId, String keywords,
@@ -585,17 +597,6 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
-	public Results<AssetSummaryCMPProject> getAssetSummaryCMPProjects(
-		FaroProject faroProject, String accountId, long channelId,
-		String individualId, String keywords, String rangeEnd, int rangeKey,
-		String rangeStart, String sort, int cur, int delta) {
-
-		return contactsEngineClient.getAssetSummaryCMPProjects(
-			faroProject, accountId, channelId, individualId, keywords, rangeEnd,
-			rangeKey, rangeStart, sort, cur, delta);
-	}
-
-	@Override
 	public Results<AssetSummaryCategory> getAssetSummaryCategories(
 		FaroProject faroProject, String accountId, long channelId,
 		String individualId, String keywords, String rangeEnd, int rangeKey,
@@ -606,6 +607,17 @@ public abstract class BaseMockContactsEngineClientImpl
 			faroProject, accountId, channelId, individualId, keywords, rangeEnd,
 			rangeKey, rangeStart, selectedMetric, sort, vocabularyId, cur,
 			delta);
+	}
+
+	@Override
+	public Results<AssetSummaryCMPProject> getAssetSummaryCMPProjects(
+		FaroProject faroProject, String accountId, long channelId,
+		String individualId, String keywords, String rangeEnd, int rangeKey,
+		String rangeStart, String sort, int cur, int delta) {
+
+		return contactsEngineClient.getAssetSummaryCMPProjects(
+			faroProject, accountId, channelId, individualId, keywords, rangeEnd,
+			rangeKey, rangeStart, sort, cur, delta);
 	}
 
 	@Override
@@ -651,17 +663,6 @@ public abstract class BaseMockContactsEngineClientImpl
 		return contactsEngineClient.getAssetSummaryVocabularies(
 			faroProject, accountId, channelId, individualId, keywords, rangeEnd,
 			rangeKey, rangeStart, sort, cur, delta);
-	}
-
-	@Override
-	public Results<Asset> getAssets(
-		FaroProject faroProject, String dataSourceId, String query, int action,
-		String assetType, int cur, int delta,
-		List<OrderByField> orderByFields) {
-
-		return contactsEngineClient.getAssets(
-			faroProject, dataSourceId, query, action, assetType, cur, delta,
-			orderByFields);
 	}
 
 	@Override
@@ -1001,15 +1002,6 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
-	public Results<Object> getFieldValues(
-		FaroProject faroProject, Long channelId, String query,
-		String fieldMappingFieldName, int cur, int delta) {
-
-		return contactsEngineClient.getFieldValues(
-			faroProject, channelId, query, fieldMappingFieldName, cur, delta);
-	}
-
-	@Override
 	public Results<Field> getFields(
 		FaroProject faroProject, int cur, int delta,
 		List<OrderByField> orderByFields) {
@@ -1048,6 +1040,15 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public Results<Object> getFieldValues(
+		FaroProject faroProject, Long channelId, String query,
+		String fieldMappingFieldName, int cur, int delta) {
+
+		return contactsEngineClient.getFieldValues(
+			faroProject, channelId, query, fieldMappingFieldName, cur, delta);
+	}
+
+	@Override
 	public Individual getIndividual(
 			FaroProject faroProject, String id, String channelId)
 		throws FaroEngineClientException {
@@ -1072,81 +1073,6 @@ public abstract class BaseMockContactsEngineClientImpl
 		return contactsEngineClient.getIndividualIndividualSegments(
 			faroProject, channelId, individualId, query, status, cur, delta,
 			orderByFields);
-	}
-
-	@Override
-	public IndividualSegment getIndividualSegment(
-			FaroProject faroProject, String id,
-			boolean includeReferencedObjects)
-		throws FaroEngineClientException {
-
-		return contactsEngineClient.getIndividualSegment(
-			faroProject, id, includeReferencedObjects);
-	}
-
-	@Override
-	public IndividualSegmentMembership getIndividualSegmentMembership(
-		FaroProject faroProject, String individualSegmentId,
-		String individualId) {
-
-		return contactsEngineClient.getIndividualSegmentMembership(
-			faroProject, individualSegmentId, individualId);
-	}
-
-	@Override
-	public Results<IndividualSegmentMembershipChangeAggregation>
-		getIndividualSegmentMembershipChangeAggregations(
-			FaroProject faroProject, String individualSegmentId,
-			String interval, int delta) {
-
-		return contactsEngineClient.
-			getIndividualSegmentMembershipChangeAggregations(
-				faroProject, individualSegmentId, interval, delta);
-	}
-
-	@Override
-	public Results<IndividualSegmentMembershipChange>
-		getIndividualSegmentMembershipChanges(
-			FaroProject faroProject, String individualSegmentId, String query,
-			Date startDate, Date endDate, int cur, int delta,
-			List<OrderByField> orderByFields) {
-
-		return contactsEngineClient.getIndividualSegmentMembershipChanges(
-			faroProject, individualSegmentId, query, startDate, endDate, cur,
-			delta, orderByFields);
-	}
-
-	@Override
-	public Results<IndividualSegmentMembership> getIndividualSegmentMemberships(
-		FaroProject faroProject, String individualSegmentId, int cur, int delta,
-		List<OrderByField> orderByFields) {
-
-		return contactsEngineClient.getIndividualSegmentMemberships(
-			faroProject, individualSegmentId, cur, delta, orderByFields);
-	}
-
-	@Override
-	public Results<IndividualSegment> getIndividualSegments(
-		FaroProject faroProject, String channelId, String dataSourceId,
-		String query, List<String> fields, String name,
-		List<String> segmentCategories, List<String> segmentTypes, String state,
-		String status, int cur, int delta, List<OrderByField> orderByFields) {
-
-		return contactsEngineClient.getIndividualSegments(
-			faroProject, channelId, dataSourceId, query, fields, name,
-			segmentCategories, segmentTypes, state, status, cur, delta,
-			orderByFields);
-	}
-
-	@Override
-	public Results<IndividualTransformation> getIndividualTransformations(
-		FaroProject faroProject, String individualSegmentId, String query,
-		List<String> fields, String fieldMappingFieldName, int cur, int delta,
-		List<OrderByField> orderByFields) {
-
-		return contactsEngineClient.getIndividualTransformations(
-			faroProject, individualSegmentId, query, fields,
-			fieldMappingFieldName, cur, delta, orderByFields);
 	}
 
 	@Override
@@ -1225,6 +1151,81 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public IndividualSegment getIndividualSegment(
+			FaroProject faroProject, String id,
+			boolean includeReferencedObjects)
+		throws FaroEngineClientException {
+
+		return contactsEngineClient.getIndividualSegment(
+			faroProject, id, includeReferencedObjects);
+	}
+
+	@Override
+	public IndividualSegmentMembership getIndividualSegmentMembership(
+		FaroProject faroProject, String individualSegmentId,
+		String individualId) {
+
+		return contactsEngineClient.getIndividualSegmentMembership(
+			faroProject, individualSegmentId, individualId);
+	}
+
+	@Override
+	public Results<IndividualSegmentMembershipChangeAggregation>
+		getIndividualSegmentMembershipChangeAggregations(
+			FaroProject faroProject, String individualSegmentId,
+			String interval, int delta) {
+
+		return contactsEngineClient.
+			getIndividualSegmentMembershipChangeAggregations(
+				faroProject, individualSegmentId, interval, delta);
+	}
+
+	@Override
+	public Results<IndividualSegmentMembershipChange>
+		getIndividualSegmentMembershipChanges(
+			FaroProject faroProject, String individualSegmentId, String query,
+			Date startDate, Date endDate, int cur, int delta,
+			List<OrderByField> orderByFields) {
+
+		return contactsEngineClient.getIndividualSegmentMembershipChanges(
+			faroProject, individualSegmentId, query, startDate, endDate, cur,
+			delta, orderByFields);
+	}
+
+	@Override
+	public Results<IndividualSegmentMembership> getIndividualSegmentMemberships(
+		FaroProject faroProject, String individualSegmentId, int cur, int delta,
+		List<OrderByField> orderByFields) {
+
+		return contactsEngineClient.getIndividualSegmentMemberships(
+			faroProject, individualSegmentId, cur, delta, orderByFields);
+	}
+
+	@Override
+	public Results<IndividualSegment> getIndividualSegments(
+		FaroProject faroProject, String channelId, String dataSourceId,
+		String query, List<String> fields, String name,
+		List<String> segmentCategories, List<String> segmentTypes, String state,
+		String status, int cur, int delta, List<OrderByField> orderByFields) {
+
+		return contactsEngineClient.getIndividualSegments(
+			faroProject, channelId, dataSourceId, query, fields, name,
+			segmentCategories, segmentTypes, state, status, cur, delta,
+			orderByFields);
+	}
+
+	@Override
+	public Results<IndividualTransformation> getIndividualTransformations(
+		FaroProject faroProject, String individualSegmentId, String query,
+		List<String> fields, String fieldMappingFieldName, int cur, int delta,
+		List<OrderByField> orderByFields) {
+
+		return contactsEngineClient.getIndividualTransformations(
+			faroProject, individualSegmentId, query, fields,
+			fieldMappingFieldName, cur, delta, orderByFields);
+	}
+
+	@Override
 	public Results<String> getInterestKeywords(
 		String channelId, FaroProject faroProject, String query, int cur,
 		int delta) {
@@ -1245,6 +1246,24 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public LifecycleTriggerResult getLifecycleNewAccountsResult(
+			FaroProject faroProject, String id, int rangeKey)
+		throws Exception {
+
+		return contactsEngineClient.getLifecycleNewAccountsResult(
+			faroProject, id, rangeKey);
+	}
+
+	@Override
+	public LifecycleTriggerResult getLifecycleStalledAccountsResult(
+			FaroProject faroProject, String id, int rangeKey)
+		throws Exception {
+
+		return contactsEngineClient.getLifecycleStalledAccountsResult(
+			faroProject, id, rangeKey);
+	}
+
+	@Override
 	public List<PageExperience> getPageExperiences(
 			FaroProject faroProject, String canonicalUrl, String channelId,
 			String pageTitle)
@@ -1252,11 +1271,6 @@ public abstract class BaseMockContactsEngineClientImpl
 
 		return contactsEngineClient.getPageExperiences(
 			faroProject, canonicalUrl, channelId, pageTitle);
-	}
-
-	@Override
-	public PageVisited getPageVisited(FaroProject faroProject, String id) {
-		return contactsEngineClient.getPageVisited(faroProject, id);
 	}
 
 	@Override
@@ -1272,6 +1286,11 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public PageVisited getPageVisited(FaroProject faroProject, String id) {
+		return contactsEngineClient.getPageVisited(faroProject, id);
+	}
+
+	@Override
 	public long getReportsExportCSVCount(
 			FaroProject faroProject, String path,
 			Map<String, List<String>> queryParameters)
@@ -1279,6 +1298,15 @@ public abstract class BaseMockContactsEngineClientImpl
 
 		return contactsEngineClient.getReportsExportCSVCount(
 			faroProject, path, queryParameters);
+	}
+
+	@Override
+	public long getSegmentNewMembersCount(
+			FaroProject faroProject, String id, int rangeKey)
+		throws Exception {
+
+		return contactsEngineClient.getSegmentNewMembersCount(
+			faroProject, id, rangeKey);
 	}
 
 	@Override
