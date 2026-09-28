@@ -5,6 +5,11 @@
 
 package com.liferay.osb.faro.web.internal.helper;
 
+import com.liferay.notification.constants.NotificationConstants;
+import com.liferay.notification.constants.NotificationTemplateConstants;
+import com.liferay.notification.context.NotificationContextBuilder;
+import com.liferay.notification.model.NotificationTemplate;
+import com.liferay.notification.service.NotificationTemplateLocalService;
 import com.liferay.osb.faro.engine.client.ContactsEngineClient;
 import com.liferay.osb.faro.engine.client.model.AccountLifecycle;
 import com.liferay.osb.faro.engine.client.model.AccountLifecycleStageTransition;
@@ -13,18 +18,19 @@ import com.liferay.osb.faro.engine.client.model.Results;
 import com.liferay.osb.faro.model.FaroProject;
 import com.liferay.osb.faro.service.FaroProjectLocalService;
 import com.liferay.osb.faro.util.EmailUtil;
-import com.liferay.osb.faro.web.internal.configuration.LifecycleNotificationGroupServiceConfiguration;
-import com.liferay.osb.faro.web.internal.configuration.SegmentNotificationGroupServiceConfiguration;
-import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
+import com.liferay.osb.faro.web.internal.constants.FaroNotificationTemplateConstants;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
-import com.liferay.portal.kernel.util.Localization;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.SubscriptionSender;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -120,32 +126,30 @@ public class NotificationHelper {
 			resultText = count + " accounts";
 		}
 
-		LifecycleNotificationGroupServiceConfiguration
-			lifecycleNotificationGroupServiceConfiguration =
-				_configurationProvider.getGroupConfiguration(
-					LifecycleNotificationGroupServiceConfiguration.class,
-					group.getCompanyId(), groupId);
+		NotificationTemplate notificationTemplate =
+			_fetchOrCreateNotificationTemplate(
+				FaroNotificationTemplateConstants.
+					EXTERNAL_REFERENCE_CODE_LIFECYCLE_NOTIFICATION,
+				group.getCompanyId(), userId);
 
 		SubscriptionSender subscriptionSender = new SubscriptionSender();
 
 		subscriptionSender.setContextAttribute(
-			"[$LIFECYCLE_NAME$]", accountLifecycle.getName(), false);
+			"[%LIFECYCLE_NAME%]", accountLifecycle.getName(), false);
 		subscriptionSender.setContextAttribute(
-			"[$LIFECYCLE_RESULT_TEXT$]", resultText, false);
+			"[%LIFECYCLE_RESULT_TEXT%]", resultText, false);
 		subscriptionSender.setLocalizedContextAttributeWithFunction(
-			"[$LIFECYCLE_TRIGGER_LABEL$]",
+			"[%LIFECYCLE_TRIGGER_LABEL%]",
 			locale -> LanguageUtil.get(
 				locale, lifecycleTriggerType.getLanguageKey()));
 		subscriptionSender.setContextAttribute(
-			"[$LIFECYCLE_URL$]", _getLifecycleURL(group), false);
+			"[%LIFECYCLE_URL%]", _getLifecycleURL(group), false);
 		subscriptionSender.setContextAttribute(
-			"[$SENDER_NAME$]", EmailUtil.getSenderName(faroProject), false);
+			"[%SENDER_NAME%]", EmailUtil.getSenderName(faroProject), false);
 		subscriptionSender.setLocalizedBodyMap(
-			_localization.getMap(
-				lifecycleNotificationGroupServiceConfiguration.emailBody()));
+			notificationTemplate.getBodyMap());
 		subscriptionSender.setLocalizedSubjectMap(
-			_localization.getMap(
-				lifecycleNotificationGroupServiceConfiguration.emailSubject()));
+			notificationTemplate.getSubjectMap());
 
 		User user = notificationContext._user;
 
@@ -174,30 +178,83 @@ public class NotificationHelper {
 
 		Group group = notificationContext._group;
 
-		SegmentNotificationGroupServiceConfiguration
-			segmentNotificationGroupServiceConfiguration =
-				_configurationProvider.getGroupConfiguration(
-					SegmentNotificationGroupServiceConfiguration.class,
-					group.getCompanyId(), groupId);
+		NotificationTemplate notificationTemplate =
+			_fetchOrCreateNotificationTemplate(
+				FaroNotificationTemplateConstants.
+					EXTERNAL_REFERENCE_CODE_SEGMENT_NOTIFICATION,
+				group.getCompanyId(), userId);
 
 		SubscriptionSender subscriptionSender = new SubscriptionSender();
 
 		subscriptionSender.setContextAttribute(
-			"[$SEGMENT_NEW_MEMBERS_COUNT$]", String.valueOf(count), false);
+			"[%SEGMENT_NEW_MEMBERS_COUNT%]", String.valueOf(count), false);
 		subscriptionSender.setContextAttribute(
-			"[$SEGMENT_URL$]", _getSegmentURL(group, segmentId), false);
+			"[%SEGMENT_URL%]", _getSegmentURL(group, segmentId), false);
 		subscriptionSender.setContextAttribute(
-			"[$SENDER_NAME$]", EmailUtil.getSenderName(faroProject), false);
+			"[%SENDER_NAME%]", EmailUtil.getSenderName(faroProject), false);
 		subscriptionSender.setLocalizedBodyMap(
-			_localization.getMap(
-				segmentNotificationGroupServiceConfiguration.emailBody()));
+			notificationTemplate.getBodyMap());
 		subscriptionSender.setLocalizedSubjectMap(
-			_localization.getMap(
-				segmentNotificationGroupServiceConfiguration.emailSubject()));
+			notificationTemplate.getSubjectMap());
 
 		User user = notificationContext._user;
 
 		_flushSubscriptionSender(subscriptionSender, faroProject, group, user);
+	}
+
+	private NotificationTemplate _fetchOrCreateNotificationTemplate(
+			String externalReferenceCode, long companyId, long userId)
+		throws Exception {
+
+		NotificationTemplate notificationTemplate =
+			_notificationTemplateLocalService.
+				fetchNotificationTemplateByExternalReferenceCode(
+					externalReferenceCode, companyId);
+
+		if (notificationTemplate != null) {
+			return notificationTemplate;
+		}
+
+		Map<String, Map<String, String>> defaultNotificationTemplates =
+			FaroNotificationTemplateConstants.getDefaultNotificationTemplates();
+
+		Map<String, String> defaultNotificationTemplate =
+			defaultNotificationTemplates.get(externalReferenceCode);
+
+		notificationTemplate =
+			_notificationTemplateLocalService.createNotificationTemplate(0);
+
+		notificationTemplate.setExternalReferenceCode(externalReferenceCode);
+		notificationTemplate.setCompanyId(companyId);
+		notificationTemplate.setUserId(userId);
+		notificationTemplate.setBodyMap(
+			Collections.singletonMap(
+				LocaleUtil.getDefault(),
+				MapUtil.getString(defaultNotificationTemplate, "body")));
+		notificationTemplate.setDescription(
+			MapUtil.getString(defaultNotificationTemplate, "name"));
+		notificationTemplate.setEditorType(
+			NotificationTemplateConstants.EDITOR_TYPE_RICH_TEXT);
+		notificationTemplate.setNameMap(
+			Collections.singletonMap(
+				LocaleUtil.getDefault(),
+				MapUtil.getString(defaultNotificationTemplate, "name")));
+		notificationTemplate.setSubjectMap(
+			Collections.singletonMap(
+				LocaleUtil.getDefault(),
+				MapUtil.getString(defaultNotificationTemplate, "subject")));
+		notificationTemplate.setSystem(false);
+		notificationTemplate.setType(NotificationConstants.TYPE_EMAIL);
+
+		return _notificationTemplateLocalService.addNotificationTemplate(
+			new NotificationContextBuilder(
+			).companyId(
+				companyId
+			).notificationTemplate(
+				notificationTemplate
+			).userId(
+				userId
+			).build());
 	}
 
 	private void _flushSubscriptionSender(
@@ -259,9 +316,6 @@ public class NotificationHelper {
 	}
 
 	@Reference
-	private ConfigurationProvider _configurationProvider;
-
-	@Reference
 	private ContactsEngineClient _contactsEngineClient;
 
 	@Reference
@@ -274,7 +328,7 @@ public class NotificationHelper {
 	private GroupLocalService _groupLocalService;
 
 	@Reference
-	private Localization _localization;
+	private NotificationTemplateLocalService _notificationTemplateLocalService;
 
 	@Reference
 	private UserLocalService _userLocalService;
