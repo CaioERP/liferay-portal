@@ -11,15 +11,10 @@ per-Site (see **Scope** below).
 1. Log in as a user with **Control Panel** access at the company level
    (this is no longer a per-Site setting — see **Scope** below).
 2. Open **Control Panel → Notifications → Notification Templates**.
-3. Two entries are pre-provisioned the first time either notification type
-   is ever sent for your company:
+3. Two entries are pre-provisioned for your company automatically, with no
+   notification needing to send first:
    - **Lifecycle Notification**
    - **Segment Notification**
-
-   If neither has sent yet, the entries won't exist until the first send
-   attempt creates them with placeholder content — trigger one Segment or
-   Lifecycle notification (or wait for the scheduled job) before expecting
-   to find them here.
 4. Click into the one you want to configure.
 
 ## Scope
@@ -31,16 +26,26 @@ override.
 
 ## Fields
 
-Each of the two configuration screens has exactly two fields:
+The native Notification Templates screen shows more fields than Faro uses.
+**Only these two are read by Faro when sending:**
 
 | Field | Purpose |
 |---|---|
 | **Email Subject** | The notification email's subject line |
 | **Email Body** | The notification email's HTML body |
 
-Both fields are **localizable** — use the language/globe selector on the field
-to provide separate content per site locale. Liferay falls back to the site's
-default locale if a translation is missing for the recipient's locale.
+Every other field on the screen (From, From Name, To, Send To, etc.) is set
+once at provisioning time and is **not** read by Faro at send time — editing
+them has no effect on Segment/Lifecycle emails. Faro determines the actual
+sender and recipient itself (see **Placeholder tokens** below for
+`[%SENDER_NAME%]`, and note recipients are always the user(s) with active
+notification preferences for that Segment/Lifecycle, not anyone configured
+here).
+
+Both Email Subject and Email Body are **localizable** — use the
+language/globe selector on the field to provide separate content per
+company-available locale. Liferay falls back to the company's default
+locale if a translation is missing for the recipient's locale.
 
 ## Placeholder tokens
 
@@ -86,11 +91,16 @@ segment.</p>
 
 Unlike the previous Group-scoped settings screens, the native Notification
 Templates store requires non-blank subject/body content to save a row at
-all. The first time a Segment or Lifecycle notification is ever sent for a
-company, Faro auto-creates that company's template with short placeholder
-copy so the send doesn't silently go out empty. Edit the placeholder
-content in Control Panel → Notifications → Notification Templates to
-customize it — your edits are never overwritten by a later send.
+all. Faro provisions both templates with short placeholder copy when your
+company is registered (or, for existing companies, the next time this
+module starts) — not lazily on first send — so they are already visible
+under Control Panel → Notifications → Notification Templates before any
+notification has gone out. Edit the placeholder content there to
+customize it; your edits are never overwritten by a later send. If
+provisioning fails for a company (for example, no user holds the
+Administrator role yet), Faro logs the error and falls back to sending
+with the same placeholder copy in-memory, without persisting a row —
+retrying provisioning on the next module restart.
 
 ## Known limitation (as of this writing)
 

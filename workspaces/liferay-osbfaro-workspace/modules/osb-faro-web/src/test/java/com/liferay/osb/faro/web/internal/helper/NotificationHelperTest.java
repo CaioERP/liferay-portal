@@ -5,10 +5,11 @@
 
 package com.liferay.osb.faro.web.internal.helper;
 
-import com.liferay.notification.context.NotificationContext;
 import com.liferay.notification.model.NotificationTemplate;
 import com.liferay.notification.service.NotificationTemplateLocalService;
 import com.liferay.osb.faro.engine.client.ContactsEngineClient;
+import com.liferay.osb.faro.engine.client.model.AccountLifecycle;
+import com.liferay.osb.faro.engine.client.model.LifecycleTriggerResult;
 import com.liferay.osb.faro.model.FaroProject;
 import com.liferay.osb.faro.service.FaroProjectLocalService;
 import com.liferay.osb.faro.web.internal.constants.FaroNotificationTemplateConstants;
@@ -19,12 +20,10 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.Collections;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import org.springframework.test.util.ReflectionTestUtils;
@@ -96,6 +95,108 @@ public class NotificationHelperTest {
 	}
 
 	@Test
+	public void testSendLifecycleNotificationWhenCountIsZero()
+		throws Exception {
+
+		Mockito.when(
+			_emailReportHelper.getRangeKey("daily")
+		).thenReturn(
+			1
+		);
+
+		Mockito.when(
+			_contactsEngineClient.getLifecycleNewAccountsResult(
+				_faroProject, "L1", 1)
+		).thenReturn(
+			null
+		);
+
+		_notificationHelper.sendLifecycleNotification(
+			2L, "L1", LifecycleTriggerType.NEW_ACCOUNTS, "daily", 3L);
+
+		Mockito.verify(
+			_notificationTemplateLocalService, Mockito.never()
+		).fetchNotificationTemplateByExternalReferenceCode(
+			Mockito.anyString(), Mockito.anyLong()
+		);
+	}
+
+	@Test
+	public void testSendLifecycleNotificationWhenNotificationTemplateDoesNotExist()
+		throws Exception {
+
+		Mockito.when(
+			_emailReportHelper.getRangeKey("daily")
+		).thenReturn(
+			1
+		);
+
+		LifecycleTriggerResult lifecycleTriggerResult = Mockito.mock(
+			LifecycleTriggerResult.class);
+
+		Mockito.when(
+			lifecycleTriggerResult.getCount()
+		).thenReturn(
+			5L
+		);
+
+		Mockito.when(
+			_contactsEngineClient.getLifecycleNewAccountsResult(
+				_faroProject, "L1", 1)
+		).thenReturn(
+			lifecycleTriggerResult
+		);
+
+		Mockito.when(
+			_contactsEngineClient.getAccountLifecycle(_faroProject, "L1")
+		).thenReturn(
+			Mockito.mock(AccountLifecycle.class)
+		);
+
+		NotificationTemplate notificationTemplate = Mockito.mock(
+			NotificationTemplate.class);
+
+		Mockito.when(
+			_notificationTemplateLocalService.createNotificationTemplate(0)
+		).thenReturn(
+			notificationTemplate
+		);
+
+		try {
+			_notificationHelper.sendLifecycleNotification(
+				2L, "L1", LifecycleTriggerType.NEW_ACCOUNTS, "daily", 3L);
+		}
+		catch (Exception exception) {
+
+			// See note in the segment-path test above.
+
+		}
+
+		Mockito.verify(
+			_notificationTemplateLocalService
+		).fetchNotificationTemplateByExternalReferenceCode(
+			FaroNotificationTemplateConstants.
+				EXTERNAL_REFERENCE_CODE_LIFECYCLE_NOTIFICATION,
+			1L
+		);
+
+		String defaultSubject =
+			FaroNotificationTemplateConstants.getDefaultNotificationTemplates(
+			).get(
+				FaroNotificationTemplateConstants.
+					EXTERNAL_REFERENCE_CODE_LIFECYCLE_NOTIFICATION
+			).get(
+				"subject"
+			);
+
+		Mockito.verify(
+			notificationTemplate
+		).setSubjectMap(
+			Collections.singletonMap(LocaleUtil.getDefault(), defaultSubject)
+		);
+	}
+
+	@Test
 	public void testSendSegmentNotificationWhenCountIsZero() throws Exception {
 		Mockito.when(
 			_emailReportHelper.getRangeKey("daily")
@@ -146,10 +247,13 @@ public class NotificationHelperTest {
 			null
 		);
 
+		NotificationTemplate notificationTemplate = Mockito.mock(
+			NotificationTemplate.class);
+
 		Mockito.when(
 			_notificationTemplateLocalService.createNotificationTemplate(0)
 		).thenReturn(
-			Mockito.mock(NotificationTemplate.class)
+			notificationTemplate
 		);
 
 		try {
@@ -159,37 +263,32 @@ public class NotificationHelperTest {
 
 			// SubscriptionSender#flushNotifications requires a running
 			// portal instance and is expected to fail in this plain unit
-			// test; only the notification-template provisioning above it
+			// test; only the notification-template fetch/fallback above it
 			// is under test here.
 
 		}
 
-		ArgumentCaptor<NotificationContext> notificationContextArgumentCaptor =
-			ArgumentCaptor.forClass(NotificationContext.class);
-
 		Mockito.verify(
 			_notificationTemplateLocalService
-		).addNotificationTemplate(
-			notificationContextArgumentCaptor.capture()
+		).fetchNotificationTemplateByExternalReferenceCode(
+			FaroNotificationTemplateConstants.
+				EXTERNAL_REFERENCE_CODE_SEGMENT_NOTIFICATION,
+			1L
 		);
 
-		NotificationTemplate notificationTemplate =
-			notificationContextArgumentCaptor.getValue(
-			).getNotificationTemplate();
-
-		Map<String, String> defaultSegmentNotificationTemplate =
+		String defaultSubject =
 			FaroNotificationTemplateConstants.getDefaultNotificationTemplates(
 			).get(
 				FaroNotificationTemplateConstants.
 					EXTERNAL_REFERENCE_CODE_SEGMENT_NOTIFICATION
+			).get(
+				"subject"
 			);
 
 		Mockito.verify(
 			notificationTemplate
 		).setSubjectMap(
-			Collections.singletonMap(
-				LocaleUtil.getDefault(),
-				defaultSegmentNotificationTemplate.get("subject"))
+			Collections.singletonMap(LocaleUtil.getDefault(), defaultSubject)
 		);
 	}
 
@@ -234,8 +333,8 @@ public class NotificationHelperTest {
 
 		Mockito.verify(
 			_notificationTemplateLocalService, Mockito.never()
-		).addNotificationTemplate(
-			Mockito.any(NotificationContext.class)
+		).createNotificationTemplate(
+			Mockito.anyLong()
 		);
 	}
 

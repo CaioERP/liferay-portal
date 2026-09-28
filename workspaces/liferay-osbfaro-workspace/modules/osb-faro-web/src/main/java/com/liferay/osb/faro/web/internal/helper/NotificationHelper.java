@@ -5,9 +5,6 @@
 
 package com.liferay.osb.faro.web.internal.helper;
 
-import com.liferay.notification.constants.NotificationConstants;
-import com.liferay.notification.constants.NotificationTemplateConstants;
-import com.liferay.notification.context.NotificationContextBuilder;
 import com.liferay.notification.model.NotificationTemplate;
 import com.liferay.notification.service.NotificationTemplateLocalService;
 import com.liferay.osb.faro.engine.client.ContactsEngineClient;
@@ -126,11 +123,10 @@ public class NotificationHelper {
 			resultText = count + " accounts";
 		}
 
-		NotificationTemplate notificationTemplate =
-			_fetchOrCreateNotificationTemplate(
-				FaroNotificationTemplateConstants.
-					EXTERNAL_REFERENCE_CODE_LIFECYCLE_NOTIFICATION,
-				group.getCompanyId(), userId);
+		NotificationTemplate notificationTemplate = _fetchNotificationTemplate(
+			FaroNotificationTemplateConstants.
+				EXTERNAL_REFERENCE_CODE_LIFECYCLE_NOTIFICATION,
+			group.getCompanyId());
 
 		SubscriptionSender subscriptionSender = new SubscriptionSender();
 
@@ -178,11 +174,10 @@ public class NotificationHelper {
 
 		Group group = notificationContext._group;
 
-		NotificationTemplate notificationTemplate =
-			_fetchOrCreateNotificationTemplate(
-				FaroNotificationTemplateConstants.
-					EXTERNAL_REFERENCE_CODE_SEGMENT_NOTIFICATION,
-				group.getCompanyId(), userId);
+		NotificationTemplate notificationTemplate = _fetchNotificationTemplate(
+			FaroNotificationTemplateConstants.
+				EXTERNAL_REFERENCE_CODE_SEGMENT_NOTIFICATION,
+			group.getCompanyId());
 
 		SubscriptionSender subscriptionSender = new SubscriptionSender();
 
@@ -202,9 +197,32 @@ public class NotificationHelper {
 		_flushSubscriptionSender(subscriptionSender, faroProject, group, user);
 	}
 
-	private NotificationTemplate _fetchOrCreateNotificationTemplate(
-			String externalReferenceCode, long companyId, long userId)
-		throws Exception {
+	private NotificationTemplate _createDefaultNotificationTemplate(
+		String externalReferenceCode) {
+
+		Map<String, String> defaultNotificationTemplate =
+			FaroNotificationTemplateConstants.getDefaultNotificationTemplates(
+			).get(
+				externalReferenceCode
+			);
+
+		NotificationTemplate notificationTemplate =
+			_notificationTemplateLocalService.createNotificationTemplate(0);
+
+		notificationTemplate.setBodyMap(
+			Collections.singletonMap(
+				LocaleUtil.getDefault(),
+				MapUtil.getString(defaultNotificationTemplate, "body")));
+		notificationTemplate.setSubjectMap(
+			Collections.singletonMap(
+				LocaleUtil.getDefault(),
+				MapUtil.getString(defaultNotificationTemplate, "subject")));
+
+		return notificationTemplate;
+	}
+
+	private NotificationTemplate _fetchNotificationTemplate(
+		String externalReferenceCode, long companyId) {
 
 		NotificationTemplate notificationTemplate =
 			_notificationTemplateLocalService.
@@ -215,46 +233,7 @@ public class NotificationHelper {
 			return notificationTemplate;
 		}
 
-		Map<String, Map<String, String>> defaultNotificationTemplates =
-			FaroNotificationTemplateConstants.getDefaultNotificationTemplates();
-
-		Map<String, String> defaultNotificationTemplate =
-			defaultNotificationTemplates.get(externalReferenceCode);
-
-		notificationTemplate =
-			_notificationTemplateLocalService.createNotificationTemplate(0);
-
-		notificationTemplate.setExternalReferenceCode(externalReferenceCode);
-		notificationTemplate.setCompanyId(companyId);
-		notificationTemplate.setUserId(userId);
-		notificationTemplate.setBodyMap(
-			Collections.singletonMap(
-				LocaleUtil.getDefault(),
-				MapUtil.getString(defaultNotificationTemplate, "body")));
-		notificationTemplate.setDescription(
-			MapUtil.getString(defaultNotificationTemplate, "name"));
-		notificationTemplate.setEditorType(
-			NotificationTemplateConstants.EDITOR_TYPE_RICH_TEXT);
-		notificationTemplate.setNameMap(
-			Collections.singletonMap(
-				LocaleUtil.getDefault(),
-				MapUtil.getString(defaultNotificationTemplate, "name")));
-		notificationTemplate.setSubjectMap(
-			Collections.singletonMap(
-				LocaleUtil.getDefault(),
-				MapUtil.getString(defaultNotificationTemplate, "subject")));
-		notificationTemplate.setSystem(false);
-		notificationTemplate.setType(NotificationConstants.TYPE_EMAIL);
-
-		return _notificationTemplateLocalService.addNotificationTemplate(
-			new NotificationContextBuilder(
-			).companyId(
-				companyId
-			).notificationTemplate(
-				notificationTemplate
-			).userId(
-				userId
-			).build());
+		return _createDefaultNotificationTemplate(externalReferenceCode);
 	}
 
 	private void _flushSubscriptionSender(
