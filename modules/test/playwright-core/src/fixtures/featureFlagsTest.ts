@@ -9,6 +9,7 @@ import {backendPageTest} from './backendPageTest';
 
 interface FeatureFlagValue {
 	enabled: boolean;
+	system?: boolean;
 }
 
 export interface FeatureFlagsOptions {
@@ -18,6 +19,7 @@ export interface FeatureFlagsOptions {
 export interface FeatureFlag {
 	readonly enabled?: boolean;
 	readonly key: string;
+	readonly system?: boolean;
 }
 
 export interface FeatureFlags {
@@ -127,6 +129,7 @@ function featureFlagsTest(options: FeatureFlagsOptions) {
 							{
 								enabled: featureFlag.enabled,
 								key: featureFlag.key,
+								system: featureFlag.companyId === 0,
 							}
 						);
 					}
@@ -172,7 +175,9 @@ async function invokeServer<T>(
 			new Promise((resolve, reject) => {
 				Liferay.Util.fetch(url, {
 					body: Liferay.Util.objectToFormData({
-						companyId: Number(Liferay.ThemeDisplay.getCompanyId()),
+						companyId: partialBody.system
+							? 0
+							: Number(Liferay.ThemeDisplay.getCompanyId()),
 						...partialBody,
 					}),
 					method: 'POST',
