@@ -9,6 +9,10 @@ import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.currency.test.util.CommerceCurrencyTestUtil;
 import com.liferay.commerce.discount.constants.CommerceDiscountConstants;
@@ -42,6 +46,7 @@ import com.liferay.exportimport.test.util.LazyReferencingTestUtil;
 import com.liferay.headless.commerce.admin.pricing.client.dto.v2_0.Creator;
 import com.liferay.headless.commerce.admin.pricing.client.dto.v2_0.Discount;
 import com.liferay.headless.commerce.admin.pricing.client.dto.v2_0.DiscountAccount;
+import com.liferay.headless.commerce.admin.pricing.client.dto.v2_0.DiscountCategory;
 import com.liferay.headless.commerce.admin.pricing.client.dto.v2_0.DiscountChannel;
 import com.liferay.headless.commerce.admin.pricing.client.dto.v2_0.DiscountOrderType;
 import com.liferay.headless.commerce.admin.pricing.client.dto.v2_0.DiscountProduct;
@@ -209,6 +214,7 @@ public class DiscountResourceTest extends BaseDiscountResourceTestCase {
 		_testPostDiscountWithCreator();
 		_testPostDiscountWithExistingIds();
 		_testPostDiscountWithLazyReferencedAccount();
+		_testPostDiscountWithLazyReferencedDiscountCategory();
 		_testPostDiscountWithLazyReferencedSku();
 		_testPostDiscountWithLazyReferencingDisabled();
 		_testPostDiscountWithLazyReferencingEnabled();
@@ -577,6 +583,50 @@ public class DiscountResourceTest extends BaseDiscountResourceTestCase {
 			WorkflowConstants.STATUS_EMPTY, accountEntry.getStatus());
 		Assert.assertEquals(
 			AccountConstants.ACCOUNT_ENTRY_TYPE_PERSON, accountEntry.getType());
+	}
+
+	private void _testPostDiscountWithLazyReferencedDiscountCategory()
+		throws Exception {
+
+		Discount discount = randomDiscount();
+
+		DiscountCategory discountCategory = new DiscountCategory();
+
+		discountCategory.setCategoryExternalReferenceCode(
+			RandomTestUtil.randomString());
+		discountCategory.setVocabularyExternalReferenceCode(
+			RandomTestUtil.randomString());
+
+		discount.setDiscountCategories(
+			new DiscountCategory[] {discountCategory});
+
+		try (SafeCloseable safeCloseable =
+				LazyReferencingTestUtil.setLazyReferencingWithSafeCloseable(
+					true)) {
+
+			discountResource.postDiscount(discount);
+		}
+
+		CommerceDiscount commerceDiscount =
+			_commerceDiscountLocalService.
+				fetchCommerceDiscountByExternalReferenceCode(
+					discount.getExternalReferenceCode(),
+					testCompany.getCompanyId());
+
+		_commerceDiscounts.add(commerceDiscount);
+
+		AssetCategory assetCategory =
+			_assetCategoryLocalService.getAssetCategoryByExternalReferenceCode(
+				discountCategory.getCategoryExternalReferenceCode(),
+				testCompany.getGroupId());
+		AssetVocabulary assetVocabulary =
+			_assetVocabularyLocalService.
+				getAssetVocabularyByExternalReferenceCode(
+					discountCategory.getVocabularyExternalReferenceCode(),
+					testCompany.getGroupId());
+
+		Assert.assertEquals(
+			assetVocabulary.getVocabularyId(), assetCategory.getVocabularyId());
 	}
 
 	private void _testPostDiscountWithLazyReferencedSku() throws Exception {
@@ -1036,6 +1086,12 @@ public class DiscountResourceTest extends BaseDiscountResourceTestCase {
 
 	@Inject
 	private AccountEntryLocalService _accountEntryLocalService;
+
+	@Inject
+	private AssetCategoryLocalService _assetCategoryLocalService;
+
+	@Inject
+	private AssetVocabularyLocalService _assetVocabularyLocalService;
 
 	@Inject
 	private ClassNameLocalService _classNameLocalService;
