@@ -12,7 +12,9 @@ import com.liferay.account.service.AccountGroupService;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
+import com.liferay.asset.kernel.service.AssetCategoryService;
 import com.liferay.asset.kernel.service.AssetTagService;
+import com.liferay.asset.kernel.service.AssetVocabularyService;
 import com.liferay.commerce.currency.exception.NoSuchCurrencyException;
 import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.currency.service.CommerceCurrencyService;
@@ -117,6 +119,7 @@ import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.SkuUnitOfM
 import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.SkuUtil;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.ProductResource;
 import com.liferay.headless.commerce.core.helper.ServiceContextHelper;
+import com.liferay.headless.commerce.core.util.AssetCategoryUtil;
 import com.liferay.headless.commerce.core.util.CommerceCurrencyUtil;
 import com.liferay.headless.commerce.core.util.DateConfig;
 import com.liferay.headless.commerce.core.util.ExpandoUtil;
@@ -833,6 +836,20 @@ public class ProductResourceImpl
 								fetchAssetCategoryByExternalReferenceCode(
 									category.getExternalReferenceCode(),
 									contextCompany.getGroupId());
+
+						if ((assetCategory == null) &&
+							LazyReferencingThreadLocal.isEnabled()) {
+
+							assetCategory =
+								AssetCategoryUtil.getOrAddEmptyAssetCategory(
+									_assetCategoryLocalService,
+									_assetCategoryService,
+									_assetVocabularyService,
+									category.getExternalReferenceCode(),
+									contextCompany.getGroupId(),
+									category.
+										getVocabularyExternalReferenceCode());
+						}
 
 						if (assetCategory == null) {
 							return null;
@@ -1931,6 +1948,20 @@ public class ProductResourceImpl
 									category.getExternalReferenceCode(),
 									contextCompany.getGroupId());
 
+						if ((assetCategory == null) &&
+							LazyReferencingThreadLocal.isEnabled()) {
+
+							assetCategory =
+								AssetCategoryUtil.getOrAddEmptyAssetCategory(
+									_assetCategoryLocalService,
+									_assetCategoryService,
+									_assetVocabularyService,
+									category.getExternalReferenceCode(),
+									contextCompany.getGroupId(),
+									category.
+										getVocabularyExternalReferenceCode());
+						}
+
 						return assetCategory.getCategoryId();
 					}));
 		}
@@ -2088,7 +2119,13 @@ public class ProductResourceImpl
 	private AssetCategoryLocalService _assetCategoryLocalService;
 
 	@Reference
+	private AssetCategoryService _assetCategoryService;
+
+	@Reference
 	private AssetTagService _assetTagService;
+
+	@Reference
+	private AssetVocabularyService _assetVocabularyService;
 
 	@Reference
 	private CProductLocalService _cProductLocalService;
