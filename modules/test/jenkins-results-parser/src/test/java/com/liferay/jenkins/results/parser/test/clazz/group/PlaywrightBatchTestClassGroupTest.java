@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
@@ -120,7 +121,7 @@ public class PlaywrightBatchTestClassGroupTest
 			"task runPlaywright");
 
 		List<Shell.ExecutionRequest> executionRequests = new ArrayList<>();
-		List<File> reportFiles = new ArrayList<>();
+		Set<File> reportFiles = new HashSet<>();
 
 		Shell.setInstance(
 			Mockito.mock(
@@ -202,10 +203,8 @@ public class PlaywrightBatchTestClassGroupTest
 		}
 
 		Assert.assertEquals(
-			reportFiles.toString(), reportFiles.size(),
-			new HashSet<>(
-				reportFiles
-			).size());
+			reportFiles.toString(), executionRequests.size(),
+			reportFiles.size());
 
 		String portalWorkingDirectoryPath =
 			JenkinsResultsParserUtil.getCanonicalPath(portalWorkingDirectory);
