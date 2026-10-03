@@ -10,6 +10,7 @@ import com.liferay.info.item.InfoItemFormVariation;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemFormVariationsProvider;
 import com.liferay.layout.page.template.admin.constants.LayoutPageTemplateAdminPortletKeys;
+import com.liferay.layout.page.template.admin.web.internal.util.LayoutPageTemplatePortletUtil;
 import com.liferay.layout.page.template.admin.web.internal.util.MappingTypesUtil;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
@@ -228,10 +229,21 @@ public class DisplayPageDisplayContext {
 			return _layoutPageTemplateCollectionId;
 		}
 
-		_layoutPageTemplateCollectionId = ParamUtil.getLong(
-			_httpServletRequest, "layoutPageTemplateCollectionId",
-			LayoutPageTemplateConstants.
-				PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT);
+		LayoutPageTemplateCollection layoutPageTemplateCollection =
+			LayoutPageTemplatePortletUtil.fetchLayoutPageTemplateCollection(
+				_httpServletRequest, _themeDisplay.getScopeGroupId());
+
+		if (layoutPageTemplateCollection == null) {
+			_layoutPageTemplateCollectionId = ParamUtil.getLong(
+				_httpServletRequest, "layoutPageTemplateCollectionId",
+				LayoutPageTemplateConstants.
+					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT);
+		}
+		else {
+			_layoutPageTemplateCollectionId =
+				layoutPageTemplateCollection.
+					getLayoutPageTemplateCollectionId();
+		}
 
 		return _layoutPageTemplateCollectionId;
 	}
