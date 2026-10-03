@@ -121,16 +121,20 @@ public class LayoutPageTemplatesAdminDisplayContext {
 
 		Group group = _themeDisplay.getScopeGroup();
 
-		if (group.isCompany() ||
-			DesignLibraryUtil.isDesignLibraryScope(group)) {
-
+		if (group.isCompany()) {
 			_tabs1 = "page-templates";
 
 			return _tabs1;
 		}
 
+		String defaultTabs1 = "master-layouts";
+
+		if (DesignLibraryUtil.isDesignLibraryScope(group)) {
+			defaultTabs1 = "page-templates";
+		}
+
 		_tabs1 = ParamUtil.getString(
-			_liferayPortletRequest, "tabs1", "master-layouts");
+			_liferayPortletRequest, "tabs1", defaultTabs1);
 
 		return _tabs1;
 	}
