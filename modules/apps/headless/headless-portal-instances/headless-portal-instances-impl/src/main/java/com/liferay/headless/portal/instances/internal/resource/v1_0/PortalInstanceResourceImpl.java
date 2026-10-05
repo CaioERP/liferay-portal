@@ -10,8 +10,8 @@ import com.liferay.headless.portal.instances.dto.v1_0.PortalInstance;
 import com.liferay.headless.portal.instances.internal.notifications.PortalInstanceNotificationUtil;
 import com.liferay.headless.portal.instances.resource.v1_0.PortalInstanceResource;
 import com.liferay.portal.instances.constants.PortalInstancesNotificationConstants;
+import com.liferay.portal.kernel.exception.ContactNameException;
 import com.liferay.portal.kernel.exception.UserEmailAddressException;
-import com.liferay.portal.kernel.exception.UserScreenNameException;
 import com.liferay.portal.kernel.instance.PortalInstancePool;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Company;
@@ -227,11 +227,16 @@ public class PortalInstanceResourceImpl extends BasePortalInstanceResourceImpl {
 	}
 
 	private void _validateAdmin(Admin admin) throws Exception {
-		if (Validator.isNull(admin.getEmailAddress()) ||
-			Validator.isNull(admin.getFamilyName()) ||
-			Validator.isNull(admin.getGivenName())) {
+		if (Validator.isNull(admin.getEmailAddress())) {
+			throw new UserEmailAddressException.MustNotBeNull();
+		}
 
-			throw new UserScreenNameException.MustNotBeNull();
+		if (Validator.isNull(admin.getFamilyName())) {
+			throw new ContactNameException.MustHaveLastName();
+		}
+
+		if (Validator.isNull(admin.getGivenName())) {
+			throw new ContactNameException.MustHaveFirstName();
 		}
 
 		EmailAddressValidator emailAddressValidator =

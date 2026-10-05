@@ -5,11 +5,10 @@
 
 package com.liferay.headless.portal.instances.internal.jaxrs.exception.mapper;
 
-import com.liferay.portal.kernel.exception.UserScreenNameException;
+import com.liferay.portal.kernel.exception.UserEmailAddressException;
 import com.liferay.portal.vulcan.jaxrs.exception.mapper.BaseExceptionMapper;
 import com.liferay.portal.vulcan.jaxrs.exception.mapper.Problem;
 
-import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 
 import org.osgi.service.component.annotations.Component;
@@ -21,21 +20,18 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"osgi.jaxrs.application.select=(osgi.jaxrs.name=Liferay.Headless.Portal.Instances)",
 		"osgi.jaxrs.extension=true",
-		"osgi.jaxrs.name=Liferay.Headless.Portal.Instances.UserScreenNameExceptionMustNotBeNullExceptionMapper"
+		"osgi.jaxrs.name=Liferay.Headless.Portal.Instances.UserEmailAddressExceptionMapper"
 	},
 	service = ExceptionMapper.class
 )
-public class UserScreenNameExceptionMustNotBeNullExceptionMapper
-	extends BaseExceptionMapper<UserScreenNameException.MustNotBeNull> {
+public class UserEmailAddressExceptionMapper
+	extends BaseExceptionMapper<UserEmailAddressException> {
 
 	@Override
 	protected Problem getProblem(
-		UserScreenNameException.MustNotBeNull mustNotBeNull) {
+		UserEmailAddressException userEmailAddressException) {
 
-		return new Problem(
-			Response.Status.BAD_REQUEST,
-			"Email address, first name, and last name are all required when " +
-				"providing information for the default admin user");
+		return new Problem(userEmailAddressException);
 	}
 
 }
