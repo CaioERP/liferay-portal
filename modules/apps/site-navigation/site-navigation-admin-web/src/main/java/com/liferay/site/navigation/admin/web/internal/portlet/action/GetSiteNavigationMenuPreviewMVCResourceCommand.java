@@ -102,12 +102,13 @@ public class GetSiteNavigationMenuPreviewMVCResourceCommand
 			return;
 		}
 
+		StringBundler sb = new StringBundler(3);
+
 		int bodyTagEndIndex =
 			html.indexOf(StringPool.GREATER_THAN, bodyTagIndex) + 1;
 
-		StringBundler sb = new StringBundler(3);
-
 		sb.append(html.substring(0, bodyTagEndIndex));
+
 		sb.append(unsyncStringWriter.toString());
 		sb.append(html.substring(bodyCloseTagIndex));
 
