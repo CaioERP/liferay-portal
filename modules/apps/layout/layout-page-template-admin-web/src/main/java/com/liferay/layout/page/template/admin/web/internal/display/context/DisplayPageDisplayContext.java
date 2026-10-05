@@ -5,6 +5,7 @@
 
 package com.liferay.layout.page.template.admin.web.internal.display.context;
 
+import com.liferay.design.library.util.DesignLibraryUtil;
 import com.liferay.info.item.InfoItemClassDetails;
 import com.liferay.info.item.InfoItemFormVariation;
 import com.liferay.info.item.InfoItemServiceRegistry;
@@ -350,6 +351,11 @@ public class DisplayPageDisplayContext {
 
 	public boolean isSearch() {
 		return Validator.isNotNull(getKeywords());
+	}
+
+	public boolean isShowBreadcrumb() {
+		return !DesignLibraryUtil.isDesignLibraryScope(
+			_themeDisplay.getScopeGroup());
 	}
 
 	private Map<Long, Long[]> _getAllowedClassNameIdsMap() {
