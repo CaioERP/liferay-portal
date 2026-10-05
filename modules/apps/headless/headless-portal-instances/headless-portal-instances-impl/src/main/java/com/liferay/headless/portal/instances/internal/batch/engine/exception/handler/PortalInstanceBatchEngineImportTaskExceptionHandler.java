@@ -68,6 +68,8 @@ public class PortalInstanceBatchEngineImportTaskExceptionHandler
 				PortalInstancesPortletKeys.PORTAL_INSTANCES,
 				UserNotificationDeliveryConstants.TYPE_WEBSITE,
 				JSONUtil.put(
+					"errorMessage", message
+				).put(
 					"errorMessageKey",
 					_getErrorMessageKey(exception1, operationType)
 				).put(
@@ -115,7 +117,7 @@ public class PortalInstanceBatchEngineImportTaskExceptionHandler
 				return "database-partitioning-must-be-enabled";
 			}
 
-			return "an-unexpected-error-occurred";
+			return null;
 		}
 
 		Throwable throwable = exception.getCause();
@@ -138,7 +140,7 @@ public class PortalInstanceBatchEngineImportTaskExceptionHandler
 			return "please-enter-a-valid-web-id";
 		}
 
-		return "an-unexpected-error-occurred";
+		return null;
 	}
 
 	private String _getErrorMessageKey(
@@ -213,7 +215,7 @@ public class PortalInstanceBatchEngineImportTaskExceptionHandler
 			return "please-enter-a-valid-screen-name";
 		}
 
-		return "an-unexpected-error-occurred";
+		return null;
 	}
 
 	private String _getExportErrorMessageKey(Exception exception) {
@@ -225,7 +227,7 @@ public class PortalInstanceBatchEngineImportTaskExceptionHandler
 			return "the-default-instance-cannot-be-exported";
 		}
 
-		return "an-unexpected-error-occurred";
+		return null;
 	}
 
 	private String _getImportErrorMessageKey(Exception exception) {
@@ -248,7 +250,7 @@ public class PortalInstanceBatchEngineImportTaskExceptionHandler
 				return "the-exported-schema-does-not-exist";
 			}
 
-			return "an-unexpected-error-occurred";
+			return null;
 		}
 
 		if (exception instanceof UnsupportedOperationException) {
@@ -264,7 +266,7 @@ public class PortalInstanceBatchEngineImportTaskExceptionHandler
 				return "database-partitioning-must-be-enabled";
 			}
 
-			return "an-unexpected-error-occurred";
+			return null;
 		}
 
 		Throwable throwable = exception.getCause();
@@ -287,7 +289,7 @@ public class PortalInstanceBatchEngineImportTaskExceptionHandler
 			return "please-enter-a-valid-web-id";
 		}
 
-		return "an-unexpected-error-occurred";
+		return null;
 	}
 
 	private String _getOperationType(

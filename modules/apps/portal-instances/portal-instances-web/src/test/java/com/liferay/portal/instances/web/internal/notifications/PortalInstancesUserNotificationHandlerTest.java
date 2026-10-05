@@ -67,9 +67,41 @@ public class PortalInstancesUserNotificationHandlerTest {
 	}
 
 	@Test
+	public void testGetBodyEscapesTheErrorMessage() throws Exception {
+		String portalInstanceId = RandomTestUtil.randomString();
+
+		JSONObject payloadJSONObject = _toPayloadJSONObject(
+			null, PortalInstancesNotificationConstants.OPERATION_TYPE_DELETE,
+			portalInstanceId, null,
+			PortalInstancesNotificationConstants.STATUS_FAILED);
+
+		String errorMessage = RandomTestUtil.randomString();
+
+		payloadJSONObject.put("errorMessage", "<script>" + errorMessage);
+
+		Assert.assertEquals(
+			_toBodyHTML(
+				"&lt;script&gt;" + errorMessage,
+				_toTranslation(
+					"the-instance-x-could-not-be-deleted", portalInstanceId)),
+			_getBody(payloadJSONObject));
+	}
+
+	@Test
 	public void testGetBodyForTheAddOperation() throws Exception {
 		String portalInstanceId = RandomTestUtil.randomString();
 
+		Assert.assertEquals(
+			_toBodyHTML(
+				"an-unexpected-error-occurred",
+				_toTranslation(
+					"the-instance-x-could-not-be-created", portalInstanceId)),
+			_getBody(
+				_toPayloadJSONObject(
+					null,
+					PortalInstancesNotificationConstants.OPERATION_TYPE_ADD,
+					portalInstanceId, null,
+					PortalInstancesNotificationConstants.STATUS_FAILED)));
 		Assert.assertEquals(
 			_toBodyHTML(
 				"please-enter-a-valid-web-id",
@@ -92,6 +124,22 @@ public class PortalInstancesUserNotificationHandlerTest {
 					PortalInstancesNotificationConstants.OPERATION_TYPE_ADD,
 					portalInstanceId, null,
 					PortalInstancesNotificationConstants.STATUS_SUCCESS)));
+
+		JSONObject payloadJSONObject = _toPayloadJSONObject(
+			null, PortalInstancesNotificationConstants.OPERATION_TYPE_ADD,
+			portalInstanceId, null,
+			PortalInstancesNotificationConstants.STATUS_FAILED);
+
+		String errorMessage = RandomTestUtil.randomString();
+
+		payloadJSONObject.put("errorMessage", errorMessage);
+
+		Assert.assertEquals(
+			_toBodyHTML(
+				errorMessage,
+				_toTranslation(
+					"the-instance-x-could-not-be-created", portalInstanceId)),
+			_getBody(payloadJSONObject));
 	}
 
 	@Test
@@ -99,6 +147,16 @@ public class PortalInstancesUserNotificationHandlerTest {
 		String portalInstanceId = RandomTestUtil.randomString();
 		String sourcePortalInstanceId = RandomTestUtil.randomString();
 
+		Assert.assertEquals(
+			_toBodyHTML(
+				"an-unexpected-error-occurred",
+				_toTranslation(
+					"the-instance-x-could-not-be-copied-to-y",
+					sourcePortalInstanceId, portalInstanceId)),
+			_getBody(
+				_toCopyPayloadJSONObject(
+					null, portalInstanceId, sourcePortalInstanceId,
+					PortalInstancesNotificationConstants.STATUS_FAILED)));
 		Assert.assertEquals(
 			_toBodyHTML(
 				"please-enter-a-valid-destination-company-id",
@@ -121,12 +179,39 @@ public class PortalInstancesUserNotificationHandlerTest {
 				_toCopyPayloadJSONObject(
 					null, portalInstanceId, sourcePortalInstanceId,
 					PortalInstancesNotificationConstants.STATUS_SUCCESS)));
+
+		JSONObject payloadJSONObject = _toCopyPayloadJSONObject(
+			null, portalInstanceId, sourcePortalInstanceId,
+			PortalInstancesNotificationConstants.STATUS_FAILED);
+
+		String errorMessage = RandomTestUtil.randomString();
+
+		payloadJSONObject.put("errorMessage", errorMessage);
+
+		Assert.assertEquals(
+			_toBodyHTML(
+				errorMessage,
+				_toTranslation(
+					"the-instance-x-could-not-be-copied-to-y",
+					sourcePortalInstanceId, portalInstanceId)),
+			_getBody(payloadJSONObject));
 	}
 
 	@Test
 	public void testGetBodyForTheDeleteOperation() throws Exception {
 		String portalInstanceId = RandomTestUtil.randomString();
 
+		Assert.assertEquals(
+			_toBodyHTML(
+				"an-unexpected-error-occurred",
+				_toTranslation(
+					"the-instance-x-could-not-be-deleted", portalInstanceId)),
+			_getBody(
+				_toPayloadJSONObject(
+					null,
+					PortalInstancesNotificationConstants.OPERATION_TYPE_DELETE,
+					portalInstanceId, null,
+					PortalInstancesNotificationConstants.STATUS_FAILED)));
 		Assert.assertEquals(
 			_toBodyHTML(
 				"the-default-instance-cannot-be-deleted",
@@ -149,6 +234,22 @@ public class PortalInstancesUserNotificationHandlerTest {
 					PortalInstancesNotificationConstants.OPERATION_TYPE_DELETE,
 					portalInstanceId, null,
 					PortalInstancesNotificationConstants.STATUS_SUCCESS)));
+
+		JSONObject payloadJSONObject = _toPayloadJSONObject(
+			null, PortalInstancesNotificationConstants.OPERATION_TYPE_DELETE,
+			portalInstanceId, null,
+			PortalInstancesNotificationConstants.STATUS_FAILED);
+
+		String errorMessage = RandomTestUtil.randomString();
+
+		payloadJSONObject.put("errorMessage", errorMessage);
+
+		Assert.assertEquals(
+			_toBodyHTML(
+				errorMessage,
+				_toTranslation(
+					"the-instance-x-could-not-be-deleted", portalInstanceId)),
+			_getBody(payloadJSONObject));
 	}
 
 	@Test
@@ -156,6 +257,17 @@ public class PortalInstancesUserNotificationHandlerTest {
 		String portalInstanceId = RandomTestUtil.randomString();
 		String schemaName = RandomTestUtil.randomString();
 
+		Assert.assertEquals(
+			_toBodyHTML(
+				"an-unexpected-error-occurred",
+				_toTranslation(
+					"the-instance-x-could-not-be-exported", portalInstanceId)),
+			_getBody(
+				_toPayloadJSONObject(
+					null,
+					PortalInstancesNotificationConstants.OPERATION_TYPE_EXPORT,
+					portalInstanceId, schemaName,
+					PortalInstancesNotificationConstants.STATUS_FAILED)));
 		Assert.assertEquals(
 			_toBodyHTML(
 				_toTranslation(
@@ -180,6 +292,22 @@ public class PortalInstancesUserNotificationHandlerTest {
 					PortalInstancesNotificationConstants.OPERATION_TYPE_EXPORT,
 					portalInstanceId, schemaName,
 					PortalInstancesNotificationConstants.STATUS_SUCCESS)));
+
+		JSONObject payloadJSONObject = _toPayloadJSONObject(
+			null, PortalInstancesNotificationConstants.OPERATION_TYPE_EXPORT,
+			portalInstanceId, schemaName,
+			PortalInstancesNotificationConstants.STATUS_FAILED);
+
+		String errorMessage = RandomTestUtil.randomString();
+
+		payloadJSONObject.put("errorMessage", errorMessage);
+
+		Assert.assertEquals(
+			_toBodyHTML(
+				_toTranslation("export-failed-with-message-x", errorMessage),
+				_toTranslation(
+					"the-instance-x-could-not-be-exported", portalInstanceId)),
+			_getBody(payloadJSONObject));
 	}
 
 	@Test
@@ -187,6 +315,18 @@ public class PortalInstancesUserNotificationHandlerTest {
 		String portalInstanceId = RandomTestUtil.randomString();
 		String schemaName = RandomTestUtil.randomString();
 
+		Assert.assertEquals(
+			_toBodyHTML(
+				"an-unexpected-error-occurred",
+				_toTranslation(
+					"the-instance-could-not-be-imported-from-the-schema-x",
+					schemaName)),
+			_getBody(
+				_toPayloadJSONObject(
+					null,
+					PortalInstancesNotificationConstants.OPERATION_TYPE_IMPORT,
+					null, schemaName,
+					PortalInstancesNotificationConstants.STATUS_FAILED)));
 		Assert.assertEquals(
 			_toBodyHTML(
 				"the-exported-schema-does-not-exist",
@@ -211,6 +351,23 @@ public class PortalInstancesUserNotificationHandlerTest {
 					PortalInstancesNotificationConstants.OPERATION_TYPE_IMPORT,
 					portalInstanceId, schemaName,
 					PortalInstancesNotificationConstants.STATUS_SUCCESS)));
+
+		JSONObject payloadJSONObject = _toPayloadJSONObject(
+			null, PortalInstancesNotificationConstants.OPERATION_TYPE_IMPORT,
+			null, schemaName,
+			PortalInstancesNotificationConstants.STATUS_FAILED);
+
+		String errorMessage = RandomTestUtil.randomString();
+
+		payloadJSONObject.put("errorMessage", errorMessage);
+
+		Assert.assertEquals(
+			_toBodyHTML(
+				errorMessage,
+				_toTranslation(
+					"the-instance-could-not-be-imported-from-the-schema-x",
+					schemaName)),
+			_getBody(payloadJSONObject));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
