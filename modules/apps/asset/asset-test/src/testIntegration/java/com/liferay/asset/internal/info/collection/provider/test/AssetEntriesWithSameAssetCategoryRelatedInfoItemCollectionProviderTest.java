@@ -587,54 +587,51 @@ public class
 
 		ServiceContextThreadLocal.pushServiceContext(serviceContext);
 
-		try {
-			CollectionQuery collectionQuery = new CollectionQuery();
+		CollectionQuery collectionQuery = new CollectionQuery();
 
-			collectionQuery.setRelatedItemObject(
-				_getAssetEntry(
-					objectDefinition.getClassName(),
-					relatedObjectEntry1.getObjectEntryId()));
+		collectionQuery.setRelatedItemObject(
+			_getAssetEntry(
+				objectDefinition.getClassName(),
+				relatedObjectEntry1.getObjectEntryId()));
 
-			_assertInfoPage(
-				_relatedInfoItemCollectionProvider.getCollectionInfoPage(
-					collectionQuery),
-				_getAssetEntry(
-					objectDefinition.getClassName(),
-					objectEntry1.getObjectEntryId()));
+		_assertInfoPage(
+			_relatedInfoItemCollectionProvider.getCollectionInfoPage(
+				collectionQuery),
+			_getAssetEntry(
+				objectDefinition.getClassName(),
+				objectEntry1.getObjectEntryId()));
 
-			collectionQuery.setRelatedItemObject(
-				_getAssetEntry(
-					JournalArticle.class.getName(),
-					relatedJournalArticle.getResourcePrimKey()));
+		collectionQuery.setRelatedItemObject(
+			_getAssetEntry(
+				JournalArticle.class.getName(),
+				relatedJournalArticle.getResourcePrimKey()));
 
-			_assertInfoPage(
-				_relatedInfoItemCollectionProvider.getCollectionInfoPage(
-					collectionQuery),
-				_getAssetEntry(
-					JournalArticle.class.getName(),
-					journalArticle.getResourcePrimKey()));
+		_assertInfoPage(
+			_relatedInfoItemCollectionProvider.getCollectionInfoPage(
+				collectionQuery),
+			_getAssetEntry(
+				JournalArticle.class.getName(),
+				journalArticle.getResourcePrimKey()));
 
-			collectionQuery.setRelatedItemObject(
-				_getAssetEntry(
-					objectDefinition.getClassName(),
-					relatedObjectEntry2.getObjectEntryId()));
+		collectionQuery.setRelatedItemObject(
+			_getAssetEntry(
+				objectDefinition.getClassName(),
+				relatedObjectEntry2.getObjectEntryId()));
 
-			_assertInfoPage(
-				_relatedInfoItemCollectionProvider.getCollectionInfoPage(
-					collectionQuery),
-				_getAssetEntry(
-					JournalArticle.class.getName(),
-					journalArticle.getResourcePrimKey()),
-				_getAssetEntry(
-					JournalArticle.class.getName(),
-					relatedJournalArticle.getResourcePrimKey()),
-				_getAssetEntry(
-					objectDefinition.getClassName(),
-					objectEntry2.getObjectEntryId()));
-		}
-		finally {
-			ServiceContextThreadLocal.popServiceContext();
-		}
+		_assertInfoPage(
+			_relatedInfoItemCollectionProvider.getCollectionInfoPage(
+				collectionQuery),
+			_getAssetEntry(
+				JournalArticle.class.getName(),
+				journalArticle.getResourcePrimKey()),
+			_getAssetEntry(
+				JournalArticle.class.getName(),
+				relatedJournalArticle.getResourcePrimKey()),
+			_getAssetEntry(
+				objectDefinition.getClassName(),
+				objectEntry2.getObjectEntryId()));
+
+		ServiceContextThreadLocal.popServiceContext();
 	}
 
 	@Test
