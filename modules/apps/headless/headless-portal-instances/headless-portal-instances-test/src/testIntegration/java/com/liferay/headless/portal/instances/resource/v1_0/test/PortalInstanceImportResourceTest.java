@@ -103,10 +103,32 @@ public class PortalInstanceImportResourceTest
 
 		_testPostPortalInstanceImportBatch();
 		_testPostPortalInstanceImportExistingDBPartition();
+		_testPostPortalInstanceImportExportedValuesInUse();
 		_testPostPortalInstanceImportInvalidSchemaName();
 		_testPostPortalInstanceImportNonexistentDBPartition();
 		_testPostPortalInstanceImportSuccess();
 		_testPostPortalInstanceImportWithoutOmniadminPermission();
+	}
+
+	private void _assertPostPortalInstanceImportProblemTitle(
+			PortalInstanceImport portalInstanceImport, String title)
+		throws Exception {
+
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				_CLASS_NAME_PORTAL_INSTANCE_IMPORT_RESOURCE_IMPL,
+				LoggerTestUtil.ERROR)) {
+
+			portalInstanceImportResource.postPortalInstanceImport(
+				portalInstanceImport);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
+			Assert.assertEquals(title, problem.getTitle());
+		}
 	}
 
 	private PortalInstanceImportResource
@@ -296,6 +318,67 @@ public class PortalInstanceImportResourceTest
 		}
 		finally {
 			_deleteCompany(companyId);
+
+			_dropExportedSchema(companyId);
+		}
+	}
+
+	private void _testPostPortalInstanceImportExportedValuesInUse()
+		throws Exception {
+
+		String webId =
+			StringUtil.toLowerCase(RandomTestUtil.randomString()) + ".com";
+
+		Company company = CompanyTestUtil.addCompanyWithWebId(webId);
+
+		long companyId = company.getCompanyId();
+
+		try {
+			_companyLocalService.exportCompany(companyId);
+		}
+		finally {
+			_deleteCompany(companyId);
+		}
+
+		Company inUseCompany = CompanyTestUtil.addCompanyWithWebId(webId);
+
+		try {
+			PortalInstanceImport portalInstanceImport =
+				new PortalInstanceImport();
+
+			portalInstanceImport.setSchemaName(
+				DBPartitionUtil.getExportedPartitionName(companyId));
+			portalInstanceImport.setVirtualHost(
+				StringUtil.toLowerCase(RandomTestUtil.randomString()) + ".com");
+
+			_assertPostPortalInstanceImportProblemTitle(
+				portalInstanceImport, "Duplicate portal instance ID " + webId);
+
+			portalInstanceImport.setVirtualHost((String)null);
+			portalInstanceImport.setWebId(
+				StringUtil.toLowerCase(RandomTestUtil.randomString()));
+
+			_assertPostPortalInstanceImportProblemTitle(
+				portalInstanceImport, "Duplicate virtual hostname " + webId);
+
+			_deleteCompany(inUseCompany.getCompanyId());
+
+			inUseCompany = null;
+
+			portalInstanceImport.setWebId((String)null);
+
+			PortalInstance portalInstance =
+				portalInstanceImportResource.postPortalInstanceImport(
+					portalInstanceImport);
+
+			Assert.assertEquals(webId, portalInstance.getPortalInstanceId());
+
+			_deleteCompany(portalInstance.getCompanyId());
+		}
+		finally {
+			if (inUseCompany != null) {
+				_deleteCompany(inUseCompany.getCompanyId());
+			}
 
 			_dropExportedSchema(companyId);
 		}

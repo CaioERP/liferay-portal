@@ -24,6 +24,8 @@ import com.liferay.portal.kernel.dao.jdbc.CurrentConnectionUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataSourceWrapper;
 import com.liferay.portal.kernel.dao.jdbc.util.ConnectionWrapper;
 import com.liferay.portal.kernel.dao.jdbc.util.StatementWrapper;
+import com.liferay.portal.kernel.exception.CompanyVirtualHostException;
+import com.liferay.portal.kernel.exception.CompanyWebIdException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.instance.PortalInstancePool;
 import com.liferay.portal.kernel.log.Log;
@@ -1495,6 +1497,13 @@ public class DBPartitionUtil {
 					"Unable to insert the database partition " +
 						sourcePartitionName + " because it does not exist");
 			}
+
+			if (Validator.isNull(webId)) {
+				_validateWebId(connection, companyId, sourcePartitionName);
+			}
+
+			_validateVirtualHostnames(
+				connection, companyId, sourcePartitionName, virtualHostname);
 		}
 		catch (SQLException sqlException) {
 			throw new PortalException(sqlException);
@@ -1796,6 +1805,65 @@ public class DBPartitionUtil {
 			preparedStatement.setLong(2, companyId);
 
 			preparedStatement.executeUpdate();
+		}
+	}
+
+	private static void _validateVirtualHostnames(
+			Connection connection, long companyId, String partitionName,
+			String virtualHostname)
+		throws CompanyVirtualHostException, SQLException {
+
+		String sql = StringBundler.concat(
+			"select VirtualHost1.hostname from ", partitionName,
+			".VirtualHost VirtualHost1 inner join ", _defaultPartitionName,
+			".VirtualHost VirtualHost2 on VirtualHost1.hostname = ",
+			"VirtualHost2.hostname where VirtualHost1.companyId = ? and ",
+			"VirtualHost1.ctCollectionId = 0 and VirtualHost2.ctCollectionId ",
+			"= 0");
+
+		if (Validator.isNotNull(virtualHostname)) {
+			sql = StringBundler.concat(
+				sql, " and not (VirtualHost1.layoutSetId = 0 and ",
+				"VirtualHost1.defaultVirtualHost = ?)");
+		}
+
+		try (PreparedStatement preparedStatement = connection.prepareStatement(
+				sql)) {
+
+			preparedStatement.setLong(1, companyId);
+
+			if (Validator.isNotNull(virtualHostname)) {
+				preparedStatement.setBoolean(2, true);
+			}
+
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				if (resultSet.next()) {
+					throw new CompanyVirtualHostException(
+						"Duplicate virtual hostname " +
+							resultSet.getString("hostname"));
+				}
+			}
+		}
+	}
+
+	private static void _validateWebId(
+			Connection connection, long companyId, String partitionName)
+		throws CompanyWebIdException, SQLException {
+
+		try (PreparedStatement preparedStatement = connection.prepareStatement(
+				StringBundler.concat(
+					"select webId from ", partitionName,
+					".Company where companyId = ? and webId in (select webId ",
+					"from ", _defaultPartitionName, ".Company)"))) {
+
+			preparedStatement.setLong(1, companyId);
+
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				if (resultSet.next()) {
+					throw new CompanyWebIdException(
+						"Duplicate web ID " + resultSet.getString("webId"));
+				}
+			}
 		}
 	}
 
