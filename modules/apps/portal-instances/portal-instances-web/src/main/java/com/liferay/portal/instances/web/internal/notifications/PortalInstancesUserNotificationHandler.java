@@ -124,7 +124,8 @@ public class PortalInstancesUserNotificationHandler
 					jsonObject.getString("schemaName"));
 			}
 
-			return _getExportErrorMessage(jsonObject, serviceContext);
+			return _getErrorMessage(
+				jsonObject, serviceContext, jsonObject.getString("schemaName"));
 		}
 
 		if (operationType.equals(
@@ -148,38 +149,19 @@ public class PortalInstancesUserNotificationHandler
 	}
 
 	private String _getErrorMessage(
-		JSONObject jsonObject, ServiceContext serviceContext) {
+		JSONObject jsonObject, ServiceContext serviceContext,
+		Object... arguments) {
 
 		String errorMessageKey = jsonObject.getString("errorMessageKey");
 
 		if (Validator.isNotNull(errorMessageKey)) {
-			return serviceContext.translate(errorMessageKey);
+			return serviceContext.translate(errorMessageKey, arguments);
 		}
 
 		String errorMessage = jsonObject.getString("errorMessage");
 
 		if (Validator.isNotNull(errorMessage)) {
 			return HtmlUtil.escape(errorMessage);
-		}
-
-		return serviceContext.translate("an-unexpected-error-occurred");
-	}
-
-	private String _getExportErrorMessage(
-		JSONObject jsonObject, ServiceContext serviceContext) {
-
-		String errorMessageKey = jsonObject.getString("errorMessageKey");
-
-		if (Validator.isNotNull(errorMessageKey)) {
-			return serviceContext.translate(
-				errorMessageKey, jsonObject.getString("schemaName"));
-		}
-
-		String errorMessage = jsonObject.getString("errorMessage");
-
-		if (Validator.isNotNull(errorMessage)) {
-			return serviceContext.translate(
-				"export-failed-with-message-x", HtmlUtil.escape(errorMessage));
 		}
 
 		return serviceContext.translate("an-unexpected-error-occurred");

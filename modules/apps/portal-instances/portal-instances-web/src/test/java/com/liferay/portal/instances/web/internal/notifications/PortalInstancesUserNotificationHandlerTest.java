@@ -304,7 +304,7 @@ public class PortalInstancesUserNotificationHandlerTest {
 
 		Assert.assertEquals(
 			_toBodyHTML(
-				_toTranslation("export-failed-with-message-x", errorMessage),
+				errorMessage,
 				_toTranslation(
 					"the-instance-x-could-not-be-exported", portalInstanceId)),
 			_getBody(payloadJSONObject));
