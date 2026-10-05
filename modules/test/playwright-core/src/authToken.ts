@@ -15,14 +15,6 @@ export function clearAuthToken(page: Page) {
 	authTokens.delete(page.context());
 }
 
-export async function readAuthToken(page: Page) {
-	const authToken = await page.evaluate(() => Liferay.authToken);
-
-	authTokens.set(page.context(), authToken);
-
-	return authToken;
-}
-
 export async function getCSRFTokenHeader(page: Page) {
 	let authToken = authTokens.get(page.context());
 
@@ -43,4 +35,12 @@ export async function getHeader(
 		'Content-Type': contentType,
 		...(await getCSRFTokenHeader(page)),
 	};
+}
+
+export async function readAuthToken(page: Page) {
+	const authToken = await page.evaluate(() => Liferay.authToken);
+
+	authTokens.set(page.context(), authToken);
+
+	return authToken;
 }
