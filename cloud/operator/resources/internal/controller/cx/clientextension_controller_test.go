@@ -249,7 +249,8 @@ func TestReconcileDeliversExtProvisionConfigMap(t *testing.T) {
 		nil, t, clientExtension, newDxpMetadata("liferay-dev", "liferay.com"), newDxpNamespace("able"),
 	)
 
-	if phase, reason := reconcileClientExtension(clientExtension, clientExtensionReconciler, t); reason != ReasonDelivered {
+	if phase, reason := reconcileClientExtension(clientExtension, clientExtensionReconciler, t); (phase != cxv1alpha1.PhaseReady) || (reason !=
+		ReasonDelivered) {
 		t.Fatalf("Reconcile() = %s / %s, want %s / %s", phase, reason, cxv1alpha1.PhaseReady, ReasonDelivered)
 	}
 
@@ -310,7 +311,8 @@ func TestReconcileDeliversOnceVirtualInstanceAppears(t *testing.T) {
 		t.Fatal(error)
 	}
 
-	if phase, reason := reconcileClientExtension(clientExtension, clientExtensionReconciler, t); reason != ReasonDelivered {
+	if phase, reason := reconcileClientExtension(clientExtension, clientExtensionReconciler, t); (phase != cxv1alpha1.PhaseReady) || (reason !=
+		ReasonDelivered) {
 		t.Errorf("Reconcile() = %s / %s, want %s / %s", phase, reason, cxv1alpha1.PhaseReady, ReasonDelivered)
 	}
 
