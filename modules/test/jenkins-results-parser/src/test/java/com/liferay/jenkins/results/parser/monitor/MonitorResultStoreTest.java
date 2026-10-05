@@ -72,7 +72,7 @@ public class MonitorResultStoreTest
 		try {
 			monitorResults.add(_newMonitorResult());
 
-			Assert.fail("Expected UnsupportedOperationException");
+			Assert.fail();
 		}
 		catch (UnsupportedOperationException unsupportedOperationException) {
 		}
