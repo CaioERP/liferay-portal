@@ -85,7 +85,7 @@ public class MonitorResultStoreTest
 		try {
 			new MonitorResultStore(0);
 
-			Assert.fail("Expected IllegalArgumentException");
+			Assert.fail();
 		}
 		catch (IllegalArgumentException illegalArgumentException) {
 		}
