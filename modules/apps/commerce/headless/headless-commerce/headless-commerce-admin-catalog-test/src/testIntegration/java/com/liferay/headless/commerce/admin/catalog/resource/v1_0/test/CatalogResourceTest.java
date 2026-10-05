@@ -384,7 +384,7 @@ public class CatalogResourceTest extends BaseCatalogResourceTestCase {
 					testCompany.getCompanyId(), testCompany.getGroupId(), null,
 					null));
 
-		String filter = (String)parameters.get("filter");
+		String filterString = (String)parameters.get("filter");
 
 		List<CommerceCatalog> commerceCatalogs =
 			_commerceCatalogLocalService.getCommerceCatalogs(
@@ -395,12 +395,12 @@ public class CatalogResourceTest extends BaseCatalogResourceTestCase {
 		Assert.assertEquals(
 			"externalReferenceCode ne '" +
 				commerceCatalog.getExternalReferenceCode() + "'",
-			filter);
+			filterString);
 
 		Catalog postCatalog = catalogResource.postCatalog(randomCatalog());
 
 		Page<Catalog> page = catalogResource.getCatalogsPage(
-			null, filter, Pagination.of(1, 100), null);
+			null, filterString, Pagination.of(1, 100), null);
 
 		List<String> externalReferenceCodes = TransformUtil.transform(
 			page.getItems(), Catalog::getExternalReferenceCode);
