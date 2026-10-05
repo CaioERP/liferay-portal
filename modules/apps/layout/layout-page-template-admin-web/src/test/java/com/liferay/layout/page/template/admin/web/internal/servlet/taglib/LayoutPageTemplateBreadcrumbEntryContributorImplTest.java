@@ -7,6 +7,7 @@ package com.liferay.layout.page.template.admin.web.internal.servlet.taglib;
 
 import com.liferay.design.library.util.DesignLibraryUtil;
 import com.liferay.layout.page.template.admin.constants.LayoutPageTemplateAdminPortletKeys;
+import com.liferay.layout.page.template.admin.web.internal.security.permission.resource.LayoutPageTemplateCollectionPermission;
 import com.liferay.layout.page.template.admin.web.internal.util.LayoutPageTemplatePortletUtil;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateCollectionTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
@@ -53,6 +54,7 @@ public class LayoutPageTemplateBreadcrumbEntryContributorImplTest {
 	@Before
 	public void setUp() {
 		_setUpLayoutPageTemplateBreadcrumbEntryContributorImpl();
+		_setUpLayoutPageTemplateCollectionPermission();
 		_setUpMockHttpServletRequest();
 		_setUpPortal();
 	}
@@ -60,6 +62,7 @@ public class LayoutPageTemplateBreadcrumbEntryContributorImplTest {
 	@After
 	public void tearDown() {
 		_designLibraryUtilMockedStatic.close();
+		_layoutPageTemplateCollectionPermissionMockedStatic.close();
 		_layoutPageTemplatePortletUtilMockedStatic.close();
 	}
 
@@ -105,6 +108,16 @@ public class LayoutPageTemplateBreadcrumbEntryContributorImplTest {
 			_portal);
 	}
 
+	private void _setUpLayoutPageTemplateCollectionPermission() {
+		_layoutPageTemplateCollectionPermissionMockedStatic.when(
+			() -> LayoutPageTemplateCollectionPermission.contains(
+				Mockito.any(), Mockito.any(LayoutPageTemplateCollection.class),
+				Mockito.anyString())
+		).thenReturn(
+			true
+		);
+	}
+
 	private void _setUpLayoutPageTemplateCollections(
 		LayoutPageTemplateCollection... layoutPageTemplateCollections) {
 
@@ -124,8 +137,6 @@ public class LayoutPageTemplateBreadcrumbEntryContributorImplTest {
 		).thenReturn(
 			layoutPageTemplateCollection
 		);
-
-		Mockito.clearInvocations(_portletURL);
 	}
 
 	private void _setUpLayoutPageTemplatesPortletInDesignLibraryScope() {
@@ -173,12 +184,14 @@ public class LayoutPageTemplateBreadcrumbEntryContributorImplTest {
 	}
 
 	private void _testGetBreadcrumbEntriesWithAncestors() {
+		Mockito.clearInvocations(_portletURL);
+
 		_setUpLayoutPageTemplatesPortletInDesignLibraryScope();
 
-		LayoutPageTemplateCollection rootLayoutPageTemplateCollection =
+		LayoutPageTemplateCollection layoutPageTemplateCollection =
 			_mockLayoutPageTemplateCollection(
 				LayoutPageTemplateCollectionTypeConstants.DISPLAY_PAGE);
-		LayoutPageTemplateCollection layoutPageTemplateCollection =
+		LayoutPageTemplateCollection rootLayoutPageTemplateCollection =
 			_mockLayoutPageTemplateCollection(
 				LayoutPageTemplateCollectionTypeConstants.DISPLAY_PAGE);
 
@@ -217,6 +230,8 @@ public class LayoutPageTemplateBreadcrumbEntryContributorImplTest {
 	}
 
 	private void _testGetBreadcrumbEntriesWithLayoutPageTemplateCollection() {
+		Mockito.clearInvocations(_portletURL);
+
 		_setUpLayoutPageTemplatesPortletInDesignLibraryScope();
 
 		BreadcrumbEntry originalBreadcrumbEntry = new BreadcrumbEntry();
@@ -305,6 +320,9 @@ public class LayoutPageTemplateBreadcrumbEntryContributorImplTest {
 	private final LayoutPageTemplateBreadcrumbEntryContributorImpl
 		_layoutPageTemplateBreadcrumbEntryContributorImpl =
 			new LayoutPageTemplateBreadcrumbEntryContributorImpl();
+	private final MockedStatic<LayoutPageTemplateCollectionPermission>
+		_layoutPageTemplateCollectionPermissionMockedStatic =
+			Mockito.mockStatic(LayoutPageTemplateCollectionPermission.class);
 	private final MockedStatic<LayoutPageTemplatePortletUtil>
 		_layoutPageTemplatePortletUtilMockedStatic = Mockito.mockStatic(
 			LayoutPageTemplatePortletUtil.class);
