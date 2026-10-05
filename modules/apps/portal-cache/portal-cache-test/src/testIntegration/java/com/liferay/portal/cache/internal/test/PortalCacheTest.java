@@ -34,7 +34,7 @@ public class PortalCacheTest {
 		new LiferayIntegrationTestRule();
 
 	@Test
-	public void testPutWithTimeToLive() throws Exception {
+	public void testPut() throws Exception {
 		List<PortalCache<String, String>> portalCaches = Arrays.asList(
 			PortalCacheHelperUtil.getPortalCache(
 				PortalCacheManagerNames.MULTI_VM, "test.cache.multi"),
