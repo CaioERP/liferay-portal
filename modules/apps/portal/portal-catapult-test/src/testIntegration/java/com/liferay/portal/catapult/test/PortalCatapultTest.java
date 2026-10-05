@@ -90,9 +90,9 @@ public class PortalCatapultTest {
 			List<String> headerValues = clientExtensionHttpServer._getHeaders(
 				_HEADER_NAME);
 
+			Assert.assertEquals(value, headerValues.get(0));
 			Assert.assertEquals(
 				headerValues.toString(), 1, headerValues.size());
-			Assert.assertEquals(value, headerValues.get(0));
 
 			List<String> authorizations = clientExtensionHttpServer._getHeaders(
 				HttpHeaders.AUTHORIZATION);
@@ -109,9 +109,9 @@ public class PortalCatapultTest {
 				HttpHeaders.CONTENT_TYPE);
 
 			Assert.assertEquals(
-				contentTypes.toString(), 1, contentTypes.size());
-			Assert.assertEquals(
 				ContentTypes.APPLICATION_JSON, contentTypes.get(0));
+			Assert.assertEquals(
+				contentTypes.toString(), 1, contentTypes.size());
 
 			Assert.assertEquals(
 				payloadJSONObject.toString(),
@@ -146,7 +146,7 @@ public class PortalCatapultTest {
 		}
 	}
 
-	private OAuth2Application _addOAuth2Application(String homePageURL)
+	private OAuth2Application _addOrUpdateOAuth2Application(String homePageURL)
 		throws Exception {
 
 		User user = UserTestUtil.getAdminUser(TestPropsValues.getCompanyId());
@@ -179,7 +179,7 @@ public class PortalCatapultTest {
 				portalCatapultHeaderContributor, null);
 
 		try {
-			OAuth2Application oAuth2Application = _addOAuth2Application(
+			OAuth2Application oAuth2Application = _addOrUpdateOAuth2Application(
 				clientExtensionHttpServer._getURL());
 
 			try {
