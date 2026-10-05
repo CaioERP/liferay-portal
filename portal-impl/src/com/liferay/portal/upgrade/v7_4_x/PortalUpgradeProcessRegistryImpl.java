@@ -846,7 +846,7 @@ public class PortalUpgradeProcessRegistryImpl
 				"LayoutSetPrototype", "description", "TEXT null"));
 
 		upgradeVersionTreeMap.put(
-			new Version(39, 0, 2), new GroupCompanyGroupKeyUpgradeProcess());
+			new Version(39, 0, 2), new GroupGroupKeyUpgradeProcess());
 	}
 
 }
