@@ -25,13 +25,13 @@ public class ConnectionUtilTest {
 
 	@Test
 	public void testGetConnection() throws Exception {
-		Connection currentConnection = Mockito.mock(Connection.class);
+		Connection connection1 = Mockito.mock(Connection.class);
 
 		SQLException sqlException1 = new SQLException(
 			RandomTestUtil.randomString());
 
 		Mockito.when(
-			currentConnection.prepareStatement(Mockito.anyString())
+			connection1.prepareStatement(Mockito.anyString())
 		).thenThrow(
 			sqlException1
 		);
@@ -45,19 +45,19 @@ public class ConnectionUtilTest {
 			currentConnectionUtilMockedStatic.when(
 				() -> CurrentConnectionUtil.getConnection(dataSource)
 			).thenReturn(
-				currentConnection
+				connection1
 			);
 
-			Connection connection = ConnectionUtil.getConnection(dataSource);
+			Connection connection2 = ConnectionUtil.getConnection(dataSource);
 
-			connection.close();
+			connection2.close();
 
 			Mockito.verify(
-				currentConnection, Mockito.never()
+				connection1, Mockito.never()
 			).close();
 
 			try {
-				connection.prepareStatement(RandomTestUtil.randomString());
+				connection2.prepareStatement(RandomTestUtil.randomString());
 
 				Assert.fail();
 			}
