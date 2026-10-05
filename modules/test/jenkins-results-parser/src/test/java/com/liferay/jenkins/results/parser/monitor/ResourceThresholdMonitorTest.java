@@ -436,7 +436,7 @@ public class ResourceThresholdMonitorTest
 		try {
 			_newMonitor(monitorProperties);
 
-			Assert.fail("Expected IllegalArgumentException");
+			Assert.fail();
 		}
 		catch (IllegalArgumentException illegalArgumentException) {
 			String message = illegalArgumentException.getMessage();
@@ -663,7 +663,7 @@ public class ResourceThresholdMonitorTest
 		try {
 			_newMonitor(monitorProperties);
 
-			Assert.fail("Expected IllegalArgumentException");
+			Assert.fail();
 		}
 		catch (IllegalArgumentException illegalArgumentException) {
 		}
@@ -704,7 +704,7 @@ public class ResourceThresholdMonitorTest
 		try {
 			_newMonitor(monitorProperties);
 
-			Assert.fail("Expected IllegalArgumentException");
+			Assert.fail();
 		}
 		catch (IllegalArgumentException illegalArgumentException) {
 			String message = illegalArgumentException.getMessage();

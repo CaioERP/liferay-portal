@@ -127,9 +127,8 @@ public class ResourceThresholdMonitor extends BaseMonitor {
 	}
 
 	private Double _getDiskUsedPercentage() throws IOException {
-		PrometheusScrape prometheusScrape = _getPrometheusScrape();
-
 		String expectedFileStore = _getExpectedFileStore();
+		PrometheusScrape prometheusScrape = _getPrometheusScrape();
 
 		Double capacity = prometheusScrape.getValue(
 			"file_store", expectedFileStore,
@@ -182,9 +181,8 @@ public class ResourceThresholdMonitor extends BaseMonitor {
 			return null;
 		}
 
-		PrometheusScrape prometheusScrape = _getPrometheusScrape();
-
 		String fileStorePrefix = _selector + " (";
+		PrometheusScrape prometheusScrape = _getPrometheusScrape();
 
 		PrometheusScrape.Sample sample = prometheusScrape.getSample(
 			"file_store", fileStorePrefix,
