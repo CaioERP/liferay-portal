@@ -978,6 +978,12 @@ export class PageEditorPage {
 		await this.waitForChangesSaved();
 	}
 
+	async deselectItem() {
+		await this.page
+			.locator('.page-editor__theme-adapter-buttons')
+			.dispatchEvent('click');
+	}
+
 	async dragToFragment({
 		drop = true,
 		position,
