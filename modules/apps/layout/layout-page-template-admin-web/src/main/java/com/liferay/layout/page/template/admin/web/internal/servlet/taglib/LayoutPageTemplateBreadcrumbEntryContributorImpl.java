@@ -7,11 +7,13 @@ package com.liferay.layout.page.template.admin.web.internal.servlet.taglib;
 
 import com.liferay.design.library.util.DesignLibraryUtil;
 import com.liferay.layout.page.template.admin.constants.LayoutPageTemplateAdminPortletKeys;
+import com.liferay.layout.page.template.admin.web.internal.security.permission.resource.LayoutPageTemplateCollectionPermission;
 import com.liferay.layout.page.template.admin.web.internal.util.LayoutPageTemplatePortletUtil;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateCollectionTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry;
 import com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntryContributor;
 import com.liferay.portal.kernel.theme.PortletDisplay;
@@ -75,10 +77,18 @@ public class LayoutPageTemplateBreadcrumbEntryContributorImpl
 
 		List<BreadcrumbEntry> breadcrumbEntries = TransformUtil.transform(
 			layoutPageTemplateCollections,
-			curLayoutPageTemplateCollection ->
-				_createLayoutPageTemplateCollectionBreadcrumbEntry(
+			curLayoutPageTemplateCollection -> {
+				if (!LayoutPageTemplateCollectionPermission.contains(
+						themeDisplay.getPermissionChecker(),
+						curLayoutPageTemplateCollection, ActionKeys.VIEW)) {
+
+					return null;
+				}
+
+				return _createLayoutPageTemplateCollectionBreadcrumbEntry(
 					httpServletRequest, curLayoutPageTemplateCollection,
-					themeDisplay));
+					themeDisplay);
+			});
 
 		breadcrumbEntries.addAll(originalBreadcrumbEntries);
 
