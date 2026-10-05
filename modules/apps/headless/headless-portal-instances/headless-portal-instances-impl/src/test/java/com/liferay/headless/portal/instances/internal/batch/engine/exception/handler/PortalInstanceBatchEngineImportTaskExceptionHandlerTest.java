@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.exception.CompanyVirtualHostException;
 import com.liferay.portal.kernel.exception.CompanyWebIdException;
 import com.liferay.portal.kernel.exception.ContactNameException;
 import com.liferay.portal.kernel.exception.NoSuchCompanyException;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.RequiredCompanyException;
 import com.liferay.portal.kernel.exception.UserEmailAddressException;
 import com.liferay.portal.kernel.exception.UserPasswordException;
@@ -195,6 +196,7 @@ public class PortalInstanceBatchEngineImportTaskExceptionHandlerTest {
 			null,
 			new NoSuchCompanyException(
 				"No Company exists with the key {webId=missing}"));
+		_assertErrorMessageKey(null, new PortalException(new Exception()));
 		_assertErrorMessageKey(
 			"please-enter-a-valid-email-address",
 			new UserEmailAddressException.MustNotBeNull());
@@ -205,6 +207,9 @@ public class PortalInstanceBatchEngineImportTaskExceptionHandlerTest {
 		_assertErrorMessageKey(
 			"please-enter-a-valid-first-name",
 			new ContactNameException.MustHaveFirstName());
+		_assertErrorMessageKey(
+			"please-enter-a-valid-first-name",
+			new PortalException(new ContactNameException.MustHaveFirstName()));
 		_assertErrorMessageKey(
 			"please-enter-a-valid-last-name",
 			new ContactNameException.MustHaveLastName());
@@ -217,8 +222,16 @@ public class PortalInstanceBatchEngineImportTaskExceptionHandlerTest {
 			new ContactNameException.MustHaveMiddleName());
 		_assertErrorMessageKey(
 			"please-enter-a-valid-password",
+			new PortalException(
+				new UserPasswordException.MustHaveMoreNumbers(
+					RandomTestUtil.randomInt())));
+		_assertErrorMessageKey(
+			"please-enter-a-valid-password",
 			new UserPasswordException.MustHaveMoreNumbers(
 				RandomTestUtil.randomInt()));
+		_assertErrorMessageKey(
+			"please-enter-a-valid-screen-name",
+			new PortalException(new UserScreenNameException.MustNotBeNull()));
 		_assertErrorMessageKey(
 			"please-enter-a-valid-screen-name",
 			new UserScreenNameException.MustNotBeNull());

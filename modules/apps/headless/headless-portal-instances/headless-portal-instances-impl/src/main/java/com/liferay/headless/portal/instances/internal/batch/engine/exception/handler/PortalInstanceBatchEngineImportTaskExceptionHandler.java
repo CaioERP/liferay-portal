@@ -167,51 +167,59 @@ public class PortalInstanceBatchEngineImportTaskExceptionHandler
 			return _getImportErrorMessageKey(exception);
 		}
 
-		if (exception instanceof CompanyMaxUsersException) {
+		Throwable throwable = exception;
+
+		if (Objects.equals(exception.getClass(), PortalException.class) &&
+			(exception.getCause() != null)) {
+
+			throwable = exception.getCause();
+		}
+
+		if (throwable instanceof CompanyMaxUsersException) {
 			return "please-enter-a-valid-max-users";
 		}
 
-		if (exception instanceof CompanyMxException) {
+		if (throwable instanceof CompanyMxException) {
 			return "please-enter-a-valid-mail-domain";
 		}
 
-		if (exception instanceof CompanyVirtualHostException) {
+		if (throwable instanceof CompanyVirtualHostException) {
 			return "please-enter-a-valid-virtual-host";
 		}
 
-		if (exception instanceof CompanyWebIdException) {
+		if (throwable instanceof CompanyWebIdException) {
 			return "please-enter-a-valid-web-id";
 		}
 
-		if (exception instanceof ContactNameException.MustHaveFirstName) {
+		if (throwable instanceof ContactNameException.MustHaveFirstName) {
 			return "please-enter-a-valid-first-name";
 		}
 
-		if (exception instanceof ContactNameException.MustHaveLastName) {
+		if (throwable instanceof ContactNameException.MustHaveLastName) {
 			return "please-enter-a-valid-last-name";
 		}
 
-		if (exception instanceof ContactNameException.MustHaveMiddleName) {
+		if (throwable instanceof ContactNameException.MustHaveMiddleName) {
 			return "please-enter-a-valid-middle-name";
 		}
 
-		if (exception instanceof ContactNameException.MustHaveValidFullName) {
+		if (throwable instanceof ContactNameException.MustHaveValidFullName) {
 			return "please-enter-a-valid-first-middle-and-last-name";
 		}
 
-		if (exception instanceof RequiredCompanyException) {
+		if (throwable instanceof RequiredCompanyException) {
 			return "the-default-instance-cannot-be-deleted";
 		}
 
-		if (exception instanceof UserEmailAddressException) {
+		if (throwable instanceof UserEmailAddressException) {
 			return "please-enter-a-valid-email-address";
 		}
 
-		if (exception instanceof UserPasswordException) {
+		if (throwable instanceof UserPasswordException) {
 			return "please-enter-a-valid-password";
 		}
 
-		if (exception instanceof UserScreenNameException) {
+		if (throwable instanceof UserScreenNameException) {
 			return "please-enter-a-valid-screen-name";
 		}
 
