@@ -43,7 +43,6 @@ import DefaultPermissionModalContent from '../default_permission/DefaultPermissi
 import openResetAssetPermissionModal from '../default_permission/ResetPermissionModalContent';
 import {handleFindAndReplace} from '../find_and_replace/utils/handleFindAndReplace';
 import AssetTypeInfoPanel from '../info_panel/AssetTypeInfoPanelContent';
-import EditImageModalContent from '../modal/EditImageModalContent';
 import ExportTranslationModalContent from '../modal/ExportTranslationModalContent';
 import AssetNavigationModalContent from '../modal/asset_navigation_view/AssetNavigationModalContent';
 import AddAssetsToProjectModalContent from '../projects/modal/AddAssetsToProjectModalContent';
@@ -54,6 +53,7 @@ import deleteAssetEntriesBulkAction, {
 } from './actions/deleteAssetEntriesBulkAction';
 import deleteItemAction from './actions/deleteItemAction';
 import duplicateBulkAction from './actions/duplicateBulkAction';
+import editImageAction, {isEditableImage} from './actions/editImageAction';
 import executeResetPermissionObjectBulkSelectionAction from './actions/executeResetPermissionObjectBulkSelectionAction';
 import expireEntriesBulkAction from './actions/expireEntriesBulkAction';
 import exportTranslationBulkAction from './actions/exportTranslationBulkAction';
@@ -426,9 +426,9 @@ export default function AssetsFDSPropsTransformer({
 				return {
 					...action,
 					isVisible: (item: any) =>
-						Boolean(item?.embedded?.file?.link?.href) &&
-						additionalProps.editableImageMIMETypes.includes(
-							item?.embedded?.file?.mimeType
+						isEditableImage(
+							item,
+							additionalProps.editableImageMIMETypes
 						),
 				};
 			}
@@ -558,20 +558,7 @@ export default function AssetsFDSPropsTransformer({
 			else if (action?.data?.id === 'edit-image') {
 				event?.preventDefault();
 
-				openCMSModal({
-					contentComponent: ({
-						closeModal,
-					}: {
-						closeModal: () => void;
-					}) =>
-						EditImageModalContent({
-							closeModal,
-							file: itemData.embedded.file,
-							loadData,
-							updateURL: itemData.actions.update.href,
-						}),
-					size: 'full-screen',
-				});
+				editImageAction(itemData, loadData);
 			}
 			else if (
 				action?.data?.id === 'default-permissions' ||
