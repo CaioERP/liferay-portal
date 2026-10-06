@@ -120,20 +120,17 @@ public class DesignLibraryUtilTest {
 
 		Assert.assertArrayEquals(
 			new long[0],
-			DesignLibraryUtil.fetchConnectedDesignLibraryGroupIds(groupId));
-
+			DesignLibraryUtil.fetchConnectedDesignLibraryGroupIds(0));
 		Assert.assertArrayEquals(
 			new long[0],
 			DesignLibraryUtil.fetchConnectedDesignLibraryGroupIds(
 				RandomTestUtil.randomLong()));
-
 		Assert.assertArrayEquals(
 			new long[0],
-			DesignLibraryUtil.fetchConnectedDesignLibraryGroupIds(0));
+			DesignLibraryUtil.fetchConnectedDesignLibraryGroupIds(groupId));
 
 		_groupLocalServiceUtilMockedStatic.verify(
 			() -> GroupLocalServiceUtil.fetchGroup(0), Mockito.never());
-
 		_groupLocalServiceUtilMockedStatic.verify(
 			() -> GroupLocalServiceUtil.getGroup(Mockito.anyLong()),
 			Mockito.never());
