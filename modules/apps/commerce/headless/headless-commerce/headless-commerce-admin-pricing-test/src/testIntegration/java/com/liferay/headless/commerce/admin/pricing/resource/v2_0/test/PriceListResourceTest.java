@@ -600,6 +600,7 @@ public class PriceListResourceTest extends BasePriceListResourceTestCase {
 		PriceList priceList = randomPriceList();
 
 		priceList.setCatalogBasePriceList(true);
+		priceList.setNeverExpire(true);
 
 		try (SafeCloseable safeCloseable =
 				LazyReferencingTestUtil.setLazyReferencingWithSafeCloseable(
