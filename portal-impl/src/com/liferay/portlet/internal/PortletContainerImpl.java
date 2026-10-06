@@ -978,7 +978,6 @@ public class PortletContainerImpl implements PortletContainer {
 		portletDisplay.setPortletName(portletConfig.getPortletName());
 		portletDisplay.setResourcePK(portletPrimaryKey);
 		portletDisplay.setRootPortletId(portlet.getRootPortletId());
-
 		portletDisplay.setWebDAVEnabledSupplier(
 			() -> portlet.getWebDAVStorageInstance() != null);
 
