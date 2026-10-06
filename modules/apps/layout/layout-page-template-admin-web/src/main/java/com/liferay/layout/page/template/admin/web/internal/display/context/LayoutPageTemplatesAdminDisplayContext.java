@@ -127,14 +127,19 @@ public class LayoutPageTemplatesAdminDisplayContext {
 			return _tabs1;
 		}
 
-		String defaultTabs1 = "master-layouts";
-
 		if (DesignLibraryUtil.isDesignLibraryScope(group)) {
-			defaultTabs1 = "page-templates";
+			_tabs1 = ParamUtil.getString(
+				_liferayPortletRequest, "tabs1", "page-templates");
+
+			if (!Objects.equals(_tabs1, "display-page-templates")) {
+				_tabs1 = "page-templates";
+			}
+
+			return _tabs1;
 		}
 
 		_tabs1 = ParamUtil.getString(
-			_liferayPortletRequest, "tabs1", defaultTabs1);
+			_liferayPortletRequest, "tabs1", "master-layouts");
 
 		return _tabs1;
 	}
