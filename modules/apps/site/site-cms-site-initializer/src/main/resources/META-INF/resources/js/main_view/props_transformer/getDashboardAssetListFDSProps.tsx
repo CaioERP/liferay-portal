@@ -24,6 +24,7 @@ import AssetNavigationModalContent from '../modal/asset_navigation_view/AssetNav
 import {AdditionalProps} from './AssetsFDSPropsTransformer';
 import ACTIONS from './actions/creationMenuActions';
 import deleteItemAction from './actions/deleteItemAction';
+import editImageAction, {isEditableImage} from './actions/editImageAction';
 import openFolderItemSelectorAction from './actions/openFolderItemSelectorAction';
 import shareAction from './actions/shareAction';
 import AssetRenderer from './cell_renderers/AssetRenderer';
@@ -53,6 +54,7 @@ export type DashboardAssetListAdditionalProps = Pick<
 		Pick<
 			AdditionalProps,
 			| 'additionalAPIURLParameters'
+			| 'editableImageMIMETypes'
 			| 'rootObjectEntryFolderExternalReferenceCode'
 		>
 	>;
@@ -127,6 +129,16 @@ export default function getDashboardAssetListFDSProps({
 					...action,
 					isVisible: (item: any) =>
 						Boolean(item?.embedded?.file?.link?.href),
+				};
+			}
+			else if (action?.data?.id === 'edit-image') {
+				return {
+					...action,
+					isVisible: (item: any) =>
+						isEditableImage(
+							item,
+							additionalProps.editableImageMIMETypes
+						),
 				};
 			}
 			else if (
@@ -241,6 +253,11 @@ export default function getDashboardAssetListFDSProps({
 						loadData
 					);
 				}
+			}
+			else if (action?.data?.id === 'edit-image') {
+				event?.preventDefault();
+
+				editImageAction(itemData, loadData);
 			}
 			else if (action?.data?.id === 'export-for-translation') {
 				event?.preventDefault();
