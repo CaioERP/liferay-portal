@@ -333,55 +333,42 @@ public class PortalInstanceImportResourceTest
 
 		long companyId = company.getCompanyId();
 
-		try {
-			_companyLocalService.exportCompany(companyId);
-		}
-		finally {
-			_deleteCompany(companyId);
-		}
+		_companyLocalService.exportCompany(companyId);
+
+		_deleteCompany(companyId);
 
 		Company inUseCompany = CompanyTestUtil.addCompanyWithWebId(webId);
 
-		try {
-			PortalInstanceImport portalInstanceImport =
-				new PortalInstanceImport();
+		PortalInstanceImport portalInstanceImport = new PortalInstanceImport();
 
-			portalInstanceImport.setSchemaName(
-				DBPartitionUtil.getExportedPartitionName(companyId));
-			portalInstanceImport.setVirtualHost(
-				StringUtil.toLowerCase(RandomTestUtil.randomString()) + ".com");
+		portalInstanceImport.setSchemaName(
+			DBPartitionUtil.getExportedPartitionName(companyId));
+		portalInstanceImport.setVirtualHost(
+			StringUtil.toLowerCase(RandomTestUtil.randomString()) + ".com");
 
-			_assertPostPortalInstanceImportProblemTitle(
-				portalInstanceImport, "Duplicate portal instance ID " + webId);
+		_assertPostPortalInstanceImportProblemTitle(
+			portalInstanceImport, "Duplicate portal instance ID " + webId);
 
-			portalInstanceImport.setVirtualHost((String)null);
-			portalInstanceImport.setWebId(
-				StringUtil.toLowerCase(RandomTestUtil.randomString()));
+		portalInstanceImport.setVirtualHost((String)null);
+		portalInstanceImport.setWebId(
+			StringUtil.toLowerCase(RandomTestUtil.randomString()));
 
-			_assertPostPortalInstanceImportProblemTitle(
-				portalInstanceImport, "Duplicate virtual hostname " + webId);
+		_assertPostPortalInstanceImportProblemTitle(
+			portalInstanceImport, "Duplicate virtual hostname " + webId);
 
-			_deleteCompany(inUseCompany.getCompanyId());
+		_deleteCompany(inUseCompany.getCompanyId());
 
-			inUseCompany = null;
+		portalInstanceImport.setWebId((String)null);
 
-			portalInstanceImport.setWebId((String)null);
+		PortalInstance portalInstance =
+			portalInstanceImportResource.postPortalInstanceImport(
+				portalInstanceImport);
 
-			PortalInstance portalInstance =
-				portalInstanceImportResource.postPortalInstanceImport(
-					portalInstanceImport);
+		Assert.assertEquals(webId, portalInstance.getPortalInstanceId());
 
-			Assert.assertEquals(webId, portalInstance.getPortalInstanceId());
+		_deleteCompany(portalInstance.getCompanyId());
 
-			_deleteCompany(portalInstance.getCompanyId());
-		}
-		finally {
-			if (inUseCompany != null) {
-				_deleteCompany(inUseCompany.getCompanyId());
-			}
-
-			_dropExportedSchema(companyId);
-		}
+		_dropExportedSchema(companyId);
 	}
 
 	private void _testPostPortalInstanceImportInvalidSchemaName()
