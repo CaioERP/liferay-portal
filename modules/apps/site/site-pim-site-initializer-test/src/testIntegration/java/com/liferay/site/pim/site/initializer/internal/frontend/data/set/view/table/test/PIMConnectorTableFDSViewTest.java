@@ -56,25 +56,24 @@ public class PIMConnectorTableFDSViewTest {
 			Arrays.asList("name", "key", "dateModified", "active"),
 			new ArrayList<>(_fdsTableSchemaFieldsMap.keySet()));
 
-		_assertFDSTableSchemaField(
-			"statusTableCellRenderer", "status", "active", false);
-		_assertFDSTableSchemaField(
-			"dateTime", "modified", "dateModified", true);
-		_assertFDSTableSchemaField(null, "connector", "key", false);
-		_assertFDSTableSchemaField(
-			"nameTableCellRenderer", "name", "name", false);
+		_testGetFDSTableSchema(
+			"dateTime", "dateModified", "modified", true);
+		_testGetFDSTableSchema("nameTableCellRenderer", "name", "name", false);
+		_testGetFDSTableSchema(
+			"statusTableCellRenderer", "active", "status", false);
+		_testGetFDSTableSchema(null, "key", "connector", false);
 	}
 
-	private void _assertFDSTableSchemaField(
-		String expectedContentRenderer, String expectedLabel, String fieldName,
+	private void _testGetFDSTableSchema(
+		String contentRenderer, String fieldName, String label,
 		boolean sortable) {
 
 		FDSTableSchemaField fdsTableSchemaField = _fdsTableSchemaFieldsMap.get(
 			fieldName);
 
 		Assert.assertEquals(
-			expectedContentRenderer, fdsTableSchemaField.getContentRenderer());
-		Assert.assertEquals(expectedLabel, fdsTableSchemaField.getLabel());
+			contentRenderer, fdsTableSchemaField.getContentRenderer());
+		Assert.assertEquals(label, fdsTableSchemaField.getLabel());
 		Assert.assertEquals(sortable, fdsTableSchemaField.isSortable());
 	}
 
