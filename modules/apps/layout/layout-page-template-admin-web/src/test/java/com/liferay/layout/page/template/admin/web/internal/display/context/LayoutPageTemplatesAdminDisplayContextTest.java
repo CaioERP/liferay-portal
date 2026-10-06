@@ -192,6 +192,10 @@ public class LayoutPageTemplatesAdminDisplayContextTest {
 		_setUpTabs1("display-page-templates");
 
 		Assert.assertEquals("display-page-templates", _getTabs1());
+
+		_setUpTabs1("master-layouts");
+
+		Assert.assertEquals("page-templates", _getTabs1());
 	}
 
 	@Test
