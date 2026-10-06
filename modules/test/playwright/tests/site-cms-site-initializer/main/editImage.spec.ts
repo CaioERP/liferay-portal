@@ -118,9 +118,9 @@ test(
 );
 
 test(
-	'Offers the Edit Image action only on editable images in the All and Files sections',
+	'Offers the Edit Image action only on editable images in the Home, All and Files sections',
 	{tag: '@LPD-92181'},
-	async ({apiHelpers, assetsPage, page}) => {
+	async ({apiHelpers, assetsPage, homePage, page}) => {
 		const imageTitle = `image ${getRandomString()}`;
 		const textTitle = `text ${getRandomString()}`;
 		const vectorTitle = `vector ${getRandomString()}`;
@@ -198,6 +198,10 @@ test(
 		};
 
 		try {
+			await homePage.goto();
+
+			await expectEditImageOnlyOnTheImage();
+
 			await assetsPage.gotoAll();
 
 			await expectEditImageOnlyOnTheImage();
