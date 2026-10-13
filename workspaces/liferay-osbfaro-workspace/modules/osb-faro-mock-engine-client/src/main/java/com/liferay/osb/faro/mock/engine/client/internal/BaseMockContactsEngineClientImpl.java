@@ -87,10 +87,10 @@ public abstract class BaseMockContactsEngineClientImpl
 	@Override
 	public AccountLifecycle addAccountLifecycle(
 		FaroProject faroProject, AccountLifecycle accountLifecycle,
-		String channelId) {
+		String channelId, long userId) {
 
 		return contactsEngineClient.addAccountLifecycle(
-			faroProject, accountLifecycle, channelId);
+			faroProject, accountLifecycle, channelId, userId);
 	}
 
 	@Override
@@ -431,12 +431,13 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
-	public List<AccountLifecycle> getAccountLifecycles(
-			FaroProject faroProject, Long channelId)
+	public Results<AccountLifecycle> getAccountLifecycles(
+			FaroProject faroProject, Long channelId, Boolean isDefault,
+			String query, int cur, int delta, String sortString)
 		throws FaroEngineClientException {
 
 		return contactsEngineClient.getAccountLifecycles(
-			faroProject, channelId);
+			faroProject, channelId, isDefault, query, cur, delta, sortString);
 	}
 
 	@Override
@@ -1329,6 +1330,14 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public AccountLifecycle patchAccountLifecycle(
+		FaroProject faroProject, String id, Boolean isDefault) {
+
+		return contactsEngineClient.patchAccountLifecycle(
+			faroProject, id, isDefault);
+	}
+
+	@Override
 	public Channel patchChannel(
 		FaroProject faroProject, String id, String name) {
 
@@ -1410,10 +1419,11 @@ public abstract class BaseMockContactsEngineClientImpl
 
 	@Override
 	public AccountLifecycle updateAccountLifecycle(
-		FaroProject faroProject, AccountLifecycle accountLifecycle) {
+		FaroProject faroProject, AccountLifecycle accountLifecycle,
+		long userId) {
 
 		return contactsEngineClient.updateAccountLifecycle(
-			faroProject, accountLifecycle);
+			faroProject, accountLifecycle, userId);
 	}
 
 	@Override

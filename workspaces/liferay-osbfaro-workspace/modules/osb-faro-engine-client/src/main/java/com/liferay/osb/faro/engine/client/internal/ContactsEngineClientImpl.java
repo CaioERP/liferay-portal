@@ -141,7 +141,9 @@ public class ContactsEngineClientImpl
 	@Override
 	public AccountLifecycle addAccountLifecycle(
 		FaroProject faroProject, AccountLifecycle accountLifecycle,
-		String channelId) {
+		String channelId, long userId) {
+
+		_setAuthor(accountLifecycle, userId);
 
 		Map<String, Object> uriVariables = getUriVariables(faroProject);
 
@@ -946,21 +948,42 @@ public class ContactsEngineClientImpl
 	}
 
 	@Override
-	public List<AccountLifecycle> getAccountLifecycles(
-			FaroProject faroProject, Long channelId)
+	public Results<AccountLifecycle> getAccountLifecycles(
+			FaroProject faroProject, Long channelId, Boolean isDefault,
+			String query, int cur, int delta, String sortString)
 		throws FaroEngineClientException {
 
-		Map<String, Object> uriVariables = getUriVariables(faroProject);
+		Map<String, Object> uriVariables = getUriVariables(
+			faroProject, cur, delta, null);
 
 		if (Validator.isNotNull(channelId)) {
 			uriVariables.put("channelId", channelId);
 		}
 
-		return get(
+		if (isDefault != null) {
+			uriVariables.put("isDefault", isDefault);
+		}
+
+		if (Validator.isNotNull(query)) {
+			uriVariables.put("query", query);
+		}
+
+		if (Validator.isNotNull(sortString)) {
+			uriVariables.put(
+				"sort",
+				Arrays.asList(
+					StringUtil.replace(
+						sortString, CharPool.COLON, CharPool.COMMA)));
+		}
+
+		PagedModel<?, AccountLifecycle> pagedModel = get(
 			faroProject, Rels.ACCOUNT_LIFECYCLES,
-			new ParameterizedTypeReference<List<AccountLifecycle>>() {
+			new ParameterizedTypeReference
+				<EntityModelPagedModel<AccountLifecycle>>() {
 			},
 			uriVariables);
+
+		return pagedModel.getResults();
 	}
 
 	@Override
@@ -3748,6 +3771,19 @@ public class ContactsEngineClientImpl
 	}
 
 	@Override
+	public AccountLifecycle patchAccountLifecycle(
+		FaroProject faroProject, String id, Boolean isDefault) {
+
+		AccountLifecycle accountLifecycle = new AccountLifecycle();
+
+		accountLifecycle.setIsDefault(isDefault);
+
+		return patch(
+			faroProject, Rels.ACCOUNT_LIFECYCLE, id, accountLifecycle,
+			AccountLifecycle.class);
+	}
+
+	@Override
 	public Channel patchChannel(
 		FaroProject faroProject, String id, String name) {
 
@@ -3898,7 +3934,10 @@ public class ContactsEngineClientImpl
 
 	@Override
 	public AccountLifecycle updateAccountLifecycle(
-		FaroProject faroProject, AccountLifecycle accountLifecycle) {
+		FaroProject faroProject, AccountLifecycle accountLifecycle,
+		long userId) {
+
+		_setAuthor(accountLifecycle, userId);
 
 		return put(
 			faroProject, Rels.ACCOUNT_LIFECYCLE, accountLifecycle,
@@ -4197,6 +4236,17 @@ public class ContactsEngineClientImpl
 		}
 
 		return patch(faroProject, rel, id, dataSourcePatch, DataSource.class);
+	}
+
+	private void _setAuthor(AccountLifecycle accountLifecycle, long userId) {
+		Author author = getAuthor(userId);
+
+		if (author == null) {
+			return;
+		}
+
+		accountLifecycle.setAuthorId(author.getId());
+		accountLifecycle.setAuthorName(author.getName());
 	}
 
 	private static final String _FARO_TEMP_FIELD = "faro_temp_field";
