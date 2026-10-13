@@ -24,6 +24,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -60,7 +61,7 @@ public class AccountLifecycleFaroController extends BaseFaroController {
 
 		return contactsEngineClient.addAccountLifecycle(
 			faroProjectLocalService.getFaroProjectByGroupId(groupId),
-			accountLifecycleFaroParam.getValue(), channelId);
+			accountLifecycleFaroParam.getValue(), channelId, getUserId());
 	}
 
 	@GET
@@ -105,14 +106,24 @@ public class AccountLifecycleFaroController extends BaseFaroController {
 
 	@GET
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
-	public List<AccountLifecycle> getAccountLifecycles(
-			@PathParam("groupId") long groupId,
-			@QueryParam("channelId") Long channelId)
+	public FaroFDSResultsDisplay<AccountLifecycle>
+			getAccountLifecyclesFaroFDSResultsDisplay(
+				@PathParam("groupId") long groupId,
+				@QueryParam("channelId") Long channelId,
+				@QueryParam("isDefault") Boolean isDefault,
+				@QueryParam("page") int page,
+				@DefaultValue("20") @QueryParam("pageSize") int pageSize,
+				@QueryParam("search") String search,
+				@DefaultValue(StringPool.BLANK) @QueryParam("sort") String
+					sortString)
 		throws Exception {
 
-		return contactsEngineClient.getAccountLifecycles(
-			faroProjectLocalService.getFaroProjectByGroupId(groupId),
-			channelId);
+		Results<AccountLifecycle> results =
+			contactsEngineClient.getAccountLifecycles(
+				faroProjectLocalService.getFaroProjectByGroupId(groupId),
+				channelId, isDefault, search, page, pageSize, sortString);
+
+		return new FaroFDSResultsDisplay<>(results, page, pageSize);
 	}
 
 	@GET
@@ -121,7 +132,8 @@ public class AccountLifecycleFaroController extends BaseFaroController {
 	public FaroFDSResultsDisplay getAccountsFaroFDSResultsDisplay(
 			@PathParam("groupId") long groupId, @PathParam("id") String id,
 			@QueryParam("filter") String filterString,
-			@QueryParam("page") int page, @QueryParam("pageSize") int pageSize,
+			@QueryParam("page") int page,
+			@DefaultValue("20") @QueryParam("pageSize") int pageSize,
 			@QueryParam("search") String search,
 			@DefaultValue(StringPool.BLANK) @QueryParam("sort") String
 				sortString)
@@ -135,6 +147,19 @@ public class AccountLifecycleFaroController extends BaseFaroController {
 		Function<Account, AccountDisplay> function = AccountDisplay::new;
 
 		return new FaroFDSResultsDisplay(results, function, page, pageSize);
+	}
+
+	@PATCH
+	@Path("/{id}")
+	@RolesAllowed(RoleConstants.SITE_MEMBER)
+	public AccountLifecycle patchAccountLifecycle(
+			@PathParam("groupId") long groupId, @PathParam("id") String id,
+			@FormParam("isDefault") Boolean isDefault)
+		throws Exception {
+
+		return contactsEngineClient.patchAccountLifecycle(
+			faroProjectLocalService.getFaroProjectByGroupId(groupId), id,
+			isDefault);
 	}
 
 	@Path("/{id}")
@@ -153,7 +178,7 @@ public class AccountLifecycleFaroController extends BaseFaroController {
 
 		return contactsEngineClient.updateAccountLifecycle(
 			faroProjectLocalService.getFaroProjectByGroupId(groupId),
-			accountLifecycle);
+			accountLifecycle, getUserId());
 	}
 
 	@Path("/{id}/stages/{stageId}/rules")
