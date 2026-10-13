@@ -105,12 +105,23 @@ public class AccountLifecycleFaroController extends BaseFaroController {
 
 	@GET
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
-	public List<AccountLifecycle> getAccountLifecycles(
-			@PathParam("groupId") long groupId)
+	public FaroFDSResultsDisplay<AccountLifecycle>
+			getAccountLifecyclesFaroFDSResultsDisplay(
+				@PathParam("groupId") long groupId,
+				@QueryParam("channelId") String channelId,
+				@QueryParam("page") int page,
+				@DefaultValue("20") @QueryParam("pageSize") int pageSize,
+				@QueryParam("search") String search,
+				@DefaultValue(StringPool.BLANK) @QueryParam("sort") String
+					sortString)
 		throws Exception {
 
-		return contactsEngineClient.getAccountLifecycles(
-			faroProjectLocalService.getFaroProjectByGroupId(groupId));
+		Results<AccountLifecycle> results =
+			contactsEngineClient.getAccountLifecycles(
+				faroProjectLocalService.getFaroProjectByGroupId(groupId),
+				channelId, search, page, pageSize, sortString);
+
+		return new FaroFDSResultsDisplay<>(results, page, pageSize);
 	}
 
 	@GET
@@ -119,7 +130,8 @@ public class AccountLifecycleFaroController extends BaseFaroController {
 	public FaroFDSResultsDisplay getAccountsFaroFDSResultsDisplay(
 			@PathParam("groupId") long groupId, @PathParam("id") String id,
 			@QueryParam("filter") String filterString,
-			@QueryParam("page") int page, @QueryParam("pageSize") int pageSize,
+			@QueryParam("page") int page,
+			@DefaultValue("20") @QueryParam("pageSize") int pageSize,
 			@QueryParam("search") String search,
 			@DefaultValue(StringPool.BLANK) @QueryParam("sort") String
 				sortString)
