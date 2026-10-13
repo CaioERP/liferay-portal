@@ -946,14 +946,38 @@ public class ContactsEngineClientImpl
 	}
 
 	@Override
-	public List<AccountLifecycle> getAccountLifecycles(FaroProject faroProject)
+	public Results<AccountLifecycle> getAccountLifecycles(
+			FaroProject faroProject, String channelId, String query, int cur,
+			int delta, String sortString)
 		throws FaroEngineClientException {
 
-		return get(
+		Map<String, Object> uriVariables = getUriVariables(
+			faroProject, cur, delta, null);
+
+		if (Validator.isNotNull(channelId)) {
+			uriVariables.put("channelId", channelId);
+		}
+
+		if (Validator.isNotNull(query)) {
+			uriVariables.put("query", query);
+		}
+
+		if (Validator.isNotNull(sortString)) {
+			uriVariables.put(
+				"sort",
+				Arrays.asList(
+					StringUtil.replace(
+						sortString, CharPool.COLON, CharPool.COMMA)));
+		}
+
+		PagedModel<?, AccountLifecycle> pagedModel = get(
 			faroProject, Rels.ACCOUNT_LIFECYCLES,
-			new ParameterizedTypeReference<List<AccountLifecycle>>() {
+			new ParameterizedTypeReference
+				<EntityModelPagedModel<AccountLifecycle>>() {
 			},
-			getUriVariables(faroProject));
+			uriVariables);
+
+		return pagedModel.getResults();
 	}
 
 	@Override

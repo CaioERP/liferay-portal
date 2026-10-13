@@ -431,10 +431,13 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
-	public List<AccountLifecycle> getAccountLifecycles(FaroProject faroProject)
+	public Results<AccountLifecycle> getAccountLifecycles(
+			FaroProject faroProject, String channelId, String query, int cur,
+			int delta, String sortString)
 		throws FaroEngineClientException {
 
-		return contactsEngineClient.getAccountLifecycles(faroProject);
+		return contactsEngineClient.getAccountLifecycles(
+			faroProject, channelId, query, cur, delta, sortString);
 	}
 
 	@Override
