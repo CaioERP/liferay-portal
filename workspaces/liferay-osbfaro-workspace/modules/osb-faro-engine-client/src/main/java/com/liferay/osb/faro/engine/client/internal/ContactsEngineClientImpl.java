@@ -902,10 +902,10 @@ public class ContactsEngineClientImpl
 	public Results<AccountLifecycleStageTransition>
 			getAccountLifecycleStageTransitions(
 				FaroProject faroProject, String country,
-				String fromLifecycleStage, String id, String industry,
+				String fromAccountLifecycleStageId, String id, String industry,
 				String rangeEnd, Integer rangeKey, String rangeStart,
-				Long segmentId, String toLifecycleStage, int cur, int delta,
-				List<OrderByField> orderByFields)
+				Long segmentId, String toAccountLifecycleStageId, int cur,
+				int delta, List<OrderByField> orderByFields)
 		throws FaroEngineClientException {
 
 		Map<String, Object> uriVariables = getUriVariables(
@@ -915,8 +915,8 @@ public class ContactsEngineClientImpl
 			uriVariables.put("country", country);
 		}
 
-		if (Validator.isNotNull(fromLifecycleStage)) {
-			uriVariables.put("fromLifecycleStage", fromLifecycleStage);
+		if (Validator.isNotNull(fromAccountLifecycleStageId)) {
+			uriVariables.put("fromLifecycleStage", fromAccountLifecycleStageId);
 		}
 
 		uriVariables.put("id", id);
@@ -941,8 +941,8 @@ public class ContactsEngineClientImpl
 			uriVariables.put("segmentId", segmentId);
 		}
 
-		if (Validator.isNotNull(toLifecycleStage)) {
-			uriVariables.put("toLifecycleStage", toLifecycleStage);
+		if (Validator.isNotNull(toAccountLifecycleStageId)) {
+			uriVariables.put("toLifecycleStage", toAccountLifecycleStageId);
 		}
 
 		PagedModel<?, AccountLifecycleStageTransition> pagedModel = get(
@@ -972,8 +972,8 @@ public class ContactsEngineClientImpl
 	@Override
 	public Results<AccountLifecycle> getAccountLifecycles(
 			FaroProject faroProject, Long channelId,
-			Boolean defaultAccountLifecycle, String query, int cur, int delta,
-			String sortString)
+			Boolean defaultAccountLifecycle, String externalReferenceCode,
+			String query, int cur, int delta, String sortString)
 		throws FaroEngineClientException {
 
 		Map<String, Object> uriVariables = getUriVariables(
@@ -986,6 +986,10 @@ public class ContactsEngineClientImpl
 		if (defaultAccountLifecycle != null) {
 			uriVariables.put(
 				"defaultAccountLifecycle", defaultAccountLifecycle);
+		}
+
+		if (Validator.isNotNull(externalReferenceCode)) {
+			uriVariables.put("externalReferenceCode", externalReferenceCode);
 		}
 
 		if (Validator.isNotNull(query)) {
@@ -4095,7 +4099,7 @@ public class ContactsEngineClientImpl
 	}
 
 	@Override
-	public void updateAccountLifecycleStageRule(
+	public AccountLifecycle updateAccountLifecycleStageRule(
 		FaroProject faroProject, String filterMetadata, String filterString,
 		String id, String name, String stageId) {
 
@@ -4110,9 +4114,9 @@ public class ContactsEngineClientImpl
 
 		uriVariables.put("stageId", stageId);
 
-		put(
+		return put(
 			faroProject, Rels.ACCOUNT_LIFECYCLE_STAGE_RULES,
-			accountLifecycleStageRule, Void.class, uriVariables);
+			accountLifecycleStageRule, AccountLifecycle.class, uriVariables);
 	}
 
 	@Override
