@@ -5,6 +5,8 @@
 
 package com.liferay.osb.faro.engine.client.model;
 
+import com.liferay.portal.kernel.util.StringUtil;
+
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +14,23 @@ import java.util.List;
  * @author Riccardo Ferrari
  */
 public class AccountLifecycle {
+
+	public AccountLifecycleStage getAccountLifecycleStage(String name) {
+		if ((name == null) || (_stages == null)) {
+			return null;
+		}
+
+		for (AccountLifecycleStage accountLifecycleStage : _stages) {
+			if (StringUtil.equalsIgnoreCase(
+					_normalize(name),
+					_normalize(accountLifecycleStage.getName()))) {
+
+				return accountLifecycleStage;
+			}
+		}
+
+		return null;
+	}
 
 	public String getAuthorId() {
 		return _authorId;
@@ -111,6 +130,12 @@ public class AccountLifecycle {
 
 	public void setStages(List<AccountLifecycleStage> stages) {
 		_stages = stages;
+	}
+
+	private String _normalize(String name) {
+		return StringUtil.trim(
+			StringUtil.replace(
+				name, new char[] {'-', '_'}, new char[] {' ', ' '}));
 	}
 
 	private String _authorId;
