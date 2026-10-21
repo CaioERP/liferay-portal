@@ -49,10 +49,10 @@ public class AccountLifecycleStageTransitionDTOConverterTest {
 		engineClientAccountLifecycleStageTransition.
 			setFromAccountLifecycleStage(
 				_createEngineClientAccountLifecycleStage(
-					"Pipeline", 3, "stage-3", 30, "PIPELINE"));
+					"Pipeline", "stage-3", 30, "Pipeline", 3));
 		engineClientAccountLifecycleStageTransition.setToAccountLifecycleStage(
 			_createEngineClientAccountLifecycleStage(
-				"Onboarding", 4, "stage-4", 60, "ONBOARDING"));
+				"Onboarding", "stage-4", 60, "Onboarding", 4));
 		engineClientAccountLifecycleStageTransition.setTransitionDate(
 			new Date());
 
@@ -88,23 +88,23 @@ public class AccountLifecycleStageTransitionDTOConverterTest {
 			engineClientAccountLifecycleStage.getDescription(),
 			accountLifecycleStage.getDescription());
 		Assert.assertEquals(
-			engineClientAccountLifecycleStage.getDisplayOrder(),
-			accountLifecycleStage.getDisplayOrder());
-		Assert.assertEquals(
 			engineClientAccountLifecycleStage.getId(),
 			accountLifecycleStage.getId());
 		Assert.assertEquals(
 			engineClientAccountLifecycleStage.getMaxDuration(),
 			accountLifecycleStage.getMaxDuration());
 		Assert.assertEquals(
-			engineClientAccountLifecycleStage.getStageType(),
-			accountLifecycleStage.getStageType());
+			engineClientAccountLifecycleStage.getName(),
+			accountLifecycleStage.getName());
+		Assert.assertEquals(
+			engineClientAccountLifecycleStage.getPosition(),
+			accountLifecycleStage.getPosition());
 	}
 
 	private com.liferay.osb.faro.engine.client.model.AccountLifecycleStage
 		_createEngineClientAccountLifecycleStage(
-			String description, int displayOrder, String id, int maxDuration,
-			String stageType) {
+			String description, String id, int maxDuration, String name,
+			int position) {
 
 		com.liferay.osb.faro.engine.client.model.AccountLifecycleStage
 			engineClientAccountLifecycleStage =
@@ -112,10 +112,10 @@ public class AccountLifecycleStageTransitionDTOConverterTest {
 					AccountLifecycleStage();
 
 		engineClientAccountLifecycleStage.setDescription(description);
-		engineClientAccountLifecycleStage.setDisplayOrder(displayOrder);
 		engineClientAccountLifecycleStage.setId(id);
 		engineClientAccountLifecycleStage.setMaxDuration(maxDuration);
-		engineClientAccountLifecycleStage.setStageType(stageType);
+		engineClientAccountLifecycleStage.setName(name);
+		engineClientAccountLifecycleStage.setPosition(position);
 
 		return engineClientAccountLifecycleStage;
 	}

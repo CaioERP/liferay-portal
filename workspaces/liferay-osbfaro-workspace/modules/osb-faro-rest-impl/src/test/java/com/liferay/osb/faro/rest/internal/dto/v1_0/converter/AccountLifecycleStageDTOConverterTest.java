@@ -25,10 +25,10 @@ public class AccountLifecycleStageDTOConverterTest {
 					AccountLifecycleStage();
 
 		engineClientAccountLifecycleStage.setDescription("Pipeline");
-		engineClientAccountLifecycleStage.setDisplayOrder(3);
 		engineClientAccountLifecycleStage.setId("stage-1");
 		engineClientAccountLifecycleStage.setMaxDuration(30);
-		engineClientAccountLifecycleStage.setStageType("PIPELINE");
+		engineClientAccountLifecycleStage.setName("Pipeline");
+		engineClientAccountLifecycleStage.setPosition(3);
 
 		AccountLifecycleStage accountLifecycleStage =
 			_accountLifecycleStageDTOConverter.toDTO(
@@ -38,17 +38,17 @@ public class AccountLifecycleStageDTOConverterTest {
 			engineClientAccountLifecycleStage.getDescription(),
 			accountLifecycleStage.getDescription());
 		Assert.assertEquals(
-			engineClientAccountLifecycleStage.getDisplayOrder(),
-			accountLifecycleStage.getDisplayOrder());
-		Assert.assertEquals(
 			engineClientAccountLifecycleStage.getId(),
 			accountLifecycleStage.getId());
 		Assert.assertEquals(
 			engineClientAccountLifecycleStage.getMaxDuration(),
 			accountLifecycleStage.getMaxDuration());
 		Assert.assertEquals(
-			engineClientAccountLifecycleStage.getStageType(),
-			accountLifecycleStage.getStageType());
+			engineClientAccountLifecycleStage.getName(),
+			accountLifecycleStage.getName());
+		Assert.assertEquals(
+			engineClientAccountLifecycleStage.getPosition(),
+			accountLifecycleStage.getPosition());
 	}
 
 	private final AccountLifecycleStageDTOConverter
