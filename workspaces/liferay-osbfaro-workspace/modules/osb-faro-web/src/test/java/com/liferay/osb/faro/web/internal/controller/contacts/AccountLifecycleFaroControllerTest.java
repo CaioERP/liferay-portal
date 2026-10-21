@@ -58,8 +58,8 @@ public class AccountLifecycleFaroControllerTest {
 
 		Mockito.when(
 			_contactsEngineClient.getAccountLifecycles(
-				_faroProject, channelId, defaultAccountLifecycle, search, page,
-				pageSize, sortString)
+				_faroProject, channelId, defaultAccountLifecycle, null, search,
+				page, pageSize, sortString)
 		).thenReturn(
 			new Results<>(Collections.emptyList(), total)
 		);

@@ -122,8 +122,8 @@ public class AccountLifecycleFaroController extends BaseFaroController {
 		Results<AccountLifecycle> results =
 			contactsEngineClient.getAccountLifecycles(
 				faroProjectLocalService.getFaroProjectByGroupId(groupId),
-				channelId, defaultAccountLifecycle, search, page, pageSize,
-				sortString);
+				channelId, defaultAccountLifecycle, null, search, page,
+				pageSize, sortString);
 
 		return new FaroFDSResultsDisplay<>(results, page, pageSize);
 	}
