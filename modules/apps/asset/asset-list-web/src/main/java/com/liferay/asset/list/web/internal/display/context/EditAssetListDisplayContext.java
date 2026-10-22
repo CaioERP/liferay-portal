@@ -161,6 +161,8 @@ public class EditAssetListDisplayContext {
 			classNameIds = _getDefaultClassNameIds();
 		}
 
+		Map<Long, JSONArray> groupIdsJSONArrays = new HashMap<>();
+
 		return JSONUtil.toJSONArray(
 			ArrayUtil.toArray(classNameIds),
 			classNameId -> {
@@ -188,6 +190,11 @@ public class EditAssetListDisplayContext {
 
 				return JSONUtil.put(
 					"classNameId", classNameId
+				).put(
+					"groupIds",
+					_getGroupIdsJSONArray(
+						_themeDisplay.getScopeGroupId(), groupIdsJSONArrays,
+						assetRendererFactory.getPortletId())
 				).put(
 					"label",
 					assetRendererFactory.getTypeName(_themeDisplay.getLocale())
@@ -1483,6 +1490,36 @@ public class EditAssetListDisplayContext {
 			"segmentsEntryId",
 			assetListEntrySegmentsEntryRel.getSegmentsEntryId()
 		).buildString();
+	}
+
+	private JSONArray _getGroupIdsJSONArray(
+			long groupId, Map<Long, JSONArray> groupIdsJSONArrays,
+			String portletId)
+		throws PortalException {
+
+		StagingGroupHelper stagingGroupHelper =
+			StagingGroupHelperUtil.getStagingGroupHelper();
+
+		long stagedPortletGroupId = stagingGroupHelper.getStagedPortletGroupId(
+			groupId, portletId);
+
+		JSONArray groupIdsJSONArray = groupIdsJSONArrays.get(
+			stagedPortletGroupId);
+
+		if (groupIdsJSONArray != null) {
+			return groupIdsJSONArray;
+		}
+
+		long[] groupIds =
+			SiteConnectedGroupGroupProviderUtil.
+				getCurrentAndAncestorSiteAndDepotGroupIds(
+					new long[] {stagedPortletGroupId});
+
+		groupIdsJSONArray = JSONUtil.putAll(ArrayUtil.toArray(groupIds));
+
+		groupIdsJSONArrays.put(stagedPortletGroupId, groupIdsJSONArray);
+
+		return groupIdsJSONArray;
 	}
 
 	private String _getOrderByColumn(String key, String defaultOrderByColumn) {

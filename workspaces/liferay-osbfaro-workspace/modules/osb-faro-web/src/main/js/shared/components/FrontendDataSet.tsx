@@ -41,6 +41,11 @@ const CONFIG_IN_URL_OFF = 'off' as EConfigInURLBehavior;
 
 const {cur, delta, deltaValues} = FaroConstants.pagination;
 
+export const EMPTY_STATE_IMAGE = '/states/empty_state.svg';
+
+export const EMPTY_STATE_REDUCED_MOTION_IMAGE =
+	'/states/empty_state_reduced_motion.svg';
+
 export const rangeSelectors = [
 	{
 		label: Liferay.Language.get('last-24-hours'),
@@ -158,14 +163,12 @@ export const columns = {
 };
 
 export function useSnapshots(fdsName: string, enabled = true) {
-	const fetchSnapshots = enabled && Liferay.FeatureFlags['LPS-164563'];
-
 	const [snapshots, setSnapshots] = useState<
 		IFrontendDataSetProps['snapshots'] | null
-	>(fetchSnapshots ? null : []);
+	>(enabled ? null : []);
 
 	useEffect(() => {
-		if (!fetchSnapshots) {
+		if (!enabled) {
 			return;
 		}
 
@@ -207,7 +210,7 @@ export function useSnapshots(fdsName: string, enabled = true) {
 
 				setSnapshots([]);
 			});
-	}, [fetchSnapshots, fdsName]);
+	}, [enabled, fdsName]);
 
 	return snapshots;
 }

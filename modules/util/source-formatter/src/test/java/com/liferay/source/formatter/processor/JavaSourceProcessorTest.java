@@ -353,10 +353,28 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
-	public void testFeatureFlagsAnnotationTest() throws Exception {
+	public void testFeatureFlagAnnotation() throws Exception {
 		test(
 			SourceProcessorTestParameters.create(
-				"FeatureFlagsAnnotationTest.testjava"
+				"FeatureFlagAnnotation.testjava"
+			).addExpectedMessage(
+				"Declare the feature flag with \"x-feature-flag\" in " +
+					"\"rest-openapi.yaml\" instead of using the annotation " +
+						"\"@FeatureFlag\"",
+				13
+			).addExpectedMessage(
+				"Declare the feature flag with \"x-feature-flag\" in " +
+					"\"rest-openapi.yaml\" instead of using the annotation " +
+						"\"@FeatureFlag\"",
+				16
+			));
+	}
+
+	@Test
+	public void testFeatureFlagsAnnotationInTest() throws Exception {
+		test(
+			SourceProcessorTestParameters.create(
+				"FeatureFlagsAnnotationInTest.testjava"
 			).addExpectedMessage(
 				"Use annotation \"@FeatureFlags\" instead of \"PropsUtil." +
 					"addProperties\" for feature flag",
@@ -1249,7 +1267,7 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
-	public void testSizeIsZeroCheck() throws Exception {
+	public void testSizeIsZero() throws Exception {
 		test(
 			SourceProcessorTestParameters.create(
 				"SizeIsZero.testjava"

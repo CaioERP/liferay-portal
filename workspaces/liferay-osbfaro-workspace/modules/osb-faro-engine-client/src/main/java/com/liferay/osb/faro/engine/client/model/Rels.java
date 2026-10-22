@@ -110,6 +110,8 @@ public interface Rels {
 
 	public static final String CAMPAIGN_ACCOUNTS = "campaign-accounts";
 
+	public static final String CAMPAIGN_INDIVIDUALS = "campaign-individuals";
+
 	public static final String CAMPAIGNS = "campaigns";
 
 	public static final String CAMPAIGNS_METRICS = "campaigns-metrics";
@@ -156,6 +158,9 @@ public interface Rels {
 
 	public static final String DATA_SOURCE_METRICS_ACCOUNTS_COUNT =
 		"data-source-metrics-accounts-count";
+
+	public static final String DATA_SOURCE_METRICS_CAMPAIGNS_COUNT =
+		"data-source-metrics-campaigns-count";
 
 	public static final String DATA_SOURCE_METRICS_EVENTS_COUNT =
 		"data-source-metrics-events-count";

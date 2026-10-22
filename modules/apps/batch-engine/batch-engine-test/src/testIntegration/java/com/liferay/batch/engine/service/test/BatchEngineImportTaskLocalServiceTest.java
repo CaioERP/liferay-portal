@@ -5,6 +5,8 @@
 
 package com.liferay.batch.engine.service.test;
 
+import com.fasterxml.jackson.core.io.JsonEOFException;
+
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.batch.engine.BatchEngineTaskExecuteStatus;
 import com.liferay.batch.engine.BatchEngineTaskOperation;
@@ -15,11 +17,15 @@ import com.liferay.petra.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.test.AssertUtils;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LogEntry;
+import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
@@ -50,6 +56,24 @@ public class BatchEngineImportTaskLocalServiceTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new LiferayIntegrationTestRule();
+
+	@Test
+	public void testAddBatchEngineImportTask() throws Exception {
+		String className = RandomTestUtil.randomString();
+
+		AssertUtils.assertFailure(
+			IllegalStateException.class,
+			StringBundler.concat(
+				"No batch engine task item delegate is available for class ",
+				"name ", className, " and task item delegate name null"),
+			() -> _batchEngineImportTaskLocalService.addBatchEngineImportTask(
+				null, TestPropsValues.getCompanyId(),
+				TestPropsValues.getUserId(), 10, null, className,
+				_getContent("[]"), "JSON",
+				BatchEngineTaskExecuteStatus.INITIAL.name(), null,
+				BatchEngineImportTaskConstants.IMPORT_STRATEGY_ON_ERROR_FAIL,
+				BatchEngineTaskOperation.CREATE.name(), new HashMap<>(), null));
+	}
 
 	@Test
 	public void testUpdateBatchEngineImportTask() throws Exception {
@@ -169,8 +193,28 @@ public class BatchEngineImportTaskLocalServiceTest {
 
 		Assert.assertTrue(content, content.contains(password));
 
-		batchEngineImportTask = _updateExecuteStatus(
-			batchEngineImportTask, batchEngineTaskExecuteStatus);
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				"com.liferay.batch.engine.service.impl." +
+					"BatchEngineImportTaskLocalServiceImpl",
+				LoggerTestUtil.ERROR)) {
+
+			batchEngineImportTask = _updateExecuteStatus(
+				batchEngineImportTask, batchEngineTaskExecuteStatus);
+
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			Assert.assertEquals(logEntries.toString(), 1, logEntries.size());
+
+			LogEntry logEntry = logEntries.get(0);
+
+			Assert.assertEquals(
+				StringBundler.concat(
+					"Unable to remove password fields from batch engine ",
+					"import task ",
+					batchEngineImportTask.getBatchEngineImportTaskId(), ": ",
+					JsonEOFException.class.getName()),
+				logEntry.getMessage());
+		}
 
 		try (InputStream inputStream =
 				_batchEngineImportTaskLocalService.openContentInputStream(

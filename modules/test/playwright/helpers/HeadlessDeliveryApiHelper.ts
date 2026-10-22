@@ -337,11 +337,13 @@ export class HeadlessDeliveryApiHelper {
 		headline,
 		siteId,
 		taxonomyCategoryIds,
+		viewableBy,
 	}: {
 		articleBody: string;
 		headline: string;
 		siteId: string;
 		taxonomyCategoryIds?: number[];
+		viewableBy?: string;
 	}): Promise<MessageBoardThread> {
 		return this.apiHelpers.post(
 			`${this.apiHelpers.baseUrl}${this.basePath}/sites/${siteId}/message-board-threads`,
@@ -350,6 +352,7 @@ export class HeadlessDeliveryApiHelper {
 					articleBody,
 					headline,
 					taxonomyCategoryIds,
+					viewableBy,
 				},
 				failOnStatusCode: true,
 			}
@@ -420,6 +423,7 @@ export class HeadlessDeliveryApiHelper {
 		siteId,
 		tags,
 		title,
+		title_i18n,
 		viewableBy = '',
 	}: {
 		categoryIds?: number[];
@@ -427,6 +431,7 @@ export class HeadlessDeliveryApiHelper {
 			contentFieldValue:
 				| {data: string}
 				| {geo: {latitude: number; longitude: number}};
+			contentFieldValue_i18n?: {[key: string]: {data: string}};
 			name: string;
 		}[];
 		contentStructureId: number;
@@ -436,6 +441,7 @@ export class HeadlessDeliveryApiHelper {
 		siteId: string;
 		tags?: string[];
 		title: string;
+		title_i18n?: {[key: string]: string};
 		viewableBy?: string;
 	}): Promise<StructuredContent> {
 		return this.apiHelpers.post(
@@ -450,6 +456,7 @@ export class HeadlessDeliveryApiHelper {
 					relatedContents,
 					taxonomyCategoryIds: categoryIds,
 					title,
+					title_i18n,
 					viewableBy,
 				},
 				failOnStatusCode: true,

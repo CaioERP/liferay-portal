@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {ObjectDefinitionAPI} from '@liferay/object-admin-rest-client-js/v1_0';
 import {type Page, expect, mergeTests} from '@playwright/test';
 
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
@@ -31,8 +32,6 @@ const test = mergeTests(
 const APPLICATION_NAME = 'cms/basic-web-contents';
 const DATE_DISPLAYED = '12/31/2099, 10:00 AM';
 const DATE_INPUT = '12/31/2099 10:00 AM';
-const DUE_DATE_INPUT = '2099-12-31';
-const DUE_TIME_INPUT = '10:00';
 const LONG_STANDING_DRAFT_AGE_DAYS = 45;
 const PAST_DATE = '2020-01-01T00:00:00Z';
 const TIME_ZONE_BROWSER = 'America/Los_Angeles';
@@ -98,22 +97,31 @@ function getDocumentHTML(externalReferenceCode: string) {
 	);
 }
 
-async function gotoBrokenLinks(page: Page, spaceName: string, title: string) {
-	await page.goto('/web/cms/dashboard');
-
-	await selectSpace(page, spaceName);
-
-	await page.getByRole('button', {name: /broken links/i}).click();
-
-	await expect(page).toHaveURL(/broken-links\?groupId=/);
+async function openQualityList(
+	page: Page,
+	{
+		cardTitle,
+		spaceName,
+		text,
+	}: {cardTitle: string; spaceName: string; text: string}
+) {
+	const qualityList = page.getByRole('region', {name: cardTitle});
 
 	await expect(async () => {
-		await page.reload();
+		await page.goto('/web/cms/dashboard');
 
-		await expect(page.getByText(title, {exact: true})).toBeVisible({
+		await selectSpace(page, spaceName);
+
+		await page
+			.getByRole('button', {name: new RegExp(`^${cardTitle} `)})
+			.click();
+
+		await expect(qualityList.getByText(text, {exact: true})).toBeVisible({
 			timeout: 5000,
 		});
 	}).toPass();
+
+	return qualityList;
 }
 
 async function pollDate(
@@ -587,180 +595,7 @@ test.describe('Freshness section', () => {
 	);
 });
 
-test.describe('Attention Required section', () => {
-	test(
-		'Updates the due date of pending workflow contents from the dashboard',
-		{tag: '@LPD-98986'},
-		async ({apiHelpers, page}) => {
-			const firstSpaceName = `space ${getRandomString()}`;
-			const secondSpaceName = `space ${getRandomString()}`;
-			const secondSpaceTitle = `pending ${getRandomString()}`;
-			const remainingTitles = [
-				`pending ${getRandomString()}`,
-				`pending ${getRandomString()}`,
-			];
-
-			const pendingWorkflowsCard = page.getByRole('button', {
-				name: /pending workflows/i,
-			});
-
-			const pendingWorkflowsCount = pendingWorkflowsCard
-				.locator('.cms-dashboard__interactive-card__metric > div')
-				.first();
-
-			let objectDefinitionClassName: string;
-			let pendingContents: Awaited<
-				ReturnType<typeof apiHelpers.objectEntry.postObjectEntry>
-			>[];
-
-			await test.step('Enable workflow and create pending contents in two spaces', async () => {
-				const firstSpace =
-					await apiHelpers.headlessAssetLibrary.createAssetLibrary({
-						name: firstSpaceName,
-						type: 'Space',
-					});
-
-				const secondSpace =
-					await apiHelpers.headlessAssetLibrary.createAssetLibrary({
-						name: secondSpaceName,
-						type: 'Space',
-					});
-
-				const objectDefinition =
-					await apiHelpers.objectAdmin.getObjectDefinitionByName(
-						'CMSBasicWebContent'
-					);
-
-				objectDefinitionClassName = objectDefinition.className;
-
-				const workflowDefinition =
-					await apiHelpers.headlessAdminWorkflow.getWorkflowDefinitionByName(
-						'Single Approver'
-					);
-
-				for (const space of [firstSpace, secondSpace]) {
-					await apiHelpers.headlessAdminWorkflow.postWorkflowDefinitionLink(
-						objectDefinition.className,
-						space.siteId,
-						workflowDefinition.id,
-						workflowDefinition.name,
-						Number(workflowDefinition.version)
-					);
-				}
-
-				const postPendingContent = (spaceName: string, title: string) =>
-					apiHelpers.objectEntry.postObjectEntry(
-						{
-							objectEntryFolderExternalReferenceCode:
-								'L_CONTENTS',
-							title,
-						},
-						APPLICATION_NAME,
-						spaceName
-					);
-
-				pendingContents = [
-					await postPendingContent(
-						firstSpaceName,
-						`pending ${getRandomString()}`
-					),
-					await postPendingContent(secondSpaceName, secondSpaceTitle),
-					await postPendingContent(
-						secondSpaceName,
-						remainingTitles[0]
-					),
-					await postPendingContent(
-						secondSpaceName,
-						remainingTitles[1]
-					),
-				];
-
-				for (const pendingContent of pendingContents) {
-					apiHelpers.data.push({
-						id: pendingContent.id,
-						type: 'document',
-					});
-
-					expect(pendingContent.id).toBeTruthy();
-				}
-			});
-
-			await test.step('Check the pending workflows count per space', async () => {
-				await page.goto('/web/cms/dashboard');
-
-				await selectSpace(page, firstSpaceName);
-
-				await expect(pendingWorkflowsCount).toHaveText('1');
-
-				await selectSpace(page, secondSpaceName);
-
-				await expect(pendingWorkflowsCount).toHaveText('3');
-			});
-
-			await test.step('Open the pending workflows list', async () => {
-				await pendingWorkflowsCard.click();
-
-				await expect(page).toHaveURL(/cms\/pending-workflows/);
-
-				await expect(async () => {
-					await page.reload();
-
-					await expect(
-						page.getByText(secondSpaceTitle, {exact: true})
-					).toBeVisible({timeout: 5000});
-				}).toPass();
-
-				await expect(
-					page.getByRole('link', {
-						exact: true,
-						name: secondSpaceTitle,
-					})
-				).toHaveAttribute(
-					'href',
-					new RegExp(
-						`edit_content_item\\?objectEntryId=${pendingContents[1].id}&redirect=%2F`
-					)
-				);
-			});
-
-			await test.step('Update the due date from its row action', async () => {
-				await page
-					.getByRole('button', {name: `${secondSpaceTitle} Actions`})
-					.click();
-
-				await page
-					.getByRole('menuitem', {name: 'Update Due Date'})
-					.click();
-
-				const modal = page.locator('.modal-content');
-
-				await expect(modal).toBeVisible();
-
-				await modal.locator('input[type="date"]').fill(DUE_DATE_INPUT);
-				await modal.locator('input[type="time"]').fill(DUE_TIME_INPUT);
-
-				await modal.getByRole('button', {name: 'Save'}).click();
-
-				await expect
-					.poll(async () => {
-						const workflowTask =
-							await apiHelpers.headlessAdminWorkflow.getWorkflowTaskByAsset(
-								objectDefinitionClassName,
-								String(pendingContents[1].id)
-							);
-
-						return workflowTask?.dateDue
-							? formatInTimeZone(
-									workflowTask.dateDue,
-									TIME_ZONE_BROWSER
-								)
-							: null;
-					})
-					.toBe(DATE_DISPLAYED);
-			});
-		}
-	);
-
+test.describe('Quality section', () => {
 	test(
 		'Lists the contents that point at an expired asset of the selected space',
 		{tag: '@LPD-103027'},
@@ -839,27 +674,41 @@ test.describe('Attention Required section', () => {
 			});
 
 			await test.step('Confirm the second space lists its own broken link', async () => {
-				await gotoBrokenLinks(
-					page,
-					secondSpaceName,
-					secondSpaceReferringTitle
-				);
-			});
-
-			await test.step('Open the broken links page of the first space', async () => {
-				await gotoBrokenLinks(page, firstSpaceName, referringTitle);
+				await openQualityList(page, {
+					cardTitle: 'Broken Links',
+					spaceName: secondSpaceName,
+					text: secondSpaceReferringTitle,
+				});
 			});
 
 			await test.step('Check that only the first space is listed', async () => {
+				const brokenLinksList = await openQualityList(page, {
+					cardTitle: 'Broken Links',
+					spaceName: firstSpaceName,
+					text: referringTitle,
+				});
+
 				await expect(
-					page.getByText(`${expiredTitle} - Expired Asset`, {
-						exact: true,
-					})
+					brokenLinksList.getByText('1 Expired Asset', {exact: true})
 				).toBeVisible();
 
 				await expect(
-					page.getByText(secondSpaceReferringTitle, {exact: true})
+					brokenLinksList.getByText(secondSpaceReferringTitle, {
+						exact: true,
+					})
 				).toBeHidden();
+			});
+
+			await test.step('Open the broken links page of the first space', async () => {
+				await page
+					.getByRole('link', {name: 'View All Broken Links'})
+					.click();
+
+				await expect(page).toHaveURL(/broken-links\?groupId=/);
+
+				await expect(
+					page.getByText(referringTitle, {exact: true})
+				).toBeVisible();
 			});
 
 			await test.step('Edit the content from the list', async () => {
@@ -875,122 +724,172 @@ test.describe('Attention Required section', () => {
 			});
 		}
 	);
-});
 
-test.describe('Duplication and Similarity section', () => {
 	test(
-		'Groups the duplicated topics of the selected space by the title they repeat',
-		{tag: ['@LPD-102887', '@LPD-103246']},
+		'Lists the contents missing a required field added to their published content structure',
+		{tag: '@LPD-110645'},
 		async ({apiHelpers, page}) => {
-			const firstSpaceName = `space ${getRandomString()}`;
-			const secondSpaceName = `space ${getRandomString()}`;
+			const spaceName = `space ${getRandomString()}`;
+			const title = `content ${getRandomString()}`;
 
-			const firstSpaceTitle = `duplicated ${getRandomString()}`;
-			const secondSpaceTitles = [
-				`Duplicated ${getRandomString()}`,
-				`duplicated ${getRandomString()}`,
-			];
-			const uniqueTitle = `unique ${getRandomString()}`;
+			let applicationName: string;
+			let objectDefinitionId: number;
+			let objectEntryId: number;
 
-			const duplicateTopicsCard = page.getByRole('button', {
-				name: /Duplicate Topics/,
-			});
-
-			const duplicateTopicsCount = duplicateTopicsCard
-				.locator('.cms-dashboard__interactive-card__metric > div')
-				.first();
-
-			async function expectDuplicateTopicsCount(
-				spaceName: string,
-				count: string
-			) {
-
-				// The counter comes from a search aggregation, so the indexer may
-				// still be behind. Reloading gives the picker a clean state and
-				// refetches the counter for the space.
-
-				await expect(async () => {
-					await page.goto('/web/cms/dashboard');
-
-					await selectSpace(page, spaceName);
-
-					await expect(duplicateTopicsCount).toHaveText(count, {
-						timeout: 10000,
-					});
-				}).toPass({timeout: 90000});
-			}
-
-			await test.step('Create contents that repeat a title in two spaces', async () => {
-				for (const spaceName of [firstSpaceName, secondSpaceName]) {
+			await test.step('Publish a content of a versioned content structure', async () => {
+				const space =
 					await apiHelpers.headlessAssetLibrary.createAssetLibrary({
 						name: spaceName,
+						settings: {},
 						type: 'Space',
 					});
-				}
 
-				const postContent = (spaceName: string, title: string) =>
-					apiHelpers.objectEntry.postObjectEntry(
+				const objectDefinitionAPIClient =
+					await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+				const {body: objectDefinition} =
+					await objectDefinitionAPIClient.postObjectDefinition({
+						enableComments: true,
+						enableFriendlyURLCustomization: true,
+						enableIndexSearch: true,
+						enableLocalization: true,
+						enableObjectEntryDraft: true,
+						enableObjectEntryHistory: true,
+						enableObjectEntrySchedule: true,
+						enableObjectEntryVersioning: true,
+						externalReferenceCode: getRandomString(),
+						label: {en_US: getRandomString()},
+						name: `Structure${getRandomInt()}`,
+						objectDefinitionSettings: [
+							{
+								name: 'acceptedGroupExternalReferenceCodes',
+								value: space.externalReferenceCode,
+							} as any,
+						],
+						objectFields: [
+							{
+								DBType: 'String',
+								businessType: 'Text',
+								externalReferenceCode: getRandomString(),
+								indexed: true,
+								indexedAsKeyword: false,
+								indexedLanguageId: 'en_US',
+								label: {en_US: 'Title'},
+								localized: true,
+								name: 'title',
+								required: true,
+							},
+						],
+						objectFolderExternalReferenceCode:
+							'L_CMS_CONTENT_STRUCTURES',
+						pluralLabel: {en_US: getRandomString()},
+						scope: 'depot',
+						status: {code: 0},
+						titleObjectFieldName: 'title',
+					});
+
+				apiHelpers.data.push({
+					id: objectDefinition.id as number,
+					type: 'objectDefinition',
+				});
+
+				applicationName = (
+					objectDefinition.restContextPath as string
+				).replace(/^\/o\//, '');
+				objectDefinitionId = objectDefinition.id as number;
+
+				const objectEntry =
+					await apiHelpers.objectEntry.postObjectEntry(
 						{
 							objectEntryFolderExternalReferenceCode:
 								'L_CONTENTS',
 							title,
 						},
-						APPLICATION_NAME,
+						applicationName,
 						spaceName
 					);
 
-				const contents = [
-					await postContent(firstSpaceName, firstSpaceTitle),
-					await postContent(firstSpaceName, firstSpaceTitle),
-					await postContent(firstSpaceName, uniqueTitle),
-					await postContent(secondSpaceName, secondSpaceTitles[0]),
-					await postContent(secondSpaceName, secondSpaceTitles[0]),
-					await postContent(secondSpaceName, secondSpaceTitles[0]),
-					await postContent(secondSpaceName, secondSpaceTitles[1]),
-					await postContent(secondSpaceName, secondSpaceTitles[1]),
-				];
-
-				for (const content of contents) {
-					apiHelpers.data.push({id: content.id, type: 'document'});
-
-					expect(content.id).toBeTruthy();
-				}
+				objectEntryId = objectEntry.id;
 			});
 
-			await test.step('Count only the contents of the selected space', async () => {
-				await expectDuplicateTopicsCount(firstSpaceName, '2');
-
-				await expectDuplicateTopicsCount(secondSpaceName, '5');
+			await test.step('Add a required field to the published structure', async () => {
+				await apiHelpers.objectAdmin.postObjectDefinitionObjectField(
+					objectDefinitionId,
+					{
+						DBType: 'String',
+						businessType: 'Text',
+						externalReferenceCode: getRandomString(),
+						indexed: true,
+						indexedAsKeyword: false,
+						indexedLanguageId: 'en_US',
+						label: {en_US: 'Summary'},
+						localized: true,
+						name: 'summary',
+						required: true,
+					}
+				);
 			});
 
-			await test.step('Review the duplicates grouped by their title', async () => {
-				await duplicateTopicsCard.click();
-
-				const modal = page.locator('.modal-full-screen .modal-content');
+			await test.step('Check the dashboard lists the content with its missing field', async () => {
+				const missingRequiredDataList = await openQualityList(page, {
+					cardTitle: 'Missing Required Data',
+					spaceName,
+					text: title,
+				});
 
 				await expect(
-					modal.getByText(`${secondSpaceTitles[0]} (3)`)
+					missingRequiredDataList.getByText(
+						'1 Missing Required Field',
+						{exact: true}
+					)
 				).toBeVisible();
+			});
+
+			await test.step('Open the missing required data page of the space', async () => {
+				await page
+					.getByRole('link', {name: 'View All Missing Required Data'})
+					.click();
+
+				await expect(page).toHaveURL(/missing-required-data\?groupId=/);
 
 				await expect(
-					modal.getByText(`${secondSpaceTitles[1]} (2)`)
+					page.getByText(title, {exact: true})
 				).toBeVisible();
+			});
+
+			await test.step('Offer only the edit action in the page', async () => {
+				await page
+					.getByRole('button', {name: `${title} Actions`})
+					.click();
+
+				const editMenuItem = page.getByRole('menuitem', {name: 'Edit'});
+
+				await expect(editMenuItem).toBeVisible();
 
 				await expect(
-					modal.getByText(secondSpaceTitles[0], {exact: true})
-				).toHaveCount(3);
+					page.getByRole('menuitem', {name: 'View'})
+				).toBeHidden();
 
-				await expect(modal.getByText(uniqueTitle)).toHaveCount(0);
+				await editMenuItem.click();
 
-				await expect(
-					modal.getByRole('button', {name: /^Edit /})
-				).toHaveCount(5);
+				await expect(page.getByLabel('Title')).toHaveValue(title);
+			});
 
-				// Editing is the only action a row offers.
+			await test.step('Check the content leaves the list once the field is filled', async () => {
+				const objectEntry =
+					await apiHelpers.objectEntry.patchObjectEntry(
+						{summary_i18n: {en_US: getRandomString()}},
+						applicationName,
+						objectEntryId
+					);
 
-				await expect(
-					modal.locator('.list-group-item button')
-				).toHaveCount(5);
+				expect(objectEntry.id).toBe(objectEntryId);
+
+				await openQualityList(page, {
+					cardTitle: 'Missing Required Data',
+					spaceName,
+					text: 'No Missing Required Data',
+				});
 			});
 		}
 	);
