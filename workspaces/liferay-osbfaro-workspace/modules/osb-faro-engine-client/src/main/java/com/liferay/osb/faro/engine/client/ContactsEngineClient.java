@@ -238,10 +238,10 @@ public interface ContactsEngineClient {
 	public Results<AccountLifecycleStageTransition>
 			getAccountLifecycleStageTransitions(
 				FaroProject faroProject, String country,
-				String fromLifecycleStage, String id, String industry,
+				String fromAccountLifecycleStageId, String id, String industry,
 				String rangeEnd, Integer rangeKey, String rangeStart,
-				Long segmentId, String toLifecycleStage, int cur, int delta,
-				List<OrderByField> orderByFields)
+				Long segmentId, String toAccountLifecycleStageId, int cur,
+				int delta, List<OrderByField> orderByFields)
 		throws FaroEngineClientException;
 
 	public AccountLifecycleStatus getAccountLifecycleStatus(
@@ -250,8 +250,8 @@ public interface ContactsEngineClient {
 
 	public Results<AccountLifecycle> getAccountLifecycles(
 			FaroProject faroProject, Long channelId,
-			Boolean defaultAccountLifecycle, String query, int cur, int delta,
-			String sortString)
+			Boolean defaultAccountLifecycle, String externalReferenceCode,
+			String query, int cur, int delta, String sortString)
 		throws FaroEngineClientException;
 
 	public List<AccountMetric> getAccountMetrics(

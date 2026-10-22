@@ -273,7 +273,7 @@ public class AccountFaroController extends BaseFaroController {
 				).put(
 					"id", stage.getId()
 				).put(
-					"stageType", stage.getStageType()
+					"name", stage.getName()
 				).build());
 
 			return new FaroFDSResultsDisplay<>(
