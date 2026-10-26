@@ -97,7 +97,7 @@ public abstract class BaseAccountResourceImpl
 	 * curl -X 'GET' 'http://localhost:8080/o/faro-rest/v1.0/workspace/{groupId}/channels/{channelId}/accounts'  -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(
-		description = "List or search accounts synced to an Analytics Cloud workspace. Optionally narrow results to a single channel (also known as property). Optionally narrow results to a single lifecycle stage with `lifecycleStage`, passing one of AT_RISK, AWARE, ENGAGED, ESTABLISHED, ONBOARDING, PIPELINE. Use this to browse or search accounts by name. To fetch a single account by ID, use `getAccount`."
+		description = "List or search accounts synced to an Analytics Cloud workspace. Optionally narrow results to a single channel (also known as property). Optionally narrow results to a single lifecycle stage with `lifecycleStage`, passing the name of a stage of the channel's default account lifecycle. Use this to browse or search accounts by name. To fetch a single account by ID, use `getAccount`."
 	)
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -112,8 +112,8 @@ public abstract class BaseAccountResourceImpl
 				name = "channelId", required = true
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
-				description = "Lifecycle stage name. When set, narrow the results to the accounts currently in that stage of the workspace's account lifecycle. The name is resolved to the stage ID that backs the filter, so pass the name, not the ID.",
-				example = "AT_RISK",
+				description = "Lifecycle stage name. When set, narrow the results to the accounts currently in that stage of the channel's default account lifecycle. The name is matched ignoring case and surrounding spaces and resolved to the stage ID that backs the filter, so pass the name, not the ID.",
+				example = "At Risk",
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
 				name = "lifecycleStage"
 			),
@@ -647,4 +647,4 @@ public abstract class BaseAccountResourceImpl
 		LogFactoryUtil.getLog(BaseAccountResourceImpl.class);
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1387646915
+// LIFERAY-REST-BUILDER-HASH:1140542466

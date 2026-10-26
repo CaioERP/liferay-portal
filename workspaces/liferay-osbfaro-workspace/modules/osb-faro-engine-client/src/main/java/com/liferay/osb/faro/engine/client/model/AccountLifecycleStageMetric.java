@@ -26,12 +26,12 @@ public class AccountLifecycleStageMetric {
 		return _description;
 	}
 
-	public double getPercentage() {
-		return _percentage;
+	public String getName() {
+		return _name;
 	}
 
-	public String getStageType() {
-		return _stageType;
+	public double getPercentage() {
+		return _percentage;
 	}
 
 	public void setAccountsCount(long accountsCount) {
@@ -50,19 +50,19 @@ public class AccountLifecycleStageMetric {
 		_description = description;
 	}
 
-	public void setPercentage(double percentage) {
-		_percentage = percentage;
+	public void setName(String name) {
+		_name = name;
 	}
 
-	public void setStageType(String stageType) {
-		_stageType = stageType;
+	public void setPercentage(double percentage) {
+		_percentage = percentage;
 	}
 
 	private long _accountsCount;
 	private double _averageStageDuration;
 	private Double _conversionRateToNextStage;
 	private String _description;
+	private String _name;
 	private double _percentage;
-	private String _stageType;
 
 }
