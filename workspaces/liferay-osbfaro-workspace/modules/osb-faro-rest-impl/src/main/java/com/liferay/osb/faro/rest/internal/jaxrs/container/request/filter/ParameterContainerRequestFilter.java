@@ -119,7 +119,11 @@ public class ParameterContainerRequestFilter implements ContainerRequestFilter {
 		MultivaluedMap<String, String> pathParameters,
 		MultivaluedMap<String, String> queryParameters) {
 
-		for (String name : new String[] {"individualSegmentId", "segmentId"}) {
+		for (String name :
+				new String[] {
+					"accountLifecycleId", "individualSegmentId", "segmentId"
+				}) {
+
 			_validateId(name, pathParameters.getFirst(name));
 			_validateId(name, queryParameters.getFirst(name));
 		}
@@ -258,6 +262,9 @@ public class ParameterContainerRequestFilter implements ContainerRequestFilter {
 				"accountId", "accountName", "fromAccountLifecycleStageId",
 				"toAccountLifecycleStageId", "transitionDate"
 			}
+		).put(
+			"getWorkspaceGroupChannelAccountLifecyclesPage",
+			new String[] {"id", "modifiedDate", "name"}
 		).put(
 			"getWorkspaceGroupChannelAccountsPage",
 			new String[] {
