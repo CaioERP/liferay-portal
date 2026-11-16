@@ -6,12 +6,18 @@
 package com.liferay.osb.faro.rest.internal.resource.v1_0;
 
 import com.liferay.osb.faro.engine.client.ContactsEngineClient;
+import com.liferay.osb.faro.model.FaroProject;
 import com.liferay.osb.faro.rest.dto.v1_0.AccountLifecycleStageMetric;
 import com.liferay.osb.faro.rest.internal.dto.v1_0.converter.FaroDTOConverterContext;
+import com.liferay.osb.faro.rest.internal.dto.v1_0.util.FaroPaginationUtil;
+import com.liferay.osb.faro.rest.internal.helper.AccountLifecycleHelper;
 import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleStageMetricResource;
 import com.liferay.osb.faro.service.FaroProjectLocalService;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.pagination.Pagination;
+
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -30,24 +36,41 @@ public class AccountLifecycleStageMetricResourceImpl
 
 	@Override
 	public Page<AccountLifecycleStageMetric>
-			getWorkspaceGroupAccountLifecycleStageMetricsPage(
-				Long groupId, String accountLifecycleId, String country,
-				String industry, Long segmentId)
+			getWorkspaceGroupChannelAccountLifecycleStageMetricsPage(
+				Long groupId, String channelId, String accountLifecycleId,
+				String country, String industry, Long segmentId,
+				Pagination pagination)
 		throws Exception {
+
+		FaroProject faroProject =
+			_faroProjectLocalService.getFaroProjectByGroupId(groupId);
+
+		_accountLifecycleHelper.getAccountLifecycle(
+			faroProject, channelId, accountLifecycleId);
+
+		List
+			<com.liferay.osb.faro.engine.client.model.
+				AccountLifecycleStageMetric> accountLifecycleStageMetrics =
+					_contactsEngineClient.getAccountLifecycleStageMetrics(
+						faroProject, country, accountLifecycleId, industry,
+						segmentId);
 
 		return Page.of(
 			transform(
-				_contactsEngineClient.getAccountLifecycleStageMetrics(
-					_faroProjectLocalService.getFaroProjectByGroupId(groupId),
-					country, accountLifecycleId, industry, segmentId),
+				FaroPaginationUtil.paginate(
+					accountLifecycleStageMetrics, pagination),
 				accountLifecycleStageMetric ->
 					_accountLifecycleStageMetricDTOConverter.toDTO(
 						new FaroDTOConverterContext(
 							contextAcceptLanguage.isAcceptAllLanguages(),
 							accountLifecycleId,
 							contextAcceptLanguage.getPreferredLocale()),
-						accountLifecycleStageMetric)));
+						accountLifecycleStageMetric)),
+			pagination, accountLifecycleStageMetrics.size());
 	}
+
+	@Reference
+	private AccountLifecycleHelper _accountLifecycleHelper;
 
 	@Reference(
 		target = "(component.name=com.liferay.osb.faro.rest.internal.dto.v1_0.converter.AccountLifecycleStageMetricDTOConverter)"

@@ -9,8 +9,10 @@ import com.liferay.osb.faro.engine.client.ContactsEngineClient;
 import com.liferay.osb.faro.engine.client.exception.FaroEngineClientException;
 import com.liferay.osb.faro.engine.client.exception.NoSuchEntryException;
 import com.liferay.osb.faro.engine.client.model.AccountLifecycleStatus;
+import com.liferay.osb.faro.model.FaroProject;
 import com.liferay.osb.faro.rest.dto.v1_0.AccountLifecycleHistory;
 import com.liferay.osb.faro.rest.internal.dto.v1_0.converter.FaroDTOConverterContext;
+import com.liferay.osb.faro.rest.internal.helper.AccountLifecycleHelper;
 import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleHistoryResource;
 import com.liferay.osb.faro.service.FaroProjectLocalService;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
@@ -34,17 +36,23 @@ public class AccountLifecycleHistoryResourceImpl
 
 	@Override
 	public AccountLifecycleHistory
-			getWorkspaceGroupAccountAccountLifecycleHistory(
-				Long groupId, String accountId, String accountLifecycleId)
+			getWorkspaceGroupChannelAccountAccountLifecycleHistory(
+				Long groupId, String channelId, String accountId,
+				String accountLifecycleId)
 		throws Exception {
+
+		FaroProject faroProject =
+			_faroProjectLocalService.getFaroProjectByGroupId(groupId);
+
+		_accountLifecycleHelper.getAccountLifecycle(
+			faroProject, channelId, accountLifecycleId);
 
 		AccountLifecycleStatus accountLifecycleStatus = null;
 
 		try {
 			accountLifecycleStatus =
 				_contactsEngineClient.getAccountLifecycleStatus(
-					_faroProjectLocalService.getFaroProjectByGroupId(groupId),
-					accountLifecycleId, accountId);
+					faroProject, accountLifecycleId, accountId);
 		}
 		catch (FaroEngineClientException faroEngineClientException) {
 			if (faroEngineClientException.getStatus() ==
@@ -62,6 +70,9 @@ public class AccountLifecycleHistoryResourceImpl
 				accountLifecycleId, contextAcceptLanguage.getPreferredLocale()),
 			accountLifecycleStatus);
 	}
+
+	@Reference
+	private AccountLifecycleHelper _accountLifecycleHelper;
 
 	@Reference(
 		target = "(component.name=com.liferay.osb.faro.rest.internal.dto.v1_0.converter.AccountLifecycleHistoryDTOConverter)"

@@ -41,7 +41,7 @@ public class AccountLifecycleResourceImpl
 		Results<com.liferay.osb.faro.engine.client.model.AccountLifecycle>
 			results = _contactsEngineClient.getAccountLifecycles(
 				_faroProjectLocalService.getFaroProjectByGroupId(groupId),
-				GetterUtil.getLong(channelId), null, search,
+				GetterUtil.getLong(channelId), null, null, search,
 				FaroPaginationUtil.getCur(pagination),
 				FaroPaginationUtil.getDelta(pagination),
 				FaroPaginationUtil.toSortString(sorts));
