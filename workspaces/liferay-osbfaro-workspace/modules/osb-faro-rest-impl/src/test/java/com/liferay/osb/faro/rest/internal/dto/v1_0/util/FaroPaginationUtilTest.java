@@ -22,6 +22,26 @@ import org.junit.Test;
 public class FaroPaginationUtilTest {
 
 	@Test
+	public void testGetPageIndex() {
+		Assert.assertEquals(
+			0,
+			FaroPaginationUtil.getPageIndex(
+				Pagination.of(1, RandomTestUtil.randomInt())));
+
+		int page = RandomTestUtil.randomInt();
+
+		Assert.assertEquals(
+			page - 1,
+			FaroPaginationUtil.getPageIndex(
+				Pagination.of(page, RandomTestUtil.randomInt())));
+	}
+
+	@Test
+	public void testGetPageIndexWithoutPagination() {
+		Assert.assertEquals(0, FaroPaginationUtil.getPageIndex(null));
+	}
+
+	@Test
 	public void testPaginate() {
 		List<String> items = List.of(
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),

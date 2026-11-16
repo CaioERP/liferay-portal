@@ -39,6 +39,10 @@ public class FaroPaginationUtil {
 		return pagination.getPageSize();
 	}
 
+	public static int getPageIndex(Pagination pagination) {
+		return getCur(pagination) - 1;
+	}
+
 	public static <T> List<T> paginate(List<T> items, Pagination pagination) {
 		if (pagination == null) {
 			return items;
