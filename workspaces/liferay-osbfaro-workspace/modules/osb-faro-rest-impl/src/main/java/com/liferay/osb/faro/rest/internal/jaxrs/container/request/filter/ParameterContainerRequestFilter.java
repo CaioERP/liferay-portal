@@ -274,6 +274,7 @@ public class ParameterContainerRequestFilter implements ContainerRequestFilter {
 		SetUtil.fromArray(
 			"getWorkspaceGroupChannelAccountLifecycleStageMetricsPage",
 			"getWorkspaceGroupChannelAccountLifecyclesPage",
+			"getWorkspaceGroupChannelAcquisitionsPage",
 			"getWorkspaceGroupEventAttributeDefinitionsPage",
 			"getWorkspaceGroupEventDefinitionsPage");
 	private static final Map<String, String[]> _sortableFieldNames =
@@ -344,6 +345,8 @@ public class ParameterContainerRequestFilter implements ContainerRequestFilter {
 			"rangeKey", _getNames(TimeRange.values())
 		).put(
 			"status", new String[] {"ACTIVE", "INACTIVE"}
+		).put(
+			"type", new String[] {"CHANNEL", "REFERRER", "SOURCE_MEDIUM"}
 		).build();
 
 	@Context

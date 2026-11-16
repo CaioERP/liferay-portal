@@ -8,6 +8,7 @@ package com.liferay.osb.faro.rest.internal.jaxrs.container.request.filter;
 import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleResource;
 import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleStageMetricResource;
 import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleStageTransitionResource;
+import com.liferay.osb.faro.rest.resource.v1_0.AcquisitionResource;
 import com.liferay.osb.faro.rest.resource.v1_0.EventAttributeDefinitionResource;
 import com.liferay.osb.faro.rest.resource.v1_0.EventDefinitionResource;
 import com.liferay.osb.faro.rest.resource.v1_0.IndividualSegmentMembershipResource;
@@ -90,6 +91,33 @@ public class ParameterContainerRequestFilterTest {
 			"\"sort\" must be a comma separated list of \"column:asc\" or " +
 				"\"column:desc\" expressions",
 			_filter("sort", "accountName:sideways"));
+	}
+
+	@Test
+	public void testFilterWithAcquisitionResourceMethod() {
+		_setResourceMethod(
+			AcquisitionResource.class,
+			"getWorkspaceGroupChannelAcquisitionsPage");
+
+		Assert.assertNull(_filter("pageSize", "100"));
+		Assert.assertNull(
+			_filter("segmentId", String.valueOf(RandomTestUtil.randomLong())));
+		Assert.assertNull(_filter("type", "SOURCE_MEDIUM"));
+
+		_assertTitle(
+			"\"pageSize\" must be a whole number from 1 to 100",
+			_filter("pageSize", "101"));
+		_assertTitle(
+			"\"rangeKey\" must be one of LAST_180_DAYS, LAST_24_HOURS, " +
+				"LAST_28_DAYS, LAST_30_DAYS, LAST_7_DAYS, LAST_90_DAYS, " +
+					"LAST_YEAR, YESTERDAY",
+			_filter("rangeKey", "LAST_2_DAYS"));
+		_assertTitle(
+			"\"segmentId\" must be a numeric ID",
+			_filter("segmentId", RandomTestUtil.randomString()));
+		_assertTitle(
+			"\"type\" must be one of CHANNEL, REFERRER, SOURCE_MEDIUM",
+			_filter("type", "BOGUS"));
 	}
 
 	@Test
