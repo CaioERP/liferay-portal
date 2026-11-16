@@ -8,8 +8,11 @@ package com.liferay.osb.faro.rest.internal.jaxrs.container.request.filter;
 import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleResource;
 import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleStageMetricResource;
 import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleStageTransitionResource;
+import com.liferay.osb.faro.rest.resource.v1_0.EventAttributeDefinitionResource;
+import com.liferay.osb.faro.rest.resource.v1_0.EventDefinitionResource;
 import com.liferay.osb.faro.rest.resource.v1_0.IndividualSegmentMembershipResource;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.vulcan.jaxrs.exception.mapper.Problem;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -87,6 +90,60 @@ public class ParameterContainerRequestFilterTest {
 			"\"sort\" must be a comma separated list of \"column:asc\" or " +
 				"\"column:desc\" expressions",
 			_filter("sort", "accountName:sideways"));
+	}
+
+	@Test
+	public void testFilterWithEventAttributeDefinitionResourceMethod() {
+		_setResourceMethod(
+			EventAttributeDefinitionResource.class,
+			"getWorkspaceGroupEventAttributeDefinitionsPage");
+
+		Assert.assertNull(_filter("attributeType", "GLOBAL"));
+		Assert.assertNull(
+			_filter(
+				"eventDefinitionId",
+				String.valueOf(RandomTestUtil.randomLong())));
+
+		_assertTitle(
+			"\"attributeType\" must be one of ALL, GLOBAL, LOCAL",
+			_filter("attributeType", "BOGUS"));
+		_assertTitle(
+			"\"dataType\" is not a sortable column. Sortable columns: " +
+				"displayName, name",
+			_filter("sort", "dataType:asc"));
+		_assertTitle(
+			"\"eventDefinitionId\" must be a numeric ID",
+			_filter("eventDefinitionId", "pageViewed"));
+		_assertTitle(
+			"\"pageSize\" must be a whole number from 1 to 100",
+			_filter("pageSize", "101"));
+	}
+
+	@Test
+	public void testFilterWithEventDefinitionResourceMethod() {
+		_setResourceMethod(
+			EventDefinitionResource.class,
+			"getWorkspaceGroupEventDefinitionsPage");
+
+		Assert.assertNull(_filter("eventType", "CUSTOM"));
+		Assert.assertNull(_filter("pageSize", "100"));
+		Assert.assertNull(_filter("sort", "displayName:desc"));
+
+		_assertTitle(
+			"\"blocked\" must be one of false, true",
+			_filter("blocked", "yes"));
+		_assertTitle(
+			"\"blockedLastSeenDate\" is not a sortable column. Sortable " +
+				"columns: displayName, name",
+			_filter("sort", "blockedLastSeenDate:desc"));
+		_assertTitle(
+			"\"eventType\" must be one of ALL, CUSTOM, DEFAULT",
+			_filter("eventType", "BOGUS"));
+		_assertTitle(
+			"\"hidden\" must be one of false, true", _filter("hidden", "1"));
+		_assertTitle(
+			"\"pageSize\" must be a whole number from 1 to 100",
+			_filter("pageSize", "101"));
 	}
 
 	@Test

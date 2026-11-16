@@ -133,7 +133,8 @@ public class ParameterContainerRequestFilter implements ContainerRequestFilter {
 
 		for (String name :
 				new String[] {
-					"accountLifecycleId", "individualSegmentId", "segmentId"
+					"accountLifecycleId", "eventDefinitionId",
+					"individualSegmentId", "segmentId"
 				}) {
 
 			_validateId(name, pathParameters.getFirst(name));
@@ -272,7 +273,9 @@ public class ParameterContainerRequestFilter implements ContainerRequestFilter {
 	private static final Set<String> _pageSizeLimitedResourceMethodNames =
 		SetUtil.fromArray(
 			"getWorkspaceGroupChannelAccountLifecycleStageMetricsPage",
-			"getWorkspaceGroupChannelAccountLifecyclesPage");
+			"getWorkspaceGroupChannelAccountLifecyclesPage",
+			"getWorkspaceGroupEventAttributeDefinitionsPage",
+			"getWorkspaceGroupEventDefinitionsPage");
 	private static final Map<String, String[]> _sortableFieldNames =
 		HashMapBuilder.put(
 			"getWorkspaceGroupAccountLifecycleStageTransitionsPage",
@@ -314,11 +317,25 @@ public class ParameterContainerRequestFilter implements ContainerRequestFilter {
 				"viewsMetric", "visitorsMetric"
 			}
 		).put(
+			"getWorkspaceGroupEventAttributeDefinitionsPage",
+			new String[] {"displayName", "name"}
+		).put(
+			"getWorkspaceGroupEventDefinitionsPage",
+			new String[] {"displayName", "name"}
+		).put(
 			"getWorkspaceGroupIndividualSegmentMembershipsPage", new String[0]
 		).build();
 	private static final Map<String, String[]> _validValues =
 		HashMapBuilder.put(
 			"activityStatus", new String[] {"ACTIVE", "INACTIVE"}
+		).put(
+			"attributeType", new String[] {"ALL", "GLOBAL", "LOCAL"}
+		).put(
+			"blocked", new String[] {"false", "true"}
+		).put(
+			"eventType", new String[] {"ALL", "CUSTOM", "DEFAULT"}
+		).put(
+			"hidden", new String[] {"false", "true"}
 		).put(
 			"interval", _getNames(Interval.values())
 		).put(
