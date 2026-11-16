@@ -174,11 +174,6 @@ components:
                         "Description of the stage."
                     readOnly: true
                     type: string
-                displayOrder:
-                    description:
-                        "Position of the stage in the lifecycle, starting at 1."
-                    readOnly: true
-                    type: integer
                 endDate:
                     description:
                         "When the account left the stage. Null while the account is still in it or never entered it."
@@ -195,11 +190,16 @@ components:
                         "Maximum number of days an account is expected to stay in the stage before it is considered stalled. Null when no limit is set."
                     readOnly: true
                     type: integer
-                stageType:
+                name:
                     description:
-                        "Stage type: AWARE, ENGAGED, PIPELINE, ONBOARDING, ESTABLISHED, or AT_RISK."
+                        "Name of the stage, unique within the lifecycle ignoring case (e.g. 'Pipeline' or 'At Risk')."
                     readOnly: true
                     type: string
+                position:
+                    description:
+                        "Position of the stage in the lifecycle, starting at 1."
+                    readOnly: true
+                    type: integer
                 startDate:
                     description:
                         "When the account entered the stage. Null when it never entered it."
@@ -225,7 +225,7 @@ components:
                     type: number
                 conversionRateToNextStage:
                     description:
-                        "Share of the accounts that entered the stage in the last 90 days that then moved to the next stage. Null for the last stage, for AT_RISK and ESTABLISHED, and when no account entered the stage."
+                        "Share of the accounts that entered the stage in the last 90 days that then moved to the next stage. Null for the last stage and when no account entered the stage."
                     format: double
                     readOnly: true
                     type: number
@@ -234,17 +234,22 @@ components:
                         "Description of the stage."
                     readOnly: true
                     type: string
+                name:
+                    description:
+                        "Name of the stage, unique within the lifecycle ignoring case (e.g. 'Pipeline' or 'At Risk')."
+                    readOnly: true
+                    type: string
                 percentage:
                     description:
                         "Percentage of the lifecycle's current accounts that are in this stage."
                     format: double
                     readOnly: true
                     type: number
-                stageType:
+                position:
                     description:
-                        "Stage type: AWARE, ENGAGED, PIPELINE, ONBOARDING, ESTABLISHED, or AT_RISK."
+                        "Position of the stage in the lifecycle, starting at 1."
                     readOnly: true
-                    type: string
+                    type: integer
             type: object
         AccountLifecycleStageTransition:
             description:
@@ -950,7 +955,7 @@ components:
             type: object
 info:
     description:
-        "Read only headless REST API for LDP (Liferay Data Platform). Exposes accounts, asset summary metrics, events, individuals, individual segments, page metrics, properties, and search terms for use as MCP tools and external integrations. All endpoints are scoped to a provisioned LDP workspace. Every tool accepts a `fields` input: request only the fields you need, especially on lists, and leave out the heavy fields `demographics`, `events` and `attributes` unless the question needs them. A Java client JAR is available for use with the group ID 'com.liferay', artifact ID 'com.liferay.osb.faro.rest.client', and version '1.0.0'."
+        "Read only headless REST API for LDP (Liferay Data Platform). Exposes accounts, account lifecycles, asset summary metrics, events, individuals, individual segments, page metrics, properties, and search terms for use as MCP tools and external integrations. All endpoints are scoped to a provisioned LDP workspace. Every tool accepts a `fields` input: request only the fields you need, especially on lists, and leave out the heavy fields `demographics`, `events` and `attributes` unless the question needs them. A Java client JAR is available for use with the group ID 'com.liferay', artifact ID 'com.liferay.osb.faro.rest.client', and version '1.0.0'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -959,60 +964,6 @@ info:
     x-class-name: FaroRest
 openapi: 3.0.1
 paths:
-    "/workspace/{groupId}/account-lifecycles/{accountLifecycleId}/stage-metrics":
-        get:
-            description:
-                "Per-stage metrics of an account lifecycle, one entry per stage in display order: how many accounts are in each stage now, their share of the lifecycle, the average days spent in the stage and the conversion rate to the next stage. Durations and conversion rates cover the last 90 days; the date range can't be changed. Use this to answer 'where do accounts stall' style questions. Optionally narrow the accounts by country, industry or segment membership."
-            operationId: getWorkspaceGroupAccountLifecycleStageMetricsPage
-            parameters:
-                -   in: path
-                    description:
-                        "ID of the Liferay site that owns the LDP workspace."
-                    name: groupId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: path
-                    description:
-                        "Account lifecycle ID. Use `getWorkspaceGroupChannelAccountLifecyclesPage` to find it."
-                    name: accountLifecycleId
-                    required: true
-                    schema:
-                        type: string
-                -   in: query
-                    description:
-                        "Only include accounts headquartered in this country."
-                    name: country
-                    schema:
-                        type: string
-                -   in: query
-                    description:
-                        "Only include accounts in this industry."
-                    name: industry
-                    schema:
-                        type: string
-                -   in: query
-                    description:
-                        "Only include accounts that are members of this segment."
-                    name: segmentId
-                    schema:
-                        format: int64
-                        type: integer
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/AccountLifecycleStageMetric"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/AccountLifecycleStageMetric"
-                                type: array
-            tags: ["AccountLifecycleStageMetric"]
     "/workspace/{groupId}/account-lifecycles/{accountLifecycleId}/stage-transitions":
         get:
             description:
@@ -1154,44 +1105,6 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/Account"
             tags: ["Account"]
-    "/workspace/{groupId}/accounts/{accountId}/account-lifecycle-histories/{accountLifecycleId}":
-        get:
-            description:
-                "The stage history of one account in an account lifecycle: every stage of the lifecycle in display order, with when the account most recently entered and left it. The stage with a `startDate` and no `endDate` is the one the account is in now. Use this to answer 'how long has this account been in its stage' or 'when did it become a customer' style questions. To see moves across many accounts, use `getWorkspaceGroupAccountLifecycleStageTransitionsPage` instead."
-            operationId: getWorkspaceGroupAccountAccountLifecycleHistory
-            parameters:
-                -   in: path
-                    description:
-                        "ID of the Liferay site that owns the LDP workspace."
-                    name: groupId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: path
-                    description:
-                        "Account ID."
-                    name: accountId
-                    required: true
-                    schema:
-                        type: string
-                -   in: path
-                    description:
-                        "Account lifecycle ID. Use `getWorkspaceGroupChannelAccountLifecyclesPage` to find it."
-                    name: accountLifecycleId
-                    required: true
-                    schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/AccountLifecycleHistory"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/AccountLifecycleHistory"
-            tags: ["AccountLifecycleHistory"]
     "/workspace/{groupId}/channels":
         get:
             description:
@@ -1254,7 +1167,7 @@ paths:
     "/workspace/{groupId}/channels/{channelId}/account-lifecycles":
         get:
             description:
-                "List the account lifecycles of a channel (also known as property), each with its stages in display order. A channel can have several lifecycles, and exactly one of them is its default. Use this to find the `accountLifecycleId` that the other account lifecycle tools and `getWorkspaceGroupChannelAccountsPage` take, and the stage types and descriptions that the stage filters accept."
+                "List the account lifecycles of a channel (also known as property), each with its stages in display order. A channel can have several lifecycles, and exactly one of them is its default. Use this to find the `accountLifecycleId` that the other account lifecycle tools and `getWorkspaceGroupChannelAccountsPage` take, and the stage names that the stage filters accept."
             operationId: getWorkspaceGroupChannelAccountLifecyclesPage
             parameters:
                 -   in: path
@@ -1281,10 +1194,10 @@ paths:
                         type: integer
                 -   in: query
                     description:
-                        "Page size, from 1 to 500. Larger values are rejected."
+                        "Page size, from 1 to 100. Larger values are rejected."
                     name: pageSize
                     schema:
-                        maximum: 500
+                        maximum: 100
                         minimum: 1
                         type: integer
                 -   in: query
@@ -1314,6 +1227,82 @@ paths:
                                     $ref: "#/components/schemas/AccountLifecycle"
                                 type: array
             tags: ["AccountLifecycle"]
+    "/workspace/{groupId}/channels/{channelId}/account-lifecycles/{accountLifecycleId}/stage-metrics":
+        get:
+            description:
+                "Per-stage metrics of an account lifecycle, one entry per stage in display order: how many accounts are in each stage now, their share of the lifecycle, the average days spent in the stage and the conversion rate to the next stage. Durations and conversion rates cover the last 90 days; the date range can't be changed. Use this to answer 'where do accounts stall' style questions. Optionally narrow the accounts by country, industry or segment membership. A lifecycle has at most 20 stages, so the default page returns them all. The lifecycle must belong to the channel; otherwise the call returns 404."
+            operationId: getWorkspaceGroupChannelAccountLifecycleStageMetricsPage
+            parameters:
+                -   in: path
+                    description:
+                        "ID of the Liferay site that owns the LDP workspace."
+                    name: groupId
+                    required: true
+                    schema:
+                        format: int64
+                        type: integer
+                -   in: path
+                    description:
+                        "ID of the channel (also known as property) that the account lifecycle belongs to."
+                    name: channelId
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    description:
+                        "Account lifecycle ID. Use `getWorkspaceGroupChannelAccountLifecyclesPage` to find it."
+                    name: accountLifecycleId
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    description:
+                        "Only include accounts headquartered in this country."
+                    name: country
+                    schema:
+                        type: string
+                -   in: query
+                    description:
+                        "Only include accounts in this industry."
+                    name: industry
+                    schema:
+                        type: string
+                -   in: query
+                    description:
+                        "Page number (starts at 1)."
+                    name: page
+                    schema:
+                        minimum: 1
+                        type: integer
+                -   in: query
+                    description:
+                        "Page size, from 1 to 100. Defaults to 20."
+                    name: pageSize
+                    schema:
+                        maximum: 100
+                        minimum: 1
+                        type: integer
+                -   in: query
+                    description:
+                        "Only include accounts that are members of this segment."
+                    name: segmentId
+                    schema:
+                        format: int64
+                        type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/AccountLifecycleStageMetric"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/AccountLifecycleStageMetric"
+                                type: array
+            tags: ["AccountLifecycleStageMetric"]
     "/workspace/{groupId}/channels/{channelId}/accounts":
         get:
             description:
@@ -1410,6 +1399,51 @@ paths:
                                     $ref: "#/components/schemas/Account"
                                 type: array
             tags: ["Account"]
+    "/workspace/{groupId}/channels/{channelId}/accounts/{accountId}/account-lifecycle-histories/{accountLifecycleId}":
+        get:
+            description:
+                "The stage history of one account in an account lifecycle: every stage of the lifecycle in display order, with when the account most recently entered and left it. The stage with a `startDate` and no `endDate` is the one the account is in now. Use this to answer 'how long has this account been in its stage' or 'when did it become a customer' style questions. To see moves across many accounts, use `getWorkspaceGroupAccountLifecycleStageTransitionsPage` instead. The lifecycle must belong to the channel; otherwise the call returns 404."
+            operationId: getWorkspaceGroupChannelAccountAccountLifecycleHistory
+            parameters:
+                -   in: path
+                    description:
+                        "ID of the Liferay site that owns the LDP workspace."
+                    name: groupId
+                    required: true
+                    schema:
+                        format: int64
+                        type: integer
+                -   in: path
+                    description:
+                        "ID of the channel (also known as property) that the account lifecycle belongs to."
+                    name: channelId
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    description:
+                        "Account ID."
+                    name: accountId
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    description:
+                        "Account lifecycle ID. Use `getWorkspaceGroupChannelAccountLifecyclesPage` to find it."
+                    name: accountLifecycleId
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AccountLifecycleHistory"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/AccountLifecycleHistory"
+            tags: ["AccountLifecycleHistory"]
     "/workspace/{groupId}/channels/{channelId}/accounts/{accountId}/event-metrics":
         get:
             description:
