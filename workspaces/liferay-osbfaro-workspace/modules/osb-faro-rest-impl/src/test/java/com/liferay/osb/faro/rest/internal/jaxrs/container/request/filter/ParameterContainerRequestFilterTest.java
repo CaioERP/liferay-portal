@@ -5,6 +5,8 @@
 
 package com.liferay.osb.faro.rest.internal.jaxrs.container.request.filter;
 
+import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleResource;
+import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleStageMetricResource;
 import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleStageTransitionResource;
 import com.liferay.osb.faro.rest.resource.v1_0.IndividualSegmentMembershipResource;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
@@ -85,6 +87,33 @@ public class ParameterContainerRequestFilterTest {
 			"\"sort\" must be a comma separated list of \"column:asc\" or " +
 				"\"column:desc\" expressions",
 			_filter("sort", "accountName:sideways"));
+	}
+
+	@Test
+	public void testFilterWithPageSizeLimitedResourceMethod() {
+		_setResourceMethod(
+			AccountLifecycleResource.class,
+			"getWorkspaceGroupChannelAccountLifecyclesPage");
+
+		Assert.assertNull(_filter("pageSize", "100"));
+
+		_assertTitle(
+			"\"pageSize\" must be a whole number from 1 to 100",
+			_filter("pageSize", "101"));
+		_assertTitle(
+			"\"bogus\" is not a sortable column. Sortable columns: id, " +
+				"modifiedDate, name",
+			_filter("sort", "bogus:asc"));
+
+		_setResourceMethod(
+			AccountLifecycleStageMetricResource.class,
+			"getWorkspaceGroupChannelAccountLifecycleStageMetricsPage");
+
+		Assert.assertNull(_filter("pageSize", "100"));
+
+		_assertTitle(
+			"\"pageSize\" must be a whole number from 1 to 100",
+			_filter("pageSize", "101"));
 	}
 
 	@Test

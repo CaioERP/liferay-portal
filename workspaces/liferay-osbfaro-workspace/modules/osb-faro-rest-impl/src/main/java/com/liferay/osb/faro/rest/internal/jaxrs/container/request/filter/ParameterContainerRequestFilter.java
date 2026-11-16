@@ -13,6 +13,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.jaxrs.exception.mapper.Problem;
@@ -38,6 +39,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ServiceScope;
@@ -88,6 +90,16 @@ public class ParameterContainerRequestFilter implements ContainerRequestFilter {
 		return names;
 	}
 
+	private int _getMaxPageSize() {
+		if (_pageSizeLimitedResourceMethodNames.contains(
+				_getResourceMethodName())) {
+
+			return 100;
+		}
+
+		return 500;
+	}
+
 	private String _getResourceMethodName() {
 		Method method = _resourceInfo.getResourceMethod();
 
@@ -136,7 +148,9 @@ public class ParameterContainerRequestFilter implements ContainerRequestFilter {
 
 		_validateInteger(
 			Integer.MAX_VALUE, "page", queryParameters.getFirst("page"));
-		_validateInteger(500, "pageSize", queryParameters.getFirst("pageSize"));
+		_validateInteger(
+			_getMaxPageSize(), "pageSize",
+			queryParameters.getFirst("pageSize"));
 		_validateRange(
 			queryParameters.getFirst("rangeEnd"),
 			queryParameters.getFirst("rangeStart"));
@@ -255,6 +269,10 @@ public class ParameterContainerRequestFilter implements ContainerRequestFilter {
 		}
 	}
 
+	private static final Set<String> _pageSizeLimitedResourceMethodNames =
+		SetUtil.fromArray(
+			"getWorkspaceGroupChannelAccountLifecycleStageMetricsPage",
+			"getWorkspaceGroupChannelAccountLifecyclesPage");
 	private static final Map<String, String[]> _sortableFieldNames =
 		HashMapBuilder.put(
 			"getWorkspaceGroupAccountLifecycleStageTransitionsPage",
