@@ -47,7 +47,8 @@ public class AccountLifecycleDTOConverter
 			{
 				setAccountLifecycleStages(
 					() -> _toAccountLifecycleStages(
-						dtoConverterContext, accountLifecycle.getStages()));
+						dtoConverterContext,
+						accountLifecycle.getAccountLifecycleStages()));
 				setDateModified(accountLifecycle::getModifiedDate);
 				setDefaultAccountLifecycle(
 					accountLifecycle::isDefaultAccountLifecycle);

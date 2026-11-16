@@ -46,8 +46,9 @@ public class AccountLifecycleStageMetricDTOConverter
 				setConversionRateToNextStage(
 					accountLifecycleStageMetric::getConversionRateToNextStage);
 				setDescription(accountLifecycleStageMetric::getDescription);
+				setName(accountLifecycleStageMetric::getName);
 				setPercentage(accountLifecycleStageMetric::getPercentage);
-				setStageType(accountLifecycleStageMetric::getStageType);
+				setPosition(accountLifecycleStageMetric::getPosition);
 			}
 		};
 	}

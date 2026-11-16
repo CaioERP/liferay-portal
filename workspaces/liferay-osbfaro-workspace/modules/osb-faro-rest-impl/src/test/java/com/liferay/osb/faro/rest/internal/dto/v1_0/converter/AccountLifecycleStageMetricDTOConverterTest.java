@@ -6,6 +6,7 @@
 package com.liferay.osb.faro.rest.internal.dto.v1_0.converter;
 
 import com.liferay.osb.faro.rest.dto.v1_0.AccountLifecycleStageMetric;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,13 +26,20 @@ public class AccountLifecycleStageMetricDTOConverterTest {
 				new com.liferay.osb.faro.engine.client.model.
 					AccountLifecycleStageMetric();
 
-		engineClientAccountLifecycleStageMetric.setAccountsCount(12);
-		engineClientAccountLifecycleStageMetric.setAverageStageDuration(4.5);
+		engineClientAccountLifecycleStageMetric.setAccountsCount(
+			RandomTestUtil.randomLong());
+		engineClientAccountLifecycleStageMetric.setAverageStageDuration(
+			RandomTestUtil.randomDouble());
 		engineClientAccountLifecycleStageMetric.setConversionRateToNextStage(
-			0.25);
-		engineClientAccountLifecycleStageMetric.setDescription("Pipeline");
-		engineClientAccountLifecycleStageMetric.setPercentage(40.0);
-		engineClientAccountLifecycleStageMetric.setStageType("PIPELINE");
+			RandomTestUtil.randomDouble());
+		engineClientAccountLifecycleStageMetric.setDescription(
+			RandomTestUtil.randomString());
+		engineClientAccountLifecycleStageMetric.setName(
+			RandomTestUtil.randomString());
+		engineClientAccountLifecycleStageMetric.setPercentage(
+			RandomTestUtil.randomDouble());
+		engineClientAccountLifecycleStageMetric.setPosition(
+			RandomTestUtil.randomInt());
 
 		AccountLifecycleStageMetric accountLifecycleStageMetric =
 			_accountLifecycleStageMetricDTOConverter.toDTO(
@@ -52,11 +60,14 @@ public class AccountLifecycleStageMetricDTOConverterTest {
 			engineClientAccountLifecycleStageMetric.getDescription(),
 			accountLifecycleStageMetric.getDescription());
 		Assert.assertEquals(
+			engineClientAccountLifecycleStageMetric.getName(),
+			accountLifecycleStageMetric.getName());
+		Assert.assertEquals(
 			engineClientAccountLifecycleStageMetric.getPercentage(),
 			accountLifecycleStageMetric.getPercentage(), 0);
 		Assert.assertEquals(
-			engineClientAccountLifecycleStageMetric.getStageType(),
-			accountLifecycleStageMetric.getStageType());
+			engineClientAccountLifecycleStageMetric.getPosition(),
+			accountLifecycleStageMetric.getPosition());
 	}
 
 	private final AccountLifecycleStageMetricDTOConverter

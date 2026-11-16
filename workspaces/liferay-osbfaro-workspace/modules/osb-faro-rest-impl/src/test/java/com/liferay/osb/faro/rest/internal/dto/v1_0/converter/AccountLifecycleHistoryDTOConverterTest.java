@@ -10,9 +10,9 @@ import com.liferay.osb.faro.engine.client.model.AccountLifecycleStatus;
 import com.liferay.osb.faro.rest.dto.v1_0.AccountLifecycleHistory;
 import com.liferay.osb.faro.rest.dto.v1_0.AccountLifecycleStageHistory;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 
 import java.util.Collections;
-import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,17 +39,17 @@ public class AccountLifecycleHistoryDTOConverterTest {
 		AccountLifecycleStageStatus accountLifecycleStageStatus =
 			new AccountLifecycleStageStatus();
 
-		accountLifecycleStageStatus.setId("stage-3");
-		accountLifecycleStageStatus.setStageType("PIPELINE");
-		accountLifecycleStageStatus.setStartDate(new Date());
+		accountLifecycleStageStatus.setId(RandomTestUtil.randomString());
+		accountLifecycleStageStatus.setName(RandomTestUtil.randomString());
+		accountLifecycleStageStatus.setStartDate(RandomTestUtil.nextDate());
 
 		AccountLifecycleStatus accountLifecycleStatus =
 			new AccountLifecycleStatus();
 
 		accountLifecycleStatus.setAccountLifecycleStageStatuses(
 			Collections.singletonList(accountLifecycleStageStatus));
-		accountLifecycleStatus.setId("lifecycle-1");
-		accountLifecycleStatus.setName("Sales");
+		accountLifecycleStatus.setId(RandomTestUtil.randomString());
+		accountLifecycleStatus.setName(RandomTestUtil.randomString());
 
 		AccountLifecycleHistory accountLifecycleHistory =
 			_accountLifecycleHistoryDTOConverter.toDTO(
@@ -75,6 +75,9 @@ public class AccountLifecycleHistoryDTOConverterTest {
 		Assert.assertEquals(
 			accountLifecycleStageStatus.getId(),
 			accountLifecycleStageHistory.getId());
+		Assert.assertEquals(
+			accountLifecycleStageStatus.getName(),
+			accountLifecycleStageHistory.getName());
 		Assert.assertEquals(
 			accountLifecycleStageStatus.getStartDate(),
 			accountLifecycleStageHistory.getStartDate());

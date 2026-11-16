@@ -8,9 +8,9 @@ package com.liferay.osb.faro.rest.internal.dto.v1_0.converter;
 import com.liferay.osb.faro.rest.dto.v1_0.AccountLifecycle;
 import com.liferay.osb.faro.rest.dto.v1_0.AccountLifecycleStage;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 
 import java.util.Collections;
-import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,23 +37,29 @@ public class AccountLifecycleDTOConverterTest {
 				new com.liferay.osb.faro.engine.client.model.
 					AccountLifecycleStage();
 
-		engineClientAccountLifecycleStage.setDescription("Pipeline");
-		engineClientAccountLifecycleStage.setDisplayOrder(3);
-		engineClientAccountLifecycleStage.setId("stage-3");
-		engineClientAccountLifecycleStage.setMaxDuration(30);
-		engineClientAccountLifecycleStage.setStageType("PIPELINE");
+		engineClientAccountLifecycleStage.setDescription(
+			RandomTestUtil.randomString());
+		engineClientAccountLifecycleStage.setId(RandomTestUtil.randomString());
+		engineClientAccountLifecycleStage.setMaxDuration(
+			RandomTestUtil.randomInt());
+		engineClientAccountLifecycleStage.setName(
+			RandomTestUtil.randomString());
+		engineClientAccountLifecycleStage.setPosition(
+			RandomTestUtil.randomInt());
 
 		com.liferay.osb.faro.engine.client.model.AccountLifecycle
 			engineClientAccountLifecycle =
 				new com.liferay.osb.faro.engine.client.model.AccountLifecycle();
 
-		engineClientAccountLifecycle.setDefaultAccountLifecycle(true);
-		engineClientAccountLifecycle.setDescription("Sales lifecycle");
-		engineClientAccountLifecycle.setId("lifecycle-1");
-		engineClientAccountLifecycle.setModifiedDate(new Date());
-		engineClientAccountLifecycle.setName("Sales");
-		engineClientAccountLifecycle.setStages(
+		engineClientAccountLifecycle.setAccountLifecycleStages(
 			Collections.singletonList(engineClientAccountLifecycleStage));
+		engineClientAccountLifecycle.setDefaultAccountLifecycle(
+			RandomTestUtil.randomBoolean());
+		engineClientAccountLifecycle.setDescription(
+			RandomTestUtil.randomString());
+		engineClientAccountLifecycle.setId(RandomTestUtil.randomString());
+		engineClientAccountLifecycle.setModifiedDate(RandomTestUtil.nextDate());
+		engineClientAccountLifecycle.setName(RandomTestUtil.randomString());
 
 		AccountLifecycle accountLifecycle = _accountLifecycleDTOConverter.toDTO(
 			null, engineClientAccountLifecycle);
@@ -85,8 +91,11 @@ public class AccountLifecycleDTOConverterTest {
 			engineClientAccountLifecycleStage.getId(),
 			accountLifecycleStage.getId());
 		Assert.assertEquals(
-			engineClientAccountLifecycleStage.getStageType(),
-			accountLifecycleStage.getStageType());
+			engineClientAccountLifecycleStage.getName(),
+			accountLifecycleStage.getName());
+		Assert.assertEquals(
+			engineClientAccountLifecycleStage.getPosition(),
+			accountLifecycleStage.getPosition());
 	}
 
 	private final AccountLifecycleDTOConverter _accountLifecycleDTOConverter =

@@ -40,11 +40,11 @@ public class AccountLifecycleStageHistoryDTOConverter
 		return new AccountLifecycleStageHistory() {
 			{
 				setDescription(accountLifecycleStageStatus::getDescription);
-				setDisplayOrder(accountLifecycleStageStatus::getDisplayOrder);
 				setEndDate(accountLifecycleStageStatus::getEndDate);
 				setId(accountLifecycleStageStatus::getId);
 				setMaxDuration(accountLifecycleStageStatus::getMaxDuration);
-				setStageType(accountLifecycleStageStatus::getStageType);
+				setName(accountLifecycleStageStatus::getName);
+				setPosition(accountLifecycleStageStatus::getPosition);
 				setStartDate(accountLifecycleStageStatus::getStartDate);
 			}
 		};

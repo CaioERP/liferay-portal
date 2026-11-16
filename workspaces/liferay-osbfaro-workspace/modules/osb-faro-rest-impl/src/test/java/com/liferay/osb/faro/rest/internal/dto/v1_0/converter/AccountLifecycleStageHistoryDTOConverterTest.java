@@ -7,8 +7,7 @@ package com.liferay.osb.faro.rest.internal.dto.v1_0.converter;
 
 import com.liferay.osb.faro.engine.client.model.AccountLifecycleStageStatus;
 import com.liferay.osb.faro.rest.dto.v1_0.AccountLifecycleStageHistory;
-
-import java.util.Date;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,13 +25,14 @@ public class AccountLifecycleStageHistoryDTOConverterTest {
 		AccountLifecycleStageStatus accountLifecycleStageStatus =
 			new AccountLifecycleStageStatus();
 
-		accountLifecycleStageStatus.setDescription("Pipeline");
-		accountLifecycleStageStatus.setDisplayOrder(3);
-		accountLifecycleStageStatus.setEndDate(new Date());
-		accountLifecycleStageStatus.setId("stage-3");
-		accountLifecycleStageStatus.setMaxDuration(30);
-		accountLifecycleStageStatus.setStageType("PIPELINE");
-		accountLifecycleStageStatus.setStartDate(new Date());
+		accountLifecycleStageStatus.setDescription(
+			RandomTestUtil.randomString());
+		accountLifecycleStageStatus.setEndDate(RandomTestUtil.nextDate());
+		accountLifecycleStageStatus.setId(RandomTestUtil.randomString());
+		accountLifecycleStageStatus.setMaxDuration(RandomTestUtil.randomInt());
+		accountLifecycleStageStatus.setName(RandomTestUtil.randomString());
+		accountLifecycleStageStatus.setPosition(RandomTestUtil.randomInt());
+		accountLifecycleStageStatus.setStartDate(RandomTestUtil.nextDate());
 
 		AccountLifecycleStageHistory accountLifecycleStageHistory =
 			_accountLifecycleStageHistoryDTOConverter.toDTO(
@@ -41,9 +41,6 @@ public class AccountLifecycleStageHistoryDTOConverterTest {
 		Assert.assertEquals(
 			accountLifecycleStageStatus.getDescription(),
 			accountLifecycleStageHistory.getDescription());
-		Assert.assertEquals(
-			accountLifecycleStageStatus.getDisplayOrder(),
-			accountLifecycleStageHistory.getDisplayOrder());
 		Assert.assertEquals(
 			accountLifecycleStageStatus.getEndDate(),
 			accountLifecycleStageHistory.getEndDate());
@@ -54,11 +51,32 @@ public class AccountLifecycleStageHistoryDTOConverterTest {
 			accountLifecycleStageStatus.getMaxDuration(),
 			accountLifecycleStageHistory.getMaxDuration());
 		Assert.assertEquals(
-			accountLifecycleStageStatus.getStageType(),
-			accountLifecycleStageHistory.getStageType());
+			accountLifecycleStageStatus.getName(),
+			accountLifecycleStageHistory.getName());
+		Assert.assertEquals(
+			accountLifecycleStageStatus.getPosition(),
+			accountLifecycleStageHistory.getPosition());
 		Assert.assertEquals(
 			accountLifecycleStageStatus.getStartDate(),
 			accountLifecycleStageHistory.getStartDate());
+	}
+
+	@Test
+	public void testToDTOWithoutDates() {
+		AccountLifecycleStageStatus accountLifecycleStageStatus =
+			new AccountLifecycleStageStatus();
+
+		accountLifecycleStageStatus.setName(RandomTestUtil.randomString());
+
+		AccountLifecycleStageHistory accountLifecycleStageHistory =
+			_accountLifecycleStageHistoryDTOConverter.toDTO(
+				null, accountLifecycleStageStatus);
+
+		Assert.assertNull(accountLifecycleStageHistory.getEndDate());
+		Assert.assertEquals(
+			accountLifecycleStageStatus.getName(),
+			accountLifecycleStageHistory.getName());
+		Assert.assertNull(accountLifecycleStageHistory.getStartDate());
 	}
 
 	private final AccountLifecycleStageHistoryDTOConverter
