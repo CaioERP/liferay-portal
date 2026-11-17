@@ -7,10 +7,16 @@ package com.liferay.osb.faro.rest.internal.graphql.servlet.v1_0;
 
 import com.liferay.osb.faro.rest.internal.graphql.mutation.v1_0.Mutation;
 import com.liferay.osb.faro.rest.internal.graphql.query.v1_0.Query;
+import com.liferay.osb.faro.rest.internal.resource.v1_0.AccountLifecycleHistoryResourceImpl;
+import com.liferay.osb.faro.rest.internal.resource.v1_0.AccountLifecycleResourceImpl;
+import com.liferay.osb.faro.rest.internal.resource.v1_0.AccountLifecycleStageMetricResourceImpl;
 import com.liferay.osb.faro.rest.internal.resource.v1_0.AccountLifecycleStageTransitionResourceImpl;
 import com.liferay.osb.faro.rest.internal.resource.v1_0.AccountResourceImpl;
+import com.liferay.osb.faro.rest.internal.resource.v1_0.AcquisitionResourceImpl;
 import com.liferay.osb.faro.rest.internal.resource.v1_0.AssetSummaryMetricResourceImpl;
 import com.liferay.osb.faro.rest.internal.resource.v1_0.ChannelResourceImpl;
+import com.liferay.osb.faro.rest.internal.resource.v1_0.EventAttributeDefinitionResourceImpl;
+import com.liferay.osb.faro.rest.internal.resource.v1_0.EventDefinitionResourceImpl;
 import com.liferay.osb.faro.rest.internal.resource.v1_0.EventMetricResourceImpl;
 import com.liferay.osb.faro.rest.internal.resource.v1_0.EventResourceImpl;
 import com.liferay.osb.faro.rest.internal.resource.v1_0.IndividualResourceImpl;
@@ -21,11 +27,19 @@ import com.liferay.osb.faro.rest.internal.resource.v1_0.IndividualSegmentResourc
 import com.liferay.osb.faro.rest.internal.resource.v1_0.PageMetricResourceImpl;
 import com.liferay.osb.faro.rest.internal.resource.v1_0.SearchTermResourceImpl;
 import com.liferay.osb.faro.rest.internal.resource.v1_0.UserSessionResourceImpl;
+import com.liferay.osb.faro.rest.internal.resource.v1_0.VisitFrequencyMetricResourceImpl;
+import com.liferay.osb.faro.rest.internal.resource.v1_0.VisitorMetricResourceImpl;
 import com.liferay.osb.faro.rest.internal.resource.v1_0.WorkspaceResourceImpl;
+import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleHistoryResource;
+import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleResource;
+import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleStageMetricResource;
 import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleStageTransitionResource;
 import com.liferay.osb.faro.rest.resource.v1_0.AccountResource;
+import com.liferay.osb.faro.rest.resource.v1_0.AcquisitionResource;
 import com.liferay.osb.faro.rest.resource.v1_0.AssetSummaryMetricResource;
 import com.liferay.osb.faro.rest.resource.v1_0.ChannelResource;
+import com.liferay.osb.faro.rest.resource.v1_0.EventAttributeDefinitionResource;
+import com.liferay.osb.faro.rest.resource.v1_0.EventDefinitionResource;
 import com.liferay.osb.faro.rest.resource.v1_0.EventMetricResource;
 import com.liferay.osb.faro.rest.resource.v1_0.EventResource;
 import com.liferay.osb.faro.rest.resource.v1_0.IndividualResource;
@@ -36,6 +50,8 @@ import com.liferay.osb.faro.rest.resource.v1_0.IndividualSegmentResource;
 import com.liferay.osb.faro.rest.resource.v1_0.PageMetricResource;
 import com.liferay.osb.faro.rest.resource.v1_0.SearchTermResource;
 import com.liferay.osb.faro.rest.resource.v1_0.UserSessionResource;
+import com.liferay.osb.faro.rest.resource.v1_0.VisitFrequencyMetricResource;
+import com.liferay.osb.faro.rest.resource.v1_0.VisitorMetricResource;
 import com.liferay.osb.faro.rest.resource.v1_0.WorkspaceResource;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.vulcan.graphql.servlet.ServletData;
@@ -64,14 +80,26 @@ public class ServletDataImpl implements ServletData {
 	public void activate(BundleContext bundleContext) {
 		Query.setAccountResourceComponentServiceObjects(
 			_accountResourceComponentServiceObjects);
+		Query.setAccountLifecycleResourceComponentServiceObjects(
+			_accountLifecycleResourceComponentServiceObjects);
+		Query.setAccountLifecycleHistoryResourceComponentServiceObjects(
+			_accountLifecycleHistoryResourceComponentServiceObjects);
+		Query.setAccountLifecycleStageMetricResourceComponentServiceObjects(
+			_accountLifecycleStageMetricResourceComponentServiceObjects);
 		Query.setAccountLifecycleStageTransitionResourceComponentServiceObjects(
 			_accountLifecycleStageTransitionResourceComponentServiceObjects);
+		Query.setAcquisitionResourceComponentServiceObjects(
+			_acquisitionResourceComponentServiceObjects);
 		Query.setAssetSummaryMetricResourceComponentServiceObjects(
 			_assetSummaryMetricResourceComponentServiceObjects);
 		Query.setChannelResourceComponentServiceObjects(
 			_channelResourceComponentServiceObjects);
 		Query.setEventResourceComponentServiceObjects(
 			_eventResourceComponentServiceObjects);
+		Query.setEventAttributeDefinitionResourceComponentServiceObjects(
+			_eventAttributeDefinitionResourceComponentServiceObjects);
+		Query.setEventDefinitionResourceComponentServiceObjects(
+			_eventDefinitionResourceComponentServiceObjects);
 		Query.setEventMetricResourceComponentServiceObjects(
 			_eventMetricResourceComponentServiceObjects);
 		Query.setIndividualResourceComponentServiceObjects(
@@ -92,6 +120,10 @@ public class ServletDataImpl implements ServletData {
 			_searchTermResourceComponentServiceObjects);
 		Query.setUserSessionResourceComponentServiceObjects(
 			_userSessionResourceComponentServiceObjects);
+		Query.setVisitFrequencyMetricResourceComponentServiceObjects(
+			_visitFrequencyMetricResourceComponentServiceObjects);
+		Query.setVisitorMetricResourceComponentServiceObjects(
+			_visitorMetricResourceComponentServiceObjects);
 		Query.setWorkspaceResourceComponentServiceObjects(
 			_workspaceResourceComponentServiceObjects);
 	}
@@ -141,10 +173,30 @@ public class ServletDataImpl implements ServletData {
 							AccountResourceImpl.class,
 							"getWorkspaceGroupChannelAccountsPage"));
 					put(
+						"query#workspaceGroupChannelAccountLifecycles",
+						new ObjectValuePair<>(
+							AccountLifecycleResourceImpl.class,
+							"getWorkspaceGroupChannelAccountLifecyclesPage"));
+					put(
+						"query#workspaceGroupChannelAccountAccountLifecycleHistory",
+						new ObjectValuePair<>(
+							AccountLifecycleHistoryResourceImpl.class,
+							"getWorkspaceGroupChannelAccountAccountLifecycleHistory"));
+					put(
+						"query#workspaceGroupChannelAccountLifecycleStageMetrics",
+						new ObjectValuePair<>(
+							AccountLifecycleStageMetricResourceImpl.class,
+							"getWorkspaceGroupChannelAccountLifecycleStageMetricsPage"));
+					put(
 						"query#workspaceGroupAccountLifecycleStageTransitions",
 						new ObjectValuePair<>(
 							AccountLifecycleStageTransitionResourceImpl.class,
 							"getWorkspaceGroupAccountLifecycleStageTransitionsPage"));
+					put(
+						"query#workspaceGroupChannelAcquisitions",
+						new ObjectValuePair<>(
+							AcquisitionResourceImpl.class,
+							"getWorkspaceGroupChannelAcquisitionsPage"));
 					put(
 						"query#workspaceGroupChannelAssetSummaries",
 						new ObjectValuePair<>(
@@ -165,6 +217,16 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							EventResourceImpl.class,
 							"getWorkspaceGroupChannelEventsPage"));
+					put(
+						"query#workspaceGroupEventAttributeDefinitions",
+						new ObjectValuePair<>(
+							EventAttributeDefinitionResourceImpl.class,
+							"getWorkspaceGroupEventAttributeDefinitionsPage"));
+					put(
+						"query#workspaceGroupEventDefinitions",
+						new ObjectValuePair<>(
+							EventDefinitionResourceImpl.class,
+							"getWorkspaceGroupEventDefinitionsPage"));
 					put(
 						"query#workspaceGroupChannelAccountEventMetric",
 						new ObjectValuePair<>(
@@ -237,6 +299,16 @@ public class ServletDataImpl implements ServletData {
 							UserSessionResourceImpl.class,
 							"getWorkspaceGroupChannelIndividualUserSessionsPage"));
 					put(
+						"query#workspaceGroupChannelVisitFrequencyMetric",
+						new ObjectValuePair<>(
+							VisitFrequencyMetricResourceImpl.class,
+							"getWorkspaceGroupChannelVisitFrequencyMetric"));
+					put(
+						"query#workspaceGroupChannelVisitorMetric",
+						new ObjectValuePair<>(
+							VisitorMetricResourceImpl.class,
+							"getWorkspaceGroupChannelVisitorMetric"));
+					put(
 						"query#workspaces",
 						new ObjectValuePair<>(
 							WorkspaceResourceImpl.class, "getWorkspacesPage"));
@@ -248,8 +320,24 @@ public class ServletDataImpl implements ServletData {
 		_accountResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<AccountLifecycleResource>
+		_accountLifecycleResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<AccountLifecycleHistoryResource>
+		_accountLifecycleHistoryResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<AccountLifecycleStageMetricResource>
+		_accountLifecycleStageMetricResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<AccountLifecycleStageTransitionResource>
 		_accountLifecycleStageTransitionResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<AcquisitionResource>
+		_acquisitionResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<AssetSummaryMetricResource>
@@ -262,6 +350,14 @@ public class ServletDataImpl implements ServletData {
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<EventResource>
 		_eventResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<EventAttributeDefinitionResource>
+		_eventAttributeDefinitionResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<EventDefinitionResource>
+		_eventDefinitionResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<EventMetricResource>
@@ -301,8 +397,16 @@ public class ServletDataImpl implements ServletData {
 		_userSessionResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<VisitFrequencyMetricResource>
+		_visitFrequencyMetricResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<VisitorMetricResource>
+		_visitorMetricResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<WorkspaceResource>
 		_workspaceResourceComponentServiceObjects;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-149085200
+// LIFERAY-REST-BUILDER-HASH:2029388238

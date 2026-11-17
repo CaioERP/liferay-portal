@@ -6,10 +6,16 @@
 package com.liferay.osb.faro.rest.internal.graphql.query.v1_0;
 
 import com.liferay.osb.faro.rest.dto.v1_0.Account;
+import com.liferay.osb.faro.rest.dto.v1_0.AccountLifecycle;
+import com.liferay.osb.faro.rest.dto.v1_0.AccountLifecycleHistory;
+import com.liferay.osb.faro.rest.dto.v1_0.AccountLifecycleStageMetric;
 import com.liferay.osb.faro.rest.dto.v1_0.AccountLifecycleStageTransition;
+import com.liferay.osb.faro.rest.dto.v1_0.Acquisition;
 import com.liferay.osb.faro.rest.dto.v1_0.AssetSummaryMetric;
 import com.liferay.osb.faro.rest.dto.v1_0.Channel;
 import com.liferay.osb.faro.rest.dto.v1_0.Event;
+import com.liferay.osb.faro.rest.dto.v1_0.EventAttributeDefinition;
+import com.liferay.osb.faro.rest.dto.v1_0.EventDefinition;
 import com.liferay.osb.faro.rest.dto.v1_0.EventMetric;
 import com.liferay.osb.faro.rest.dto.v1_0.Individual;
 import com.liferay.osb.faro.rest.dto.v1_0.IndividualSegment;
@@ -19,11 +25,19 @@ import com.liferay.osb.faro.rest.dto.v1_0.IndividualSegmentMembershipChangeMetri
 import com.liferay.osb.faro.rest.dto.v1_0.PageMetric;
 import com.liferay.osb.faro.rest.dto.v1_0.SearchTerm;
 import com.liferay.osb.faro.rest.dto.v1_0.UserSession;
+import com.liferay.osb.faro.rest.dto.v1_0.VisitFrequencyMetric;
+import com.liferay.osb.faro.rest.dto.v1_0.VisitorMetric;
 import com.liferay.osb.faro.rest.dto.v1_0.Workspace;
+import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleHistoryResource;
+import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleResource;
+import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleStageMetricResource;
 import com.liferay.osb.faro.rest.resource.v1_0.AccountLifecycleStageTransitionResource;
 import com.liferay.osb.faro.rest.resource.v1_0.AccountResource;
+import com.liferay.osb.faro.rest.resource.v1_0.AcquisitionResource;
 import com.liferay.osb.faro.rest.resource.v1_0.AssetSummaryMetricResource;
 import com.liferay.osb.faro.rest.resource.v1_0.ChannelResource;
+import com.liferay.osb.faro.rest.resource.v1_0.EventAttributeDefinitionResource;
+import com.liferay.osb.faro.rest.resource.v1_0.EventDefinitionResource;
 import com.liferay.osb.faro.rest.resource.v1_0.EventMetricResource;
 import com.liferay.osb.faro.rest.resource.v1_0.EventResource;
 import com.liferay.osb.faro.rest.resource.v1_0.IndividualResource;
@@ -34,6 +48,8 @@ import com.liferay.osb.faro.rest.resource.v1_0.IndividualSegmentResource;
 import com.liferay.osb.faro.rest.resource.v1_0.PageMetricResource;
 import com.liferay.osb.faro.rest.resource.v1_0.SearchTermResource;
 import com.liferay.osb.faro.rest.resource.v1_0.UserSessionResource;
+import com.liferay.osb.faro.rest.resource.v1_0.VisitFrequencyMetricResource;
+import com.liferay.osb.faro.rest.resource.v1_0.VisitorMetricResource;
 import com.liferay.osb.faro.rest.resource.v1_0.WorkspaceResource;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
@@ -74,6 +90,32 @@ public class Query {
 			accountResourceComponentServiceObjects;
 	}
 
+	public static void setAccountLifecycleResourceComponentServiceObjects(
+		ComponentServiceObjects<AccountLifecycleResource>
+			accountLifecycleResourceComponentServiceObjects) {
+
+		_accountLifecycleResourceComponentServiceObjects =
+			accountLifecycleResourceComponentServiceObjects;
+	}
+
+	public static void
+		setAccountLifecycleHistoryResourceComponentServiceObjects(
+			ComponentServiceObjects<AccountLifecycleHistoryResource>
+				accountLifecycleHistoryResourceComponentServiceObjects) {
+
+		_accountLifecycleHistoryResourceComponentServiceObjects =
+			accountLifecycleHistoryResourceComponentServiceObjects;
+	}
+
+	public static void
+		setAccountLifecycleStageMetricResourceComponentServiceObjects(
+			ComponentServiceObjects<AccountLifecycleStageMetricResource>
+				accountLifecycleStageMetricResourceComponentServiceObjects) {
+
+		_accountLifecycleStageMetricResourceComponentServiceObjects =
+			accountLifecycleStageMetricResourceComponentServiceObjects;
+	}
+
 	public static void
 		setAccountLifecycleStageTransitionResourceComponentServiceObjects(
 			ComponentServiceObjects<AccountLifecycleStageTransitionResource>
@@ -81,6 +123,14 @@ public class Query {
 
 		_accountLifecycleStageTransitionResourceComponentServiceObjects =
 			accountLifecycleStageTransitionResourceComponentServiceObjects;
+	}
+
+	public static void setAcquisitionResourceComponentServiceObjects(
+		ComponentServiceObjects<AcquisitionResource>
+			acquisitionResourceComponentServiceObjects) {
+
+		_acquisitionResourceComponentServiceObjects =
+			acquisitionResourceComponentServiceObjects;
 	}
 
 	public static void setAssetSummaryMetricResourceComponentServiceObjects(
@@ -105,6 +155,23 @@ public class Query {
 
 		_eventResourceComponentServiceObjects =
 			eventResourceComponentServiceObjects;
+	}
+
+	public static void
+		setEventAttributeDefinitionResourceComponentServiceObjects(
+			ComponentServiceObjects<EventAttributeDefinitionResource>
+				eventAttributeDefinitionResourceComponentServiceObjects) {
+
+		_eventAttributeDefinitionResourceComponentServiceObjects =
+			eventAttributeDefinitionResourceComponentServiceObjects;
+	}
+
+	public static void setEventDefinitionResourceComponentServiceObjects(
+		ComponentServiceObjects<EventDefinitionResource>
+			eventDefinitionResourceComponentServiceObjects) {
+
+		_eventDefinitionResourceComponentServiceObjects =
+			eventDefinitionResourceComponentServiceObjects;
 	}
 
 	public static void setEventMetricResourceComponentServiceObjects(
@@ -183,6 +250,22 @@ public class Query {
 			userSessionResourceComponentServiceObjects;
 	}
 
+	public static void setVisitFrequencyMetricResourceComponentServiceObjects(
+		ComponentServiceObjects<VisitFrequencyMetricResource>
+			visitFrequencyMetricResourceComponentServiceObjects) {
+
+		_visitFrequencyMetricResourceComponentServiceObjects =
+			visitFrequencyMetricResourceComponentServiceObjects;
+	}
+
+	public static void setVisitorMetricResourceComponentServiceObjects(
+		ComponentServiceObjects<VisitorMetricResource>
+			visitorMetricResourceComponentServiceObjects) {
+
+		_visitorMetricResourceComponentServiceObjects =
+			visitorMetricResourceComponentServiceObjects;
+	}
+
 	public static void setWorkspaceResourceComponentServiceObjects(
 		ComponentServiceObjects<WorkspaceResource>
 			workspaceResourceComponentServiceObjects) {
@@ -217,7 +300,7 @@ public class Query {
 	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workspaceGroupChannelAccounts(accountLifecycleId: ___, channelId: ___, groupId: ___, lifecycleStage: ___, page: ___, pageSize: ___, rangeEnd: ___, rangeKey: ___, rangeStart: ___, search: ___, sorts: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(
-		description = "List or search accounts synced to an LDP workspace. Optionally narrow results to a single channel (also known as property). Optionally narrow results to a single lifecycle stage with `lifecycleStage`, passing the name of a stage; the stage is looked up in the account lifecycle given by `accountLifecycleId`, or in the channel's default account lifecycle when it is omitted. Use this to browse or search accounts by name. To fetch a single account by ID, use `getWorkspaceGroupAccount`. Wide date ranges can take a while. If the response says the query is still running, wait the stated number of seconds and repeat the identical call."
+		description = "List or search accounts synced to an LDP workspace. Optionally narrow results to a single channel (also known as property). Optionally narrow results to a single lifecycle stage with `lifecycleStage`, passing the name of a stage; the stage is looked up in the account lifecycle given by `accountLifecycleId`, or in the channel's default account lifecycle when it is omitted. A channel can have several account lifecycles; use `getWorkspaceGroupChannelAccountLifecyclesPage` to list them. Use this to browse or search accounts by name. To fetch a single account by ID, use `getWorkspaceGroupAccount`. Wide date ranges can take a while. If the response says the query is still running, wait the stated number of seconds and repeat the identical call."
 	)
 	public AccountPage workspaceGroupChannelAccounts(
 			@GraphQLName("groupId") Long groupId,
@@ -242,6 +325,92 @@ public class Query {
 					rangeEnd, rangeKey, rangeStart, search,
 					Pagination.of(page, pageSize),
 					_sortsBiFunction.apply(accountResource, sortsString))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workspaceGroupChannelAccountLifecycles(channelId: ___, groupId: ___, page: ___, pageSize: ___, search: ___, sorts: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "List the account lifecycles of a channel (also known as property), each with its stages in display order. A channel can have several lifecycles, and exactly one of them is its default. Use this to find the `accountLifecycleId` that the other account lifecycle tools and `getWorkspaceGroupChannelAccountsPage` take, and the stage names that the stage filters accept."
+	)
+	public AccountLifecyclePage workspaceGroupChannelAccountLifecycles(
+			@GraphQLName("groupId") Long groupId,
+			@GraphQLName("channelId") String channelId,
+			@GraphQLName("search") String search,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page,
+			@GraphQLName("sort") String sortsString)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountLifecycleResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountLifecycleResource -> new AccountLifecyclePage(
+				accountLifecycleResource.
+					getWorkspaceGroupChannelAccountLifecyclesPage(
+						groupId, channelId, search,
+						Pagination.of(page, pageSize),
+						_sortsBiFunction.apply(
+							accountLifecycleResource, sortsString))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workspaceGroupChannelAccountAccountLifecycleHistory(accountId: ___, accountLifecycleId: ___, channelId: ___, groupId: ___){accountLifecycleStageHistories, id, name}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "The stage history of one account in an account lifecycle: every stage of the lifecycle in display order, with when the account most recently entered and left it. The stage with a `startDate` and no `endDate` is the one the account is in now. Use this to answer 'how long has this account been in its stage' or 'when did it become a customer' style questions. To see moves across many accounts, use `getWorkspaceGroupAccountLifecycleStageTransitionsPage` instead. The lifecycle must belong to the channel; otherwise the call returns 404."
+	)
+	public AccountLifecycleHistory
+			workspaceGroupChannelAccountAccountLifecycleHistory(
+				@GraphQLName("groupId") Long groupId,
+				@GraphQLName("channelId") String channelId,
+				@GraphQLName("accountId") String accountId,
+				@GraphQLName("accountLifecycleId") String accountLifecycleId)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountLifecycleHistoryResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountLifecycleHistoryResource ->
+				accountLifecycleHistoryResource.
+					getWorkspaceGroupChannelAccountAccountLifecycleHistory(
+						groupId, channelId, accountId, accountLifecycleId));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workspaceGroupChannelAccountLifecycleStageMetrics(accountLifecycleId: ___, channelId: ___, country: ___, groupId: ___, industry: ___, page: ___, pageSize: ___, segmentId: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "Per-stage metrics of an account lifecycle, one entry per stage in display order: how many accounts are in each stage now, their share of the lifecycle, the average days spent in the stage and the conversion rate to the next stage. Durations and conversion rates cover the last 90 days; the date range can't be changed. Use this to answer 'where do accounts stall' style questions. Optionally narrow the accounts by country, industry or segment membership. A lifecycle has at most 20 stages, so the default page returns them all. The lifecycle must belong to the channel; otherwise the call returns 404."
+	)
+	public AccountLifecycleStageMetricPage
+			workspaceGroupChannelAccountLifecycleStageMetrics(
+				@GraphQLName("groupId") Long groupId,
+				@GraphQLName("channelId") String channelId,
+				@GraphQLName("accountLifecycleId") String accountLifecycleId,
+				@GraphQLName("country") String country,
+				@GraphQLName("industry") String industry,
+				@GraphQLName("segmentId") Long segmentId,
+				@GraphQLName("pageSize") int pageSize,
+				@GraphQLName("page") int page)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountLifecycleStageMetricResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountLifecycleStageMetricResource ->
+				new AccountLifecycleStageMetricPage(
+					accountLifecycleStageMetricResource.
+						getWorkspaceGroupChannelAccountLifecycleStageMetricsPage(
+							groupId, channelId, accountLifecycleId, country,
+							industry, segmentId,
+							Pagination.of(page, pageSize))));
 	}
 
 	/**
@@ -283,6 +452,37 @@ public class Query {
 							_sortsBiFunction.apply(
 								accountLifecycleStageTransitionResource,
 								sortsString))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workspaceGroupChannelAcquisitions(accountId: ___, channelId: ___, groupId: ___, page: ___, pageSize: ___, rangeEnd: ___, rangeKey: ___, rangeStart: ___, segmentId: ___, type: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "List where the sessions of a channel (also known as property) came from in a date range, in descending order of number of sessions. `type` picks the breakdown: CHANNEL (the acquisition channel LDP assigns to each session, such as direct), REFERRER (referring URL), or SOURCE_MEDIUM (`source / medium` pairs from UTM parameters); it defaults to CHANNEL. Optionally narrow to the individuals of an account with `accountId` or of a segment with `segmentId`. For date range filtering pass `rangeKey` as one of LAST_24_HOURS, YESTERDAY, LAST_7_DAYS, LAST_28_DAYS, LAST_30_DAYS, LAST_90_DAYS, LAST_180_DAYS, or pass both `rangeStart` and `rangeEnd` as `yyyy-MM-dd` dates for a custom window of at most 180 days; a custom window takes precedence over `rangeKey`. Without either, the last 30 days are used. Use this for 'top traffic sources' or 'top referrers' style queries. Wide date ranges can take a while. If the response says the query is still running, wait the stated number of seconds and repeat the identical call."
+	)
+	public AcquisitionPage workspaceGroupChannelAcquisitions(
+			@GraphQLName("groupId") Long groupId,
+			@GraphQLName("channelId") String channelId,
+			@GraphQLName("accountId") String accountId,
+			@GraphQLName("rangeEnd") String rangeEnd,
+			@GraphQLName("rangeKey") String rangeKey,
+			@GraphQLName("rangeStart") String rangeStart,
+			@GraphQLName("segmentId") String segmentId,
+			@GraphQLName("type") String type,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_acquisitionResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			acquisitionResource -> new AcquisitionPage(
+				acquisitionResource.getWorkspaceGroupChannelAcquisitionsPage(
+					groupId, channelId, accountId, rangeEnd, rangeKey,
+					rangeStart, segmentId, type,
+					Pagination.of(page, pageSize))));
 	}
 
 	/**
@@ -391,6 +591,68 @@ public class Query {
 					groupId, channelId, accountId, includeAnonymousUsers,
 					individualId, rangeEnd, rangeKey, rangeStart, search,
 					segmentId, Pagination.of(page, pageSize))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workspaceGroupEventAttributeDefinitions(attributeType: ___, eventDefinitionId: ___, groupId: ___, page: ___, pageSize: ___, search: ___, sorts: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "List the event attribute definitions of an LDP workspace: the attribute keys events carry, with their data type and a sample value. Pass `eventDefinitionId` (from `getWorkspaceGroupEventDefinitionsPage`) to list only the attributes of that event; an unknown ID returns an empty list. Use this to learn which keys appear in `Event.attributes` and how to read their values."
+	)
+	public EventAttributeDefinitionPage workspaceGroupEventAttributeDefinitions(
+			@GraphQLName("groupId") Long groupId,
+			@GraphQLName("attributeType") String attributeType,
+			@GraphQLName("eventDefinitionId") String eventDefinitionId,
+			@GraphQLName("search") String search,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page,
+			@GraphQLName("sort") String sortsString)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_eventAttributeDefinitionResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			eventAttributeDefinitionResource ->
+				new EventAttributeDefinitionPage(
+					eventAttributeDefinitionResource.
+						getWorkspaceGroupEventAttributeDefinitionsPage(
+							groupId, attributeType, eventDefinitionId, search,
+							Pagination.of(page, pageSize),
+							_sortsBiFunction.apply(
+								eventAttributeDefinitionResource,
+								sortsString))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workspaceGroupEventDefinitions(blocked: ___, eventType: ___, groupId: ___, hidden: ___, page: ___, pageSize: ___, search: ___, sorts: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "List the event definitions of an LDP workspace: every event name that the workspace has seen, across all channels, with its display name and whether it's a DEFAULT or CUSTOM event. Use this to find out which events exist before querying events, and to find the `eventDefinitionId` that `getWorkspaceGroupEventAttributeDefinitionsPage` takes."
+	)
+	public EventDefinitionPage workspaceGroupEventDefinitions(
+			@GraphQLName("groupId") Long groupId,
+			@GraphQLName("blocked") Boolean blocked,
+			@GraphQLName("eventType") String eventType,
+			@GraphQLName("hidden") Boolean hidden,
+			@GraphQLName("search") String search,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page,
+			@GraphQLName("sort") String sortsString)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_eventDefinitionResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			eventDefinitionResource -> new EventDefinitionPage(
+				eventDefinitionResource.getWorkspaceGroupEventDefinitionsPage(
+					groupId, blocked, eventType, hidden, search,
+					Pagination.of(page, pageSize),
+					_sortsBiFunction.apply(
+						eventDefinitionResource, sortsString))));
 	}
 
 	/**
@@ -800,6 +1062,54 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workspaceGroupChannelVisitFrequencyMetric(channelId: ___, groupId: ___, rangeEnd: ___, rangeKey: ___, rangeStart: ___){biWeeklyVisitors, dailyVisitors, monthlyVisitors, occasionalVisitors, visitors, weeklyVisitors}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "Get how often the visitors of a channel (also known as property) came back in a date range, as counts of daily, weekly, bi-weekly, monthly and occasional visitors. The buckets are relative to the length of the range, so compare ranges of the same length. It can't be narrowed to a segment or an account. For date range filtering pass `rangeKey` as one of LAST_24_HOURS, YESTERDAY, LAST_7_DAYS, LAST_28_DAYS, LAST_30_DAYS, LAST_90_DAYS, LAST_180_DAYS, or pass both `rangeStart` and `rangeEnd` as `yyyy-MM-dd` dates for a custom window of at most 180 days; a custom window takes precedence over `rangeKey`. Without either, the last 30 days are used. Use this for 'how loyal are our visitors' style queries. Wide date ranges can take a while. If the response says the query is still running, wait the stated number of seconds and repeat the identical call."
+	)
+	public VisitFrequencyMetric workspaceGroupChannelVisitFrequencyMetric(
+			@GraphQLName("groupId") Long groupId,
+			@GraphQLName("channelId") String channelId,
+			@GraphQLName("rangeEnd") String rangeEnd,
+			@GraphQLName("rangeKey") String rangeKey,
+			@GraphQLName("rangeStart") String rangeStart)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_visitFrequencyMetricResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			visitFrequencyMetricResource ->
+				visitFrequencyMetricResource.
+					getWorkspaceGroupChannelVisitFrequencyMetric(
+						groupId, channelId, rangeEnd, rangeKey, rangeStart));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workspaceGroupChannelVisitorMetric(channelId: ___, groupId: ___, rangeKey: ___, segmentId: ___){averageSessionDuration, knownVisitors, totalSessionDuration, visitors}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "Get the visitor totals of a channel (also known as property) for a date range: unique visitors, known visitors (identified by email), and the average and total session duration. Optionally narrow to the individuals in a segment with `segmentId`. For date range filtering pass `rangeKey` as one of LAST_24_HOURS, YESTERDAY, LAST_7_DAYS, LAST_28_DAYS, LAST_30_DAYS, LAST_90_DAYS, LAST_180_DAYS; this tool doesn't support custom `rangeStart`/`rangeEnd` windows. Without `rangeKey`, the last 30 days are used. Use this for 'how many visitors did the site have' style queries. Wide date ranges can take a while. If the response says the query is still running, wait the stated number of seconds and repeat the identical call."
+	)
+	public VisitorMetric workspaceGroupChannelVisitorMetric(
+			@GraphQLName("groupId") Long groupId,
+			@GraphQLName("channelId") String channelId,
+			@GraphQLName("rangeKey") String rangeKey,
+			@GraphQLName("segmentId") String segmentId)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_visitorMetricResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			visitorMetricResource ->
+				visitorMetricResource.getWorkspaceGroupChannelVisitorMetric(
+					groupId, channelId, rangeKey, segmentId));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workspaces{items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(
@@ -846,6 +1156,107 @@ public class Query {
 
 	}
 
+	@GraphQLName("AccountLifecyclePage")
+	public class AccountLifecyclePage {
+
+		public AccountLifecyclePage(Page accountLifecyclePage) {
+			actions = accountLifecyclePage.getActions();
+
+			items = accountLifecyclePage.getItems();
+			lastPage = accountLifecyclePage.getLastPage();
+			page = accountLifecyclePage.getPage();
+			pageSize = accountLifecyclePage.getPageSize();
+			totalCount = accountLifecyclePage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<AccountLifecycle> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
+	@GraphQLName("AccountLifecycleHistoryPage")
+	public class AccountLifecycleHistoryPage {
+
+		public AccountLifecycleHistoryPage(Page accountLifecycleHistoryPage) {
+			actions = accountLifecycleHistoryPage.getActions();
+
+			items = accountLifecycleHistoryPage.getItems();
+			lastPage = accountLifecycleHistoryPage.getLastPage();
+			page = accountLifecycleHistoryPage.getPage();
+			pageSize = accountLifecycleHistoryPage.getPageSize();
+			totalCount = accountLifecycleHistoryPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<AccountLifecycleHistory> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
+	@GraphQLName("AccountLifecycleStageMetricPage")
+	public class AccountLifecycleStageMetricPage {
+
+		public AccountLifecycleStageMetricPage(
+			Page accountLifecycleStageMetricPage) {
+
+			actions = accountLifecycleStageMetricPage.getActions();
+
+			items = accountLifecycleStageMetricPage.getItems();
+			lastPage = accountLifecycleStageMetricPage.getLastPage();
+			page = accountLifecycleStageMetricPage.getPage();
+			pageSize = accountLifecycleStageMetricPage.getPageSize();
+			totalCount = accountLifecycleStageMetricPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<AccountLifecycleStageMetric> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
 	@GraphQLName("AccountLifecycleStageTransitionPage")
 	public class AccountLifecycleStageTransitionPage {
 
@@ -866,6 +1277,39 @@ public class Query {
 
 		@GraphQLField
 		protected java.util.Collection<AccountLifecycleStageTransition> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
+	@GraphQLName("AcquisitionPage")
+	public class AcquisitionPage {
+
+		public AcquisitionPage(Page acquisitionPage) {
+			actions = acquisitionPage.getActions();
+
+			items = acquisitionPage.getItems();
+			lastPage = acquisitionPage.getLastPage();
+			page = acquisitionPage.getPage();
+			pageSize = acquisitionPage.getPageSize();
+			totalCount = acquisitionPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<Acquisition> items;
 
 		@GraphQLField
 		protected long lastPage;
@@ -965,6 +1409,72 @@ public class Query {
 
 		@GraphQLField
 		protected java.util.Collection<Event> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
+	@GraphQLName("EventAttributeDefinitionPage")
+	public class EventAttributeDefinitionPage {
+
+		public EventAttributeDefinitionPage(Page eventAttributeDefinitionPage) {
+			actions = eventAttributeDefinitionPage.getActions();
+
+			items = eventAttributeDefinitionPage.getItems();
+			lastPage = eventAttributeDefinitionPage.getLastPage();
+			page = eventAttributeDefinitionPage.getPage();
+			pageSize = eventAttributeDefinitionPage.getPageSize();
+			totalCount = eventAttributeDefinitionPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<EventAttributeDefinition> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
+	@GraphQLName("EventDefinitionPage")
+	public class EventDefinitionPage {
+
+		public EventDefinitionPage(Page eventDefinitionPage) {
+			actions = eventDefinitionPage.getActions();
+
+			items = eventDefinitionPage.getItems();
+			lastPage = eventDefinitionPage.getLastPage();
+			page = eventDefinitionPage.getPage();
+			pageSize = eventDefinitionPage.getPageSize();
+			totalCount = eventDefinitionPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<EventDefinition> items;
 
 		@GraphQLField
 		protected long lastPage;
@@ -1287,6 +1797,72 @@ public class Query {
 
 	}
 
+	@GraphQLName("VisitFrequencyMetricPage")
+	public class VisitFrequencyMetricPage {
+
+		public VisitFrequencyMetricPage(Page visitFrequencyMetricPage) {
+			actions = visitFrequencyMetricPage.getActions();
+
+			items = visitFrequencyMetricPage.getItems();
+			lastPage = visitFrequencyMetricPage.getLastPage();
+			page = visitFrequencyMetricPage.getPage();
+			pageSize = visitFrequencyMetricPage.getPageSize();
+			totalCount = visitFrequencyMetricPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<VisitFrequencyMetric> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
+	@GraphQLName("VisitorMetricPage")
+	public class VisitorMetricPage {
+
+		public VisitorMetricPage(Page visitorMetricPage) {
+			actions = visitorMetricPage.getActions();
+
+			items = visitorMetricPage.getItems();
+			lastPage = visitorMetricPage.getLastPage();
+			page = visitorMetricPage.getPage();
+			pageSize = visitorMetricPage.getPageSize();
+			totalCount = visitorMetricPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<VisitorMetric> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
 	@GraphQLName("WorkspacePage")
 	public class WorkspacePage {
 
@@ -1357,6 +1933,72 @@ public class Query {
 	}
 
 	private void _populateResourceContext(
+			AccountLifecycleResource accountLifecycleResource)
+		throws Exception {
+
+		accountLifecycleResource.setContextAcceptLanguage(_acceptLanguage);
+		accountLifecycleResource.setContextCompany(_company);
+		accountLifecycleResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		accountLifecycleResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		accountLifecycleResource.setContextUriInfo(_uriInfo);
+		accountLifecycleResource.setContextUser(_user);
+		accountLifecycleResource.setGroupLocalService(_groupLocalService);
+		accountLifecycleResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		accountLifecycleResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
+		accountLifecycleResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private void _populateResourceContext(
+			AccountLifecycleHistoryResource accountLifecycleHistoryResource)
+		throws Exception {
+
+		accountLifecycleHistoryResource.setContextAcceptLanguage(
+			_acceptLanguage);
+		accountLifecycleHistoryResource.setContextCompany(_company);
+		accountLifecycleHistoryResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		accountLifecycleHistoryResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		accountLifecycleHistoryResource.setContextUriInfo(_uriInfo);
+		accountLifecycleHistoryResource.setContextUser(_user);
+		accountLifecycleHistoryResource.setGroupLocalService(
+			_groupLocalService);
+		accountLifecycleHistoryResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		accountLifecycleHistoryResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
+		accountLifecycleHistoryResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private void _populateResourceContext(
+			AccountLifecycleStageMetricResource
+				accountLifecycleStageMetricResource)
+		throws Exception {
+
+		accountLifecycleStageMetricResource.setContextAcceptLanguage(
+			_acceptLanguage);
+		accountLifecycleStageMetricResource.setContextCompany(_company);
+		accountLifecycleStageMetricResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		accountLifecycleStageMetricResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		accountLifecycleStageMetricResource.setContextUriInfo(_uriInfo);
+		accountLifecycleStageMetricResource.setContextUser(_user);
+		accountLifecycleStageMetricResource.setGroupLocalService(
+			_groupLocalService);
+		accountLifecycleStageMetricResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		accountLifecycleStageMetricResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
+		accountLifecycleStageMetricResource.setRoleLocalService(
+			_roleLocalService);
+	}
+
+	private void _populateResourceContext(
 			AccountLifecycleStageTransitionResource
 				accountLifecycleStageTransitionResource)
 		throws Exception {
@@ -1378,6 +2020,24 @@ public class Query {
 			setResourcePermissionLocalService(_resourcePermissionLocalService);
 		accountLifecycleStageTransitionResource.setRoleLocalService(
 			_roleLocalService);
+	}
+
+	private void _populateResourceContext(
+			AcquisitionResource acquisitionResource)
+		throws Exception {
+
+		acquisitionResource.setContextAcceptLanguage(_acceptLanguage);
+		acquisitionResource.setContextCompany(_company);
+		acquisitionResource.setContextHttpServletRequest(_httpServletRequest);
+		acquisitionResource.setContextHttpServletResponse(_httpServletResponse);
+		acquisitionResource.setContextUriInfo(_uriInfo);
+		acquisitionResource.setContextUser(_user);
+		acquisitionResource.setGroupLocalService(_groupLocalService);
+		acquisitionResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		acquisitionResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
+		acquisitionResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -1432,6 +2092,48 @@ public class Query {
 		eventResource.setResourcePermissionLocalService(
 			_resourcePermissionLocalService);
 		eventResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private void _populateResourceContext(
+			EventAttributeDefinitionResource eventAttributeDefinitionResource)
+		throws Exception {
+
+		eventAttributeDefinitionResource.setContextAcceptLanguage(
+			_acceptLanguage);
+		eventAttributeDefinitionResource.setContextCompany(_company);
+		eventAttributeDefinitionResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		eventAttributeDefinitionResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		eventAttributeDefinitionResource.setContextUriInfo(_uriInfo);
+		eventAttributeDefinitionResource.setContextUser(_user);
+		eventAttributeDefinitionResource.setGroupLocalService(
+			_groupLocalService);
+		eventAttributeDefinitionResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		eventAttributeDefinitionResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
+		eventAttributeDefinitionResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private void _populateResourceContext(
+			EventDefinitionResource eventDefinitionResource)
+		throws Exception {
+
+		eventDefinitionResource.setContextAcceptLanguage(_acceptLanguage);
+		eventDefinitionResource.setContextCompany(_company);
+		eventDefinitionResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		eventDefinitionResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		eventDefinitionResource.setContextUriInfo(_uriInfo);
+		eventDefinitionResource.setContextUser(_user);
+		eventDefinitionResource.setGroupLocalService(_groupLocalService);
+		eventDefinitionResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		eventDefinitionResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
+		eventDefinitionResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -1615,6 +2317,45 @@ public class Query {
 		userSessionResource.setRoleLocalService(_roleLocalService);
 	}
 
+	private void _populateResourceContext(
+			VisitFrequencyMetricResource visitFrequencyMetricResource)
+		throws Exception {
+
+		visitFrequencyMetricResource.setContextAcceptLanguage(_acceptLanguage);
+		visitFrequencyMetricResource.setContextCompany(_company);
+		visitFrequencyMetricResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		visitFrequencyMetricResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		visitFrequencyMetricResource.setContextUriInfo(_uriInfo);
+		visitFrequencyMetricResource.setContextUser(_user);
+		visitFrequencyMetricResource.setGroupLocalService(_groupLocalService);
+		visitFrequencyMetricResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		visitFrequencyMetricResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
+		visitFrequencyMetricResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private void _populateResourceContext(
+			VisitorMetricResource visitorMetricResource)
+		throws Exception {
+
+		visitorMetricResource.setContextAcceptLanguage(_acceptLanguage);
+		visitorMetricResource.setContextCompany(_company);
+		visitorMetricResource.setContextHttpServletRequest(_httpServletRequest);
+		visitorMetricResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		visitorMetricResource.setContextUriInfo(_uriInfo);
+		visitorMetricResource.setContextUser(_user);
+		visitorMetricResource.setGroupLocalService(_groupLocalService);
+		visitorMetricResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		visitorMetricResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
+		visitorMetricResource.setRoleLocalService(_roleLocalService);
+	}
+
 	private void _populateResourceContext(WorkspaceResource workspaceResource)
 		throws Exception {
 
@@ -1634,15 +2375,27 @@ public class Query {
 
 	private static ComponentServiceObjects<AccountResource>
 		_accountResourceComponentServiceObjects;
+	private static ComponentServiceObjects<AccountLifecycleResource>
+		_accountLifecycleResourceComponentServiceObjects;
+	private static ComponentServiceObjects<AccountLifecycleHistoryResource>
+		_accountLifecycleHistoryResourceComponentServiceObjects;
+	private static ComponentServiceObjects<AccountLifecycleStageMetricResource>
+		_accountLifecycleStageMetricResourceComponentServiceObjects;
 	private static ComponentServiceObjects
 		<AccountLifecycleStageTransitionResource>
 			_accountLifecycleStageTransitionResourceComponentServiceObjects;
+	private static ComponentServiceObjects<AcquisitionResource>
+		_acquisitionResourceComponentServiceObjects;
 	private static ComponentServiceObjects<AssetSummaryMetricResource>
 		_assetSummaryMetricResourceComponentServiceObjects;
 	private static ComponentServiceObjects<ChannelResource>
 		_channelResourceComponentServiceObjects;
 	private static ComponentServiceObjects<EventResource>
 		_eventResourceComponentServiceObjects;
+	private static ComponentServiceObjects<EventAttributeDefinitionResource>
+		_eventAttributeDefinitionResourceComponentServiceObjects;
+	private static ComponentServiceObjects<EventDefinitionResource>
+		_eventDefinitionResourceComponentServiceObjects;
 	private static ComponentServiceObjects<EventMetricResource>
 		_eventMetricResourceComponentServiceObjects;
 	private static ComponentServiceObjects<IndividualResource>
@@ -1663,6 +2416,10 @@ public class Query {
 		_searchTermResourceComponentServiceObjects;
 	private static ComponentServiceObjects<UserSessionResource>
 		_userSessionResourceComponentServiceObjects;
+	private static ComponentServiceObjects<VisitFrequencyMetricResource>
+		_visitFrequencyMetricResourceComponentServiceObjects;
+	private static ComponentServiceObjects<VisitorMetricResource>
+		_visitorMetricResourceComponentServiceObjects;
 	private static ComponentServiceObjects<WorkspaceResource>
 		_workspaceResourceComponentServiceObjects;
 
@@ -1683,4 +2440,4 @@ public class Query {
 	private com.liferay.portal.kernel.model.User _user;
 
 }
-// LIFERAY-REST-BUILDER-HASH:1829930811
+// LIFERAY-REST-BUILDER-HASH:588831187
