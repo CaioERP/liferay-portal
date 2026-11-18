@@ -545,6 +545,8 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 				"IncorrectInitialRequestPortalInstanceLifecycleListener2." +
 					"testjava"
 			).addExpectedMessage(
+				"Parameter \"bundleContext\" is unused", 22
+			).addExpectedMessage(
 				"The \"activate\" method is missing the \"@Override\" " +
 					"annotation",
 				22
@@ -1682,7 +1684,14 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 
 	@Test
 	public void testUnusedParameter() throws Exception {
-		test("UnusedParameter.testjava", "Parameter \"color\" is unused", 17);
+		test("UnusedParameter.testjava", "Parameter \"color\" is unused", 23);
+	}
+
+	@Test
+	public void testUnusedParameterDSLifecycleMethods() throws Exception {
+		test(
+			"UnusedParameterDSLifecycleMethods.testjava",
+			"Parameter \"bundleContext\" is unused", 33);
 	}
 
 	@Test

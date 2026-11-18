@@ -8,6 +8,8 @@ import {RangeKeyTimeRanges} from 'shared/util/constants';
 import {useRequest} from 'shared/hooks/useRequest';
 import {warmFrontendDataSet} from 'test/warm-frontend-data-set';
 
+import type {TSort} from '@liferay/frontend-data-set-web';
+
 interface IStageItem {
 	externalReferenceCode: string;
 	id: string;
@@ -169,6 +171,7 @@ type FakeView = {
 let lastApiURL: string | undefined;
 let lastCustomDataRenderers: FakeCustomDataRenderers | undefined;
 let lastFilters: FakeFilter[] | undefined;
+let lastSorts: TSort[] | undefined;
 let lastViews: FakeView[] | undefined;
 let mountCount = 0;
 
@@ -185,17 +188,20 @@ jest.mock('@liferay/frontend-data-set-web', () => ({
 		customDataRenderers,
 		filters,
 		id,
+		sorts,
 		views,
 	}: {
 		apiURL: string;
 		customDataRenderers: FakeCustomDataRenderers;
 		filters: FakeFilter[];
 		id: string;
+		sorts: TSort[];
 		views: FakeView[];
 	}) => {
 		lastApiURL = apiURL;
 		lastCustomDataRenderers = customDataRenderers;
 		lastFilters = filters;
+		lastSorts = sorts;
 		lastViews = views;
 
 		React.useEffect(() => {
@@ -223,6 +229,7 @@ describe('AccountsDataSet', () => {
 		lastApiURL = undefined;
 		lastCustomDataRenderers = undefined;
 		lastFilters = undefined;
+		lastSorts = undefined;
 		lastViews = undefined;
 		mountCount = 0;
 	});
@@ -311,6 +318,55 @@ describe('AccountsDataSet', () => {
 
 		expect(countryFilter?.preloadedData).toBeUndefined();
 		expect(industryFilter?.preloadedData).toBeUndefined();
+	});
+
+	it('should omit the campaign filter unless a campaign is selected', async () => {
+		await renderAccountsDataSet(
+			<AccountsDataSet apiURL="fake-url" channelId="123" groupId="23" />
+		);
+
+		expect(lastFilters?.find((f) => f.id === 'campaignId')).toBeUndefined();
+	});
+
+	it('should offer the campaigns and preload the one selected', async () => {
+		await renderAccountsDataSet(
+			<AccountsDataSet
+				apiURL="fake-url"
+				campaignId="7"
+				campaignName="Spring Sale"
+				channelId="123"
+				groupId="23"
+			/>
+		);
+
+		const campaignFilter = lastFilters?.find((f) => f.id === 'campaignId');
+
+		expect(campaignFilter?.apiURL).toBe(
+			'/o/faro/contacts/23/campaigns/campaign-names?channelId=123'
+		);
+		expect(campaignFilter?.preloadedData).toEqual({
+			exclude: false,
+			selectedItems: [{label: 'Spring Sale', value: '7'}],
+		});
+	});
+
+	it('should remount the data set when the campaign changes', async () => {
+		const {rerender} = await renderAccountsDataSet(
+			<AccountsDataSet apiURL="fake-url" channelId="123" groupId="23" />
+		);
+
+		expect(mountCount).toBe(1);
+
+		rerender(
+			<AccountsDataSet
+				apiURL="fake-url"
+				campaignId="7"
+				channelId="123"
+				groupId="23"
+			/>
+		);
+
+		await waitFor(() => expect(mountCount).toBe(2));
 	});
 
 	it('should omit the lifecycleStatus filter when accountLifecycleId is not provided', async () => {
@@ -1296,6 +1352,62 @@ describe('AccountsDataSet', () => {
 			).toHaveLength(1);
 
 			expect(byFieldName('lastEnriched')?.sortable).toBe(true);
+		});
+	});
+
+	describe('the Order menu', () => {
+		it('should offer every sortable column of the Default View, last active descending by default', async () => {
+			await renderAccountsDataSet(
+				<AccountsDataSet
+					apiURL="fake-url"
+					channelId="123"
+					groupId="23"
+				/>
+			);
+
+			expect(lastSorts!.map(({key}) => key)).toEqual(
+				DEFAULT_VIEW_FIELD_NAMES
+			);
+
+			expect(lastSorts!.filter(({active}) => active)).toEqual([
+				{
+					active: true,
+					default: true,
+					direction: 'desc',
+					key: 'lastActive',
+					label: 'Last Active',
+				},
+			]);
+		});
+
+		it('should mark last active as the only default sort', async () => {
+			await renderAccountsDataSet(
+				<AccountsDataSet
+					apiURL="fake-url"
+					channelId="123"
+					fieldCatalog={ALL_ATTRIBUTES_FIELD_CATALOG}
+					groupId="23"
+				/>
+			);
+
+			expect(
+				lastSorts!.filter((sort) => sort.default).map(({key}) => key)
+			).toEqual(['lastActive']);
+		});
+
+		it('should add Last Enriched but leave the unsortable catalog columns out when the All Attributes View exists', async () => {
+			await renderAccountsDataSet(
+				<AccountsDataSet
+					apiURL="fake-url"
+					channelId="123"
+					fieldCatalog={ALL_ATTRIBUTES_FIELD_CATALOG}
+					groupId="23"
+				/>
+			);
+
+			expect(lastSorts!.map(({key}) => key)).toEqual(
+				ALL_ATTRIBUTES_FIXED_FIELD_NAMES
+			);
 		});
 	});
 });
